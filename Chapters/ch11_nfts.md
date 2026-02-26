@@ -80,7 +80,7 @@ Utility and Access NFTs: These function as digital keys, granting holders access
 
 Identity and Credential NFTs propose using blockchain technology for verifiable credentials like diplomas, certifications, or professional licenses. Soulbound NFTs that cannot be transferred aim to represent non-transferable achievements or reputation.
 
-Despite various utility propositions, the broader NFT market has seen dramatic declines in trading volume and floor prices since 2022, with most projects struggling to maintain active communities or practical utility beyond speculative trading.
+Despite various utility propositions, the broader NFT market has seen dramatic declines in trading volume and floor prices since 2022, with the vast majority of projects struggling to maintain active communities or practical utility beyond speculative trading. Overall volumes remain a fraction of their peak. But blue-chip collections like CryptoPunks and Bored Apes have retained cultural significance and meaningful floor prices even as the long tail of projects went to zero, reinforcing that the NFT market mirrors traditional art and collectibles: a handful of established names hold value while most everything else doesn't.
 
 ### Supply Mechanics
 
@@ -150,9 +150,9 @@ Most NFT collections set creator royalties between 5-10%, which buyers tradition
 
 OpenSea's response was inconsistent and ultimately ineffective. They enforced full royalties for newer collections through their Operator Filter (launched in November 2022\) but couldn't enforce fees on older collections. Traders naturally migrated to Blur's lower-fee structure, and OpenSea's market dominance began to crumble.
 
-The situation grew more complicated with the rise of aggregator protocols. These platforms, including Gem and Genie, solved a different problem: market fragmentation. They checked prices across multiple marketplaces and automatically executed trades wherever users got the best deal. This innovation inadvertently amplified Blur's advantage. Since aggregators routed users to the lowest-cost marketplace, Blur's fee discount became a structural advantage that attracted more and more volume. The value of this infrastructure layer became obvious when both aggregators were quickly acquired: Gem by OpenSea and Genie by Uniswap.
+The situation grew more complicated with the rise of aggregator protocols. These platforms, including Gem and Genie, solved a different problem: market fragmentation. They checked prices across multiple marketplaces and automatically executed trades wherever users got the best deal. This innovation inadvertently amplified Blur's advantage. Since aggregators routed users to the lowest-cost marketplace, Blur's fee discount became a structural advantage that attracted more and more volume. The value of this infrastructure layer became obvious when both aggregators were quickly acquired: Gem by OpenSea and Genie by Uniswap. Aggregators have since faded in relevance as trading activity consolidated back to OpenSea, making cross-marketplace routing less necessary.
 
-Blur's strategy worked. By February 2023, Blur had surpassed OpenSea in trading volume. By August 2023, this competition helped push OpenSea to abandon its royalty enforcement policy entirely.
+Blur's strategy worked, at first. By February 2023, Blur had surpassed OpenSea in trading volume. By August 2023, this competition helped push OpenSea to abandon its royalty enforcement policy entirely. But Blur's dominance proved temporary. Much of its volume was driven by token incentives and airdrop farming rather than organic demand, and as those incentives dried up and NFT trading volumes collapsed across the board, Blur's structural advantages mattered less. By 2025, OpenSea had reclaimed its position as the dominant Ethereum NFT marketplace, a comeback few predicted during the height of Blur's ascent.
 
 ### The Pricing Mechanics
 
@@ -162,7 +162,7 @@ The most watched metric in any NFT collection is the floor price. It serves as t
 
 This variability created a need for more sophisticated pricing approaches. Trait-based pricing emerged as one solution, taking into account the individual characteristics of each NFT rather than treating all pieces in a collection as equivalent.
 
-Another innovation, collection-wide bidding, addressed a different problem: illiquidity. Instead of bidding on one specific NFT, buyers could place bids on any NFT meeting certain criteria, like "any Bored Ape with laser eyes." This improved liquidity for sellers and made price discovery more efficient. The tradeoff was philosophical: it commoditized supposedly unique assets. OpenSea supports both collection and trait offers, while Blur popularized trait bidding and accelerated its adoption by rewarding it with loyalty points.
+Another innovation, collection-wide bidding, addressed a different problem: illiquidity. Instead of bidding on one specific NFT, buyers could place bids on any NFT meeting certain criteria, like "any Bored Ape with laser eyes." This improved liquidity for sellers and made price discovery more efficient. The tradeoff was philosophical: it commoditized supposedly unique assets. Blur attempted to popularize trait-level bidding by rewarding it with loyalty points, and OpenSea added support for both collection and trait offers, but in practice trait bidding never gained widespread adoption. Most trading activity continued to center on floor sweeps and collection-wide bids rather than granular trait-based strategies.
 
 This tension between uniqueness and fungibility sits at the heart of NFTs. Every design decision, from marketplace features to pricing mechanisms, reflects this fundamental paradox and shapes everything about how NFTs are used and valued.
 
@@ -170,4 +170,4 @@ This tension between uniqueness and fungibility sits at the heart of NFTs. Every
 
 NFTs are less a passing fad than a new digital primitive: a way to make ownership, identity, and coordination programmable on the internet. They sit at the intersection of law, culture, and technology, where licensing choices matter as much as smart contract standards, and marketplace design determines who actually captures value.
 
-Whether NFTs appear as art, access passes, game items, or credentials, the same basic mechanics are at work: scarcity, provenance, and programmability. The real question isn't whether a JPEG can be worth millions. The question is what new kinds of markets, communities, and institutions become possible once "who owns what" on the internet is no longer a fuzzy concept, but a line of code anyone can verify.
+Whether the token represents art, an access pass, a game item, or a credential, the same basic mechanics are at work: scarcity, provenance, and programmability. Most projects built on these mechanics failed. But the underlying infrastructure -- unique tokens on a public ledger -- solved a real problem that the internet never had an answer for, and the handful of collections and use cases that survived the crash are proof enough that digital ownership, however niche, is here to stay.
