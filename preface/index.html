@@ -1,0 +1,1783 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A comprehensive bilingual guide to cryptocurrency technology (English/Korean)">
+      
+      
+        <meta name="author" content="Original Author">
+      
+      
+        <link rel="canonical" href="https://suwonyoo.github.io/howcryptoworksbook/preface/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../chapters/ch01_bitcoin/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
+    
+    
+      
+        <title>Preface - How Crypto Works</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#preface-why-this-matters" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="How Crypto Works" class="md-header__button md-logo" aria-label="How Crypto Works" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            How Crypto Works
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Preface
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/suwonyoo/howcryptoworksbook" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    suwonyoo/howcryptoworksbook
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Introduction
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Preface
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../chapters/ch01_bitcoin/" class="md-tabs__link">
+          
+  
+  
+  Core Protocols
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../chapters/ch05_custody/" class="md-tabs__link">
+          
+  
+  
+  Infrastructure & Markets
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../chapters/ch07_defi/" class="md-tabs__link">
+          
+  
+  
+  Advanced Topics
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../chapters/ch10_hyperliquid/" class="md-tabs__link">
+          
+  
+  
+  Applications & Governance
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../chapters/ch13_depin/" class="md-tabs__link">
+          
+  
+  
+  Future Challenges
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../appendix/glossary/" class="md-tabs__link">
+          
+  
+  
+  Appendix
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="How Crypto Works" class="md-nav__button md-logo" aria-label="How Crypto Works" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    How Crypto Works
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/suwonyoo/howcryptoworksbook" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    suwonyoo/howcryptoworksbook
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introduction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preface
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preface
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-adversarial-frontier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Adversarial Frontier
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        적대적 최전선
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-tyranny-of-convenience" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Tyranny of Convenience
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        편의의 폭정
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-illusion-of-safety" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Illusion of Safety
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        안전의 환상
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-price-of-open-gates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Price of Open Gates
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        열린 문의 대가
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#signal-in-the-noise" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Signal in the Noise
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        잡음 속의 신호
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Protocols
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Core Protocols
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapters/ch01_bitcoin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter I: Bitcoin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapters/ch02_ethereum/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter II: Ethereum
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapters/ch03_solana/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter III: Solana
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapters/ch04_l1_blockchains/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter IV: L1 Blockchains
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure & Markets
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Infrastructure & Markets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapters/ch05_custody/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter V: Custody
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapters/ch06_market_structure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter VI: Market Structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced Topics
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Advanced Topics
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapters/ch07_defi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter VII: DeFi
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapters/ch08_mev/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter VIII: MEV
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapters/ch09_stablecoins_rwas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter IX: Stablecoins & RWAs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Applications & Governance
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Applications & Governance
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapters/ch10_hyperliquid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter X: Hyperliquid
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapters/ch11_nfts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter XI: NFTs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapters/ch12_governance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter XII: Governance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Future Challenges
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Future Challenges
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapters/ch13_depin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter XIII: DePIN
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapters/ch14_quantum_resistance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter XIV: Quantum Resistance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapters/ch15_prediction_markets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter XV: Prediction Markets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Appendix
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendix/glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-adversarial-frontier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Adversarial Frontier
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        적대적 최전선
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-tyranny-of-convenience" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Tyranny of Convenience
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        편의의 폭정
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-illusion-of-safety" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Illusion of Safety
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        안전의 환상
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-price-of-open-gates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Price of Open Gates
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        열린 문의 대가
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#signal-in-the-noise" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Signal in the Noise
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        잡음 속의 신호
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="preface-why-this-matters">Preface: Why This Matters<a class="headerlink" href="#preface-why-this-matters" title="Permanent link">&para;</a></h1>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:10"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><input id="__tabbed_1_5" name="__tabbed_1" type="radio" /><input id="__tabbed_1_6" name="__tabbed_1" type="radio" /><input id="__tabbed_1_7" name="__tabbed_1" type="radio" /><input id="__tabbed_1_8" name="__tabbed_1" type="radio" /><input id="__tabbed_1_9" name="__tabbed_1" type="radio" /><input id="__tabbed_1_10" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">English</label><label for="__tabbed_1_2">한국어</label><label for="__tabbed_1_3">English</label><label for="__tabbed_1_4">한국어</label><label for="__tabbed_1_5">English</label><label for="__tabbed_1_6">한국어</label><label for="__tabbed_1_7">English</label><label for="__tabbed_1_8">한국어</label><label for="__tabbed_1_9">English</label><label for="__tabbed_1_10">한국어</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<h2 id="the-adversarial-frontier">The Adversarial Frontier<a class="headerlink" href="#the-adversarial-frontier" title="Permanent link">&para;</a></h2>
+<p>Before exploring the technical mechanics of blockchains or the intricacies of DeFi protocols, you must first understand the environment you are entering. Crypto is arguably the most aggressively capitalist, meritocratic, and adversarial environment ever created. At its core, it is a financial system with absolutely no safety net.</p>
+<p>To the average person, this environment is alien. In the traditional world, if you lose your credit card, you call the bank. If a transaction is fraudulent, you dispute it. If you forget your password, you reset it. There is always a higher authority to appeal to, a centralized custodian responsible for your safety.</p>
+<p>In crypto, there is no manager. If you send money to the wrong address, it is gone forever. If you lose your private key, your wealth is inaccessible. If you interact with a malicious contract, your assets are drained with no recourse.</p>
+<p>It is precisely this lack of a safety net that creates a ruthless meritocracy. Because there is no referee to blow the whistle and no lifeguard to save the drowning, only the competent survive. It is not a meritocracy of credentials, status, or wealth, but of raw capability.</p>
+<p>Participation requires nothing but an internet connection and geography is irrelevant. A pseudonymous team of developers can deploy a smart contract, and the code does not care if it was written in a Manhattan skyscraper or a basement in Lagos.</p>
+<p>A 15-year-old in Lagos can't walk into Goldman Sachs and trade derivatives. But they can trade on a decentralized exchange on the same technical footing as anyone else.</p>
+<p>Not only is crypto accessible but it's transparent too. Instead of private order flows and dark pools, all on-chain data is visible to everyone in real-time. Reading this data might be challenging but this creates a competition of skill not access.</p>
+</div>
+<div class="tabbed-block">
+<h2 id="_1">적대적 최전선<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>블록체인(Blockchain)의 기술적 메커니즘이나 탈중앙화 금융(Decentralized Finance, DeFi) 프로토콜의 복잡한 세부 사항을 탐구하기 전에, 먼저 당신이 진입하려는 환경을 이해해야 한다. 암호화폐(Cryptocurrency)는 인류가 만들어낸 것 중 가장 공격적으로 자본주의적이고, 능력주의적이며, 적대적인 환경이라 해도 과언이 아니다. 그 본질은 안전망이 전혀 없는 금융 시스템이다.</p>
+<p>일반인에게 이 환경은 낯설다. 전통적인 세계에서는 신용카드를 잃어버리면 은행에 전화하면 된다. 거래가 사기라면 이의를 제기하면 된다. 비밀번호를 잊었다면 재설정하면 된다. 언제나 호소할 수 있는 상위 권위가 있고, 당신의 안전을 책임지는 중앙화된 수탁자가 존재한다.</p>
+<p>암호화폐에는 관리자가 없다. 잘못된 주소로 돈을 보내면 영원히 사라진다. 개인키(Private Key)를 잃어버리면 당신의 자산은 접근 불가능해진다. 악성 컨트랙트와 상호작용하면 자산이 빠져나가며 아무런 구제책도 없다.</p>
+<p>바로 이 안전망의 부재가 냉혹한 능력주의를 만들어낸다. 휘슬을 불 심판도 없고 익사자를 구할 인명구조원도 없기에 오직 유능한 자만이 살아남는다. 이것은 학력, 지위, 부의 능력주의가 아니라 순수한 역량의 능력주의다.</p>
+<p>참여에 필요한 것은 인터넷 연결뿐이며 지리적 위치는 무관하다. 익명의 개발자 팀이 스마트 컨트랙트(Smart Contract)를 배포할 수 있고, 코드는 그것이 맨해튼의 고층빌딩에서 작성되었는지 라고스의 지하실에서 작성되었는지 개의치 않는다.</p>
+<p>라고스의 15살 청소년은 골드만삭스에 들어가서 파생상품을 거래할 수 없다. 하지만 탈중앙화 거래소(Decentralized Exchange, DEX)에서는 다른 누구와도 동일한 기술적 기반 위에서 거래할 수 있다.</p>
+<p>암호화폐는 접근성만 높은 것이 아니라 투명하기도 하다. 비공개 주문 흐름이나 다크 풀 대신, 모든 온체인(On-chain) 데이터가 실시간으로 모든 사람에게 공개된다. 이 데이터를 읽는 것이 어려울 수는 있지만, 이는 접근권이 아닌 실력의 경쟁을 만들어낸다.</p>
+</div>
+<div class="tabbed-block">
+<h2 id="the-tyranny-of-convenience">The Tyranny of Convenience<a class="headerlink" href="#the-tyranny-of-convenience" title="Permanent link">&para;</a></h2>
+<p>The brutality of this meritocracy creates a natural friction against mass adoption. Because the environment is so hostile, the instinct for most people is to stay away.</p>
+<p>The hard truth is that the vast majority of people don't want absolute sovereignty; most want convenience, reversibility, and customer service. They want someone to blame when things go wrong. The traditional banking system provides this by wrapping money in layers of protection, insurance, and legal recourse.</p>
+<p>This is why the industry has developed a spectrum of sovereignty. It is why centralized exchanges like Coinbase have millions of users, and why tools like multi-sig wallets and social recovery exist. These mechanisms allow users to opt for a middle ground by outsourcing some security responsibility to trusted third parties or software logic to avoid the chance they lose all their funds by misplacing their seed phrase.</p>
+<p>However, for the average person living in a stable democracy, even this middle ground feels unnecessary. Why deal with private keys, seed phrases, or even the onboarding friction of an exchange when Apple Pay works perfectly? If you live in a world where the currency is stable and the government is benign, the "sovereignty" of Bitcoin feels like a hassle.</p>
+<p>But this thought process changes instantly when the environment shifts. The convenience of the traditional system relies entirely on the stability of the institutions running it. When those institutions fail, or when they turn against you, the "inconvenience" of sovereign money becomes priceless.</p>
+</div>
+<div class="tabbed-block">
+<h2 id="_2">편의의 폭정<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>이 능력주의의 잔혹함은 대중 채택에 대한 자연스러운 마찰을 만들어낸다. 환경이 너무나 적대적이기 때문에 대부분의 사람들의 본능적 반응은 멀리하는 것이다.</p>
+<p>냉혹한 현실은 대다수의 사람들이 절대적 주권(Sovereignty)을 원하지 않는다는 것이다. 대부분은 편의성, 되돌릴 수 있는 거래, 고객 서비스를 원한다. 일이 잘못됐을 때 탓할 누군가를 원한다. 전통적인 은행 시스템은 돈을 보호, 보험, 법적 구제책의 여러 겹으로 감싸 이를 제공한다.</p>
+<p>이것이 업계가 주권의 스펙트럼을 발전시킨 이유다. Coinbase 같은 중앙화 거래소가 수백만 명의 사용자를 보유하고, 다중 서명 지갑(Multi-sig Wallet)이나 소셜 복구(Social Recovery) 같은 도구가 존재하는 이유다. 이러한 메커니즘은 사용자들이 보안 책임의 일부를 신뢰할 수 있는 제3자나 소프트웨어 로직에 위임함으로써 중간 지대를 선택할 수 있게 해준다. 이를 통해 시드 구문(Seed Phrase)을 분실해서 모든 자금을 잃을 가능성을 피할 수 있다.</p>
+<p>그러나 안정적인 민주주의 국가에 사는 일반인에게는 이 중간 지대마저 불필요하게 느껴진다. Apple Pay가 완벽하게 작동하는데 왜 Private Key, Seed Phrase, 심지어 거래소 가입의 번거로움을 감수해야 하는가? 화폐가 안정적이고 정부가 우호적인 세상에 살고 있다면 비트코인(Bitcoin)의 "주권"은 그저 귀찮은 것처럼 느껴진다.</p>
+<p>하지만 이 사고방식은 환경이 변하는 순간 즉시 바뀐다. 전통 시스템의 편의성은 전적으로 그것을 운영하는 기관들의 안정성에 의존한다. 그 기관들이 실패하거나, 당신을 적대하게 되면, 주권적 화폐의 "불편함"은 값을 매길 수 없는 것이 된다.</p>
+</div>
+<div class="tabbed-block">
+<h2 id="the-illusion-of-safety">The Illusion of Safety<a class="headerlink" href="#the-illusion-of-safety" title="Permanent link">&para;</a></h2>
+<p>Most people do not intuitively "get" the value of this trade-off until the system fails them. In stable Western democracies, we assume this failure is unlikely to happen. We look at hyperinflation in Venezuela or capital controls in Lebanon and think, "That can't happen here."</p>
+<p>But the cracks are already showing.</p>
+<p>In the United States, we accept that central banks manage the money supply to steer the economy. While some inflation may be necessary for growth, the critical realization is that you have absolutely no say in the matter. Your purchasing power is at the mercy of monetary policy decisions made behind closed doors. You are a passenger in an economic vehicle with no ability to grab the wheel, no emergency brake, and no exit.</p>
+<p>More alarmingly, we are already seeing the weaponization of finance in the West. During the Canadian trucker protests, the government invoked emergency powers to freeze the bank accounts of protestors without due process. Regardless of your political stance on the protests themselves, the precedent set is chilling. If the financial system can be weaponized against one group today, it can be weaponized against any group tomorrow: including groups you support, or you personally.</p>
+<p>This is not hypothetical in much of the world. If you live under an authoritarian regime, your ability to financially support dissidents, journalists, or opposition movements is nonexistent within the traditional system. Every transaction is surveilled, every donation is traced, and supporting the "wrong" cause can mean imprisonment or worse.</p>
+<p>Crypto flips this dynamic. A citizen in Moscow can donate to an anti-war organization. A resident of Tehran can fund independent media. A person in Beijing can support activists in Hong Kong, all without revealing their identity to a state that would punish them for it. The same pseudonymity that regulators in the West decry as enabling crime is, for billions living under oppression, the only viable path to political expression.</p>
+<p>The core principle is that access to your own resources should not be contingent on your political views or social compliance. Yet, the swiftness with which people can be cut off from the global economy reveals a terrifying truth: your access to your own money was never a right. It is a privilege granted by the state and the banks, and it can be revoked at the flip of a switch.</p>
+<p>Bitcoin functions as fire insurance. You may not need it every day. It is cumbersome to set up and annoying to maintain. But when the house catches fire, whether through inflation, censorship, or systemic collapse, it is the only exit door that cannot be locked from the outside.</p>
+</div>
+<div class="tabbed-block">
+<h2 id="_3">안전의 환상<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>대부분의 사람들은 시스템이 자신을 실망시킬 때까지 이 교환의 가치를 직관적으로 "이해"하지 못한다. 안정적인 서구 민주주의 국가에서 우리는 이런 실패가 일어날 가능성이 낮다고 가정한다. 베네수엘라의 초인플레이션(Hyperinflation)이나 레바논의 자본 통제를 보며 "그건 여기서는 일어날 수 없어"라고 생각한다.</p>
+<p>하지만 균열은 이미 나타나고 있다.</p>
+<p>미국에서 우리는 중앙은행이 경제를 조종하기 위해 통화 공급량을 관리한다는 것을 받아들인다. 어느 정도의 인플레이션이 성장에 필요할 수 있지만, 핵심적인 깨달음은 당신이 이 문제에 전혀 발언권이 없다는 것이다. 당신의 구매력은 닫힌 문 뒤에서 내려지는 통화 정책 결정의 자비에 달려 있다. 당신은 핸들을 잡을 능력도, 비상 브레이크도, 탈출구도 없는 경제라는 차량의 승객이다.</p>
+<p>더 우려스러운 것은 서구에서도 이미 금융의 무기화가 나타나고 있다는 점이다. 캐나다 트럭 운전사 시위 당시, 정부는 적법한 절차 없이 시위자들의 은행 계좌를 동결하기 위해 비상 권한을 발동했다. 시위 자체에 대한 당신의 정치적 입장과 관계없이, 설정된 선례는 소름끼친다. 금융 시스템이 오늘 한 집단에 대해 무기화될 수 있다면, 내일은 어떤 집단에 대해서도 무기화될 수 있다. 당신이 지지하는 집단이나, 당신 개인을 포함해서.</p>
+<p>이것은 세계 많은 곳에서 가설이 아니다. 권위주의 정권 아래 살고 있다면, 전통 시스템 내에서 반체제 인사, 언론인, 야당 운동을 재정적으로 지원할 능력은 존재하지 않는다. 모든 거래가 감시되고, 모든 기부가 추적되며, "잘못된" 대의를 지원하는 것은 투옥 또는 그 이상을 의미할 수 있다.</p>
+<p>암호화폐는 이 역학을 뒤집는다. 모스크바의 시민이 반전 단체에 기부할 수 있다. 테헤란의 거주자가 독립 언론에 자금을 지원할 수 있다. 베이징의 사람이 홍콩의 활동가를 지원할 수 있다. 그들을 처벌할 국가에 신원을 드러내지 않고서 말이다. 서구의 규제 당국이 범죄를 가능케 한다고 비난하는 바로 그 익명성(Pseudonymity)이, 억압 아래 살아가는 수십억 명에게는 정치적 표현의 유일하게 가능한 경로다.</p>
+<p>핵심 원칙은 자신의 자원에 대한 접근이 정치적 견해나 사회적 순응에 좌우되어서는 안 된다는 것이다. 그러나 사람들이 글로벌 경제에서 차단될 수 있는 신속함은 무서운 진실을 드러낸다: 당신 자신의 돈에 대한 접근은 결코 권리가 아니었다. 그것은 국가와 은행이 부여한 특권이며, 스위치 하나로 박탈될 수 있다.</p>
+<p>Bitcoin은 화재 보험처럼 기능한다. 매일 필요하지 않을 수 있다. 설정하기 번거롭고 유지하기 성가시다. 하지만 집에 불이 났을 때, 인플레이션이든, 검열이든, 시스템적 붕괴든, 그것은 외부에서 잠글 수 없는 유일한 탈출구다.</p>
+</div>
+<div class="tabbed-block">
+<h2 id="the-price-of-open-gates">The Price of Open Gates<a class="headerlink" href="#the-price-of-open-gates" title="Permanent link">&para;</a></h2>
+<p>The same attributes that allow for sovereignty, permissionless access, and censorship resistance are exactly what enable the industry's darker elements. If anyone can build a financial protocol without a license, then scammers, hackers, and fraudsters will inevitably build them too.</p>
+<p>To an outside observer, the industry often looks like a casino built inside a minefield. The headlines are dominated by collapses, rug pulls, and hacks. Because fraud is loud and successful infrastructure is boringly invisible, the perception creates a distorted reality where the entire space feels like a scam.</p>
+<p>However, this prevalence of fraud is an expected outcome of the technology's core utility. You cannot have a system that allows anyone to innovate without permission while simultaneously preventing anyone from committing fraud. The lack of gatekeepers means the gates are open to everyone, including the malicious.</p>
+<p>This is the price of neutrality. Crypto is native internet money that does not discriminate. It offers the same tools to a student in Lagos as it does to a Wall Street veteran. It levels the playing field globally. But this neutrality cuts both ways. The protocol is radically indifferent: it does not care if you are a refugee fleeing a regime or a hacker draining a grandmother's life savings. It does not care if you are innocent, and it does not care if you made a typo. It verifies the signature, not the person.</p>
+</div>
+<div class="tabbed-block">
+<h2 id="_4">열린 문의 대가<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p>주권, 무허가 접근(Permissionless Access), 검열 저항(Censorship Resistance)을 가능케 하는 바로 그 속성들이 업계의 어두운 면을 가능케 하는 것이기도 하다. 누구나 라이선스 없이 금융 프로토콜을 구축할 수 있다면, 사기꾼, 해커, 범죄자들도 필연적으로 그것들을 구축할 것이다.</p>
+<p>외부 관찰자에게 이 업계는 종종 지뢰밭 안에 세워진 카지노처럼 보인다. 헤드라인은 붕괴, 러그 풀(Rug Pull), 해킹으로 가득하다. 사기는 시끄럽고 성공적인 인프라는 지루할 정도로 보이지 않기 때문에, 이러한 인식은 전체 공간이 사기처럼 느껴지는 왜곡된 현실을 만들어낸다.</p>
+<p>그러나 이 사기의 만연함은 기술의 핵심 유용성의 예상된 결과물이다. 누구나 허가 없이 혁신할 수 있는 시스템을 가지면서 동시에 누구도 사기를 저지를 수 없게 하는 것은 불가능하다. 문지기가 없다는 것은 문이 악의적인 자를 포함한 모든 사람에게 열려 있다는 의미다.</p>
+<p>이것이 중립성의 대가다. 암호화폐는 차별하지 않는 인터넷 네이티브 화폐다. 라고스의 학생에게나 월스트리트 베테랑에게나 동일한 도구를 제공한다. 전 세계적으로 경쟁의 장을 평준화한다. 하지만 이 중립성은 양날의 검이다. 프로토콜은 근본적으로 무관심하다. 당신이 정권을 피해 도망치는 난민인지, 할머니의 평생 저축을 빼내는 해커인지 개의치 않는다. 당신이 무고한지, 오타를 냈는지 개의치 않는다. 프로토콜은 서명을 검증하지, 사람을 검증하지 않는다.</p>
+</div>
+<div class="tabbed-block">
+<h2 id="signal-in-the-noise">Signal in the Noise<a class="headerlink" href="#signal-in-the-noise" title="Permanent link">&para;</a></h2>
+<p>The challenge, then, is not to dismiss the industry because of the danger, but to learn how to navigate it. Beneath the headlines and the hype, a new financial rail is being built that solves the fundamental problems of trust and value.</p>
+<p>This creates a confusing duality where the technology is real, but the noise is deafening. The underlying layers (Bitcoin, Ethereum, Solana) provide actual, verifiable utility: uncensorable value transfer and programmable property rights. Yet, this narrative is constantly hijacked by speculation and bad actors attempting to leverage that utility for quick profit. In a world without trusted intermediaries, verification is survival; you cannot rely on reputation or marketing. You must understand the incentives and mechanics yourself.</p>
+<p>This book is designed to give you the tools to survive this environment. You must understand that outwardly, the "crypto" narrative is often driven by greed. But underpinning that narrative is a layer of technological breakthroughs that restore sovereignty to the individual.</p>
+<p>If you simply avoid the industry because of the risk, you miss the most significant shift in financial technology since the invention of the ledger. But if you enter blindly, trusting narratives without verifying the mechanics, you will be the one paying for everyone else's gains.</p>
+<p>The following chapters will explain how these systems actually work, stripping away the marketing to reveal the mechanism design and technical reality underneath. By the end, you will understand not just what crypto is, but why it works: and how to distinguish the signal from the noise. The frontier rewards those who come prepared.</p>
+</div>
+<div class="tabbed-block">
+<h2 id="_5">잡음 속의 신호<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>그렇다면 과제는 위험 때문에 업계를 거부하는 것이 아니라, 그것을 탐색하는 방법을 배우는 것이다. 헤드라인과 과대광고 아래에서 신뢰와 가치의 근본적인 문제를 해결하는 새로운 금융 레일이 구축되고 있다.</p>
+<p>이것은 기술은 실재하지만 잡음이 귀를 멀게 하는 혼란스러운 이중성을 만들어낸다. 기반 레이어(Bitcoin, 이더리움(Ethereum), Solana)는 실제로 검증 가능한 유용성을 제공한다. 검열 불가능한 가치 이전과 프로그래밍 가능한 재산권이다. 그러나 이 서사는 끊임없이 그 유용성을 빠른 이익을 위해 활용하려는 투기와 악의적 행위자들에 의해 납치된다. 신뢰할 수 있는 중개자가 없는 세상에서 검증은 생존이다. 평판이나 마케팅에 의존할 수 없다. 인센티브와 메커니즘을 직접 이해해야 한다.</p>
+<p>이 책은 이 환경에서 생존하기 위한 도구를 제공하도록 설계되었다. 외적으로 "암호화폐" 서사가 종종 탐욕에 의해 주도된다는 것을 이해해야 한다. 하지만 그 서사 아래에는 개인에게 주권을 회복시키는 기술적 돌파구의 층이 있다.</p>
+<p>위험 때문에 단순히 업계를 피한다면, 원장의 발명 이래 금융 기술에서 가장 중요한 변화를 놓치게 된다. 하지만 맹목적으로 진입하여, 메커니즘을 검증하지 않고 서사를 신뢰한다면, 당신은 다른 모든 사람의 이익을 위해 대가를 치르는 사람이 될 것이다.</p>
+<p>이어지는 장들은 이 시스템들이 실제로 어떻게 작동하는지 설명하며, 마케팅을 걷어내고 그 아래의 메커니즘 설계와 기술적 현실을 드러낼 것이다. 이 책을 다 읽으면, 암호화폐가 무엇인지뿐만 아니라 왜 작동하는지, 그리고 신호와 잡음을 구별하는 방법을 이해하게 될 것이다. 최전선은 준비된 자에게 보상한다.</p>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/lawmaster10/howcryptoworksbook" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.tabs.link", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
