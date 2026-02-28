@@ -1,9 +1,9 @@
 site_name: How Crypto Works
 site_description: A comprehensive bilingual guide to cryptocurrency technology (English/Korean)
 site_author: Original Author
-site_url: https://lawmaster10.github.io/howcryptoworksbook/
-repo_url: https://github.com/lawmaster10/howcryptoworksbook
-repo_name: lawmaster10/howcryptoworksbook
+site_url: https://suwonyoo.github.io/howcryptoworksbook/
+repo_url: https://github.com/suwonyoo/howcryptoworksbook
+repo_name: suwonyoo/howcryptoworksbook
 
 theme:
   name: material
