@@ -1,0 +1,345 @@
+# Chapter XI: NFTs
+
+=== "English"
+
+    Imagine paying $70M for a JPEG that anyone can right-click and save. It sounds absurd. The entire premise seems to violate everything we understand about value: if something can be perfectly replicated at zero cost, how can it possibly be worth millions? Yet in March 2021, this exact scenario played out at Christie's, the world-famous fine art auction house, when Beeple's "Everydays" sold to the buyer known as Metakovan for precisely that sum. He didn't purchase exclusive access to the pixels. Instead, he bought something even more interesting: a cryptographically-verified proof that he owns the "original."
+
+=== "한국어"
+
+    누구나 우클릭해서 저장할 수 있는 JPEG에 7천만 달러를 지불한다고 상상해 보라. 이것은 터무니없어 보인다. 전체 전제가 우리가 가치에 대해 이해하는 모든 것을 위반하는 것처럼 보인다: 무언가가 비용 없이 완벽하게 복제될 수 있다면, 어떻게 수백만 달러의 가치가 있을 수 있을까? 그러나 2021년 3월, 세계적으로 유명한 미술품 경매 회사인 Christie's에서 정확히 이 시나리오가 펼쳐졌다. Beeple의 "Everydays"가 Metakovan으로 알려진 구매자에게 정확히 그 금액에 팔렸다. 그는 픽셀에 대한 독점적 접근권을 구매한 것이 아니었다. 대신 그는 더 흥미로운 것을 샀다: 자신이 "원본"을 소유한다는 암호학적으로 검증된 증명이었다.
+
+## Section I: The Digital Ownership Revolution
+
+=== "English"
+
+    What made that $70M purchase possible was a fundamental shift in how digital assets work. Unlike fungible tokens where every unit is identical, NFTs are non-fungible: each token is distinct, which creates markets where price discovery happens one asset at a time. That, in turn, makes the information attached to each token, called its **metadata**, especially important.
+
+    ### What NFTs Actually Are
+
+    Before NFTs, the digital world had a fundamental flaw: perfect copyability. Anyone can download a high-resolution image, creating a pixel-perfect duplicate indistinguishable from the original. If copies are free and identical, how can anyone truly "own" a digital image?
+
+    NFTs solve this by unbundling digital property into separate, verifiable layers. The image file itself remains freely copyable, but the NFT purchase grants several distinct components:
+
+    * Token control: The blockchain immutably records that a holder controls NFT \#1234
+    * Provenance: A certificate proving this token came from the creator's wallet, establishing authenticity
+    * Usage rights: A separate license (often off-chain) defining what the holder can do with the content
+    * Utility access: Smart contracts can grant permissions based on token possession (token-gated features, etc.)
+
+    These layers can be programmed independently, offering remarkable flexibility. Unlike a painting that just hangs on a wall, NFTs can evolve over time, route **royalties** to creators where supported, interact with other digital assets, and even control their own wallets. An owner might hold an NFT that grants commercial rights to use the artwork in their business, while the image itself lives on distributed storage networks, and provenance is anchored by the creator's wallet. Layers remain modular and composable with other systems.
+
+    ### How Uniqueness Actually Works
+
+    At its heart, the solution is simple. Regular tokens like ERC-20 (the fungible token standard introduced in Chapter II) are like identical dollar bills, but NFTs are like numbered Pokemon cards. Every NFT receives a unique identifier within its smart contract, and the blockchain maintains a permanent ledger mapping which wallet controls which token. The same identifier number can exist in different collections, but the combination of collection address and identifier is globally distinct, ensuring every NFT is uniquely identifiable across the entire blockchain.
+
+    A more recent innovation allows NFTs to own things themselves. Each NFT can be linked to its own wallet, controlled not by a private key but by whoever holds the NFT. This means an NFT can accumulate assets over time. A game character NFT might collect equipment and currency as you play. A membership NFT might accumulate event badges and rewards. When you sell or transfer the NFT, everything it owns transfers along with it automatically.
+
+    Yet this technical foundation introduces a core design tension every project must navigate: what lives on-chain versus off-chain. Beyond technical decisions, the flexibility introduces a fundamental legal gap in how ownership rights actually work.
+
+    ### The Copyright Conundrum
+
+    Unbundling rights into separate layers opens significant legal gray areas. While the NFT proves possession of the token, the usage rights for the underlying artwork are governed by off-chain licenses and traditional copyright law, which is often ill-equipped to handle decentralized assets. The enforceability of these licenses across different jurisdictions has yet to be robustly tested in court, leaving questions about what holders can truly do with their multi-million dollar JPEGs.
+
+    The ambiguity led to a major strategic split in the NFT world. Some projects, like Bored Ape Yacht Club, grant owners commercial rights but retain significant intellectual property control. In direct opposition, a powerful movement embraced dedicating art to the public domain via **Creative Commons Zero (CC0)**. Projects like Nouns DAO and CrypToadz famously adopted a "no rights reserved" approach, allowing anyone to use, remix, and commercialize their art. Their thesis was that a brand becomes more valuable when it is open and permissionless, functioning like a protocol that anyone can build on top of. The choice between a closed, centrally-controlled brand and an open, decentralized one has become a fundamental ideological fork for NFT creators.
+
+    These philosophical and legal questions about ownership rights matter precisely because NFTs are complex technical artifacts whose value depends entirely on how creators solve fundamental infrastructure challenges.
+
+=== "한국어"
+
+    그 7천만 달러 구매를 가능하게 한 것은 디지털 자산이 작동하는 방식의 근본적인 변화였다. 모든 단위가 동일한 대체 가능 토큰(Fungible Token)과 달리, NFT는 대체 불가능(Non-fungible)하다: 각 토큰이 고유하며, 이는 가격 발견이 자산별로 이루어지는 시장을 만든다. 이것은 결과적으로 각 토큰에 첨부된 정보인 **메타데이터(Metadata)**를 특히 중요하게 만든다.
+
+    ### NFT가 실제로 무엇인가
+
+    NFT 이전에 디지털 세계에는 근본적인 결함이 있었다: 완벽한 복제 가능성이다. 누구나 고해상도 이미지를 다운로드하여 원본과 구별할 수 없는 픽셀 단위로 완벽한 복제본을 만들 수 있다. 복사본이 무료이고 동일하다면, 어떻게 누군가가 디지털 이미지를 진정으로 "소유"할 수 있을까?
+
+    NFT는 디지털 재산을 별도의 검증 가능한 레이어로 분리함으로써 이 문제를 해결한다. 이미지 파일 자체는 자유롭게 복사 가능하지만, NFT 구매는 여러 개별 구성 요소를 부여한다:
+
+    * 토큰 통제: 블록체인은 보유자가 NFT #1234를 통제한다는 것을 불변적으로 기록한다
+    * 출처 증명: 이 토큰이 창작자의 지갑에서 나왔다는 것을 증명하여 진위를 확립하는 인증서
+    * 사용권: 보유자가 콘텐츠로 무엇을 할 수 있는지 정의하는 별도의 라이선스(종종 오프체인)
+    * 유틸리티 접근: 스마트 컨트랙트는 토큰 보유에 기반하여 권한을 부여할 수 있다(토큰 게이트 기능 등)
+
+    이러한 레이어는 독립적으로 프로그래밍될 수 있어 놀라운 유연성을 제공한다. 벽에 그냥 걸려 있는 그림과 달리, NFT는 시간이 지남에 따라 진화하고, 지원되는 곳에서 창작자에게 **로열티(Royalty)**를 지급하며, 다른 디지털 자산과 상호작용하고, 심지어 자체 지갑을 통제할 수 있다. 소유자는 비즈니스에서 아트워크를 사용할 상업적 권리를 부여하는 NFT를 보유할 수 있으며, 이미지 자체는 분산 스토리지 네트워크에 있고, 출처는 창작자의 지갑에 의해 고정된다. 레이어는 모듈화되어 있으며 다른 시스템과 조합 가능하다.
+
+    ### 고유성이 실제로 작동하는 방식
+
+    핵심적으로 해결책은 간단하다. ERC-20(Chapter II에서 소개된 대체 가능 토큰 표준)과 같은 일반 토큰은 동일한 달러 지폐와 같지만, NFT는 번호가 매겨진 포켓몬 카드와 같다. 모든 NFT는 스마트 컨트랙트 내에서 고유 식별자를 받으며, 블록체인은 어떤 지갑이 어떤 토큰을 통제하는지 영구적인 원장을 유지한다. 동일한 식별자 번호가 다른 컬렉션에 존재할 수 있지만, 컬렉션 주소와 식별자의 조합은 전역적으로 고유하여 모든 NFT가 전체 블록체인에서 고유하게 식별 가능하도록 보장한다.
+
+    더 최근의 혁신은 NFT가 스스로 소유할 수 있게 한다. 각 NFT는 개인키가 아닌 NFT 보유자에 의해 통제되는 자체 지갑에 연결될 수 있다. 이는 NFT가 시간이 지남에 따라 자산을 축적할 수 있음을 의미한다. 게임 캐릭터 NFT는 플레이하면서 장비와 통화를 수집할 수 있다. 멤버십 NFT는 이벤트 배지와 보상을 축적할 수 있다. NFT를 판매하거나 전송할 때, 소유한 모든 것이 자동으로 함께 전송된다.
+
+    그러나 이 기술적 기반은 모든 프로젝트가 탐색해야 하는 핵심 설계 긴장을 도입한다: 무엇이 온체인에 있고 무엇이 오프체인에 있는가. 기술적 결정을 넘어, 이 유연성은 소유권이 실제로 어떻게 작동하는지에 대한 근본적인 법적 격차를 도입한다.
+
+    ### 저작권 난제
+
+    권리를 별도의 레이어로 분리하면 상당한 법적 회색 지대가 열린다. NFT가 토큰의 점유를 증명하지만, 기본 아트워크에 대한 사용권은 오프체인 라이선스와 전통적인 저작권법에 의해 관리되며, 이는 종종 탈중앙화된 자산을 처리하기에 부적합하다. 다른 관할권에 걸쳐 이러한 라이선스의 집행 가능성은 아직 법원에서 충분히 검증되지 않아, 보유자가 수백만 달러짜리 JPEG로 실제로 무엇을 할 수 있는지에 대한 의문을 남긴다.
+
+    이 모호함은 NFT 세계에서 주요 전략적 분열로 이어졌다. Bored Ape Yacht Club과 같은 일부 프로젝트는 소유자에게 상업적 권리를 부여하지만 상당한 지적 재산 통제권을 유지한다. 이에 직접적으로 반대하여, 강력한 운동이 **크리에이티브 커먼즈 제로(Creative Commons Zero, CC0)**를 통해 아트를 퍼블릭 도메인에 헌정하는 것을 수용했다. Nouns DAO와 CrypToadz와 같은 프로젝트는 유명하게 "권리 보유 없음" 접근법을 채택하여 누구나 그들의 아트를 사용, 리믹스, 상업화할 수 있게 했다. 그들의 논제는 브랜드가 개방적이고 무허가일 때 더 가치 있어지며, 누구나 그 위에 구축할 수 있는 프로토콜처럼 기능한다는 것이었다. 폐쇄적이고 중앙 통제된 브랜드와 개방적이고 탈중앙화된 브랜드 사이의 선택은 NFT 창작자들에게 근본적인 이념적 분기점이 되었다.
+
+    소유권에 대한 이러한 철학적, 법적 질문은 NFT가 창작자들이 근본적인 인프라 과제를 어떻게 해결하느냐에 전적으로 의존하는 복잡한 기술적 산물이기 때문에 정확히 중요하다.
+
+## Section II: Beyond Simple Ownership
+
+=== "English"
+
+    ### Storage Solutions
+
+    Creating an NFT forces an immediate technical dilemma: store everything on-chain for maximum permanence but pay prohibitive gas costs, or store most content off-chain for affordability but risk the NFT pointing to dead links years later.
+
+    Most projects choose a hybrid approach. The blockchain records token ownership and includes a link pointing to a file containing the token's name, description, image, and properties. The ownership registry becomes immutable while the actual content depends on external storage remaining available.
+
+    A spectrum of storage solutions has emerged:
+
+    * Centralized servers: Cheapest and most flexible, but the NFT becomes inaccessible if the server shuts down
+    * IPFS (InterPlanetary File System): Content-addressed distributed storage where files are identified by their content hash, making them harder to lose but requiring ongoing "pinning" to stay available (also discussed in Chapter XIII's DePIN storage section)
+    * Arweave: Pay once for permanent storage via an endowment (the "permaweb"); higher upfront costs
+    * On-chain storage: Maximum permanence and censorship resistance (e.g., Autoglyphs), but can cost thousands of dollars in gas fees for a single image
+
+    More sophisticated NFT collections take a layered approach. They use content-addressed URIs (IPFS/Arweave hashes) to ensure files can't silently change. They store critical provenance information directly on-chain. And they employ multiple pinning providers as backup. With reliable storage infrastructure in place, NFTs evolve beyond static images into programmable, dynamic assets.
+
+    ### Advanced Token Types
+
+    **Dynamic NFTs** evolve over time. A sports card NFT might automatically update a player's stats after each game. Digital art might change colors based on weather data from the owner's city. Game characters accumulate experience points and level up, with their appearance and abilities changing accordingly. The token itself becomes a living, breathing entity that responds to the world around it.
+
+    Composable NFTs create property hierarchies: tokens that contain other tokens. Imagine buying a virtual world plot (one NFT) that contains a house (another NFT) filled with furniture (more NFTs). When the holder sells the plot, everything inside can transfer together if the collection is designed to support this kind of nesting. Complex property trees emerge that mirror how we think about physical real estate.
+
+    Semi-fungible tokens blur the line between fungible and unique. Event tickets might start identical (fungible) but become unique when used, recording the specific seat, entry time, and event details. Gaming items might stack when unused but gain individual histories once equipped by players.
+
+    **Soulbound Tokens (SBTs)** go the opposite direction: they're intentionally non-transferable, designed to represent identity, credentials, achievements, or reputation that should remain permanently tied to specific individuals. A university degree NFT shouldn't be sellable to another individual.
+
+    ### NFT Categories by Use Case
+
+    Profile Picture Projects represent collections like CryptoPunks, Bored Apes, and Pudgy Penguins that dominated the early boom, serving as digital status symbols and social media avatars. These collections saw explosive growth but also experienced significant value declines from their peaks as speculative fervor cooled. For instance, as of early 2026, the **floor price** (the cost of the cheapest NFT available in a collection) of Bored Apes is down more than 90% from its all-time high of over $400,000.
+
+    The question that consistently baffles outsiders is why these digital assets command prices comparable to, or even exceeding, physical luxuries like houses or fine art. The answer lies partially in speculation but mostly in the fundamental human need for digital tribal signaling. In our increasingly online world, these digital artifacts serve a purpose that extends far beyond their visual appeal.
+
+    Just as wearing a Rolex communicates success and social positioning in the physical realm, displaying a Bored Ape as your Twitter avatar signals membership in an exclusive digital community. These images convey identity, wealth, and cultural alignment in digital spaces where traditional status symbols lose their meaning.
+
+    The value accumulates through self-reinforcing network effects. Cultural relevance amplifies when high-profile figures like Jay-Z, Serena Williams, and Steph Curry adopt these avatars, bringing mainstream recognition. Scarcity plays a fundamental role, as there is always a cap on how many can exist in each collection.
+
+    Generative Art: Distinct from PFPs, this category focuses on art created by autonomous systems. Platforms like Art Blocks allow artists to write algorithms that are executed at the time of mint, producing unique, often complex, and aesthetically driven outputs. Collections like Tyler Hobbs' *Fidenzas* or Snowfro's *Chromie Squiggles* are valued for their artistic merit, historical significance, and algorithmic novelty, appealing to a different collector base than community-focused PFPs.
+
+    Gaming and Virtual World NFTs: These projects represent digital assets within blockchain-based games, from creatures in *Axie Infinity* to land parcels in *The Sandbox*. While the promise of "play-to-earn" economies and true asset ownership was a powerful narrative, most projects have struggled to create sustainable economic models or retain players beyond initial speculation.
+
+    Utility and Access NFTs: These function as digital keys, granting holders access to exclusive communities, events, software, or services. They are increasingly being explored for loyalty programs and subscription models, acting as a verifiable and tradable proof of membership.
+
+    Identity and Credential NFTs propose using blockchain technology for verifiable credentials like diplomas, certifications, or professional licenses. Soulbound NFTs that cannot be transferred aim to represent non-transferable achievements or reputation.
+
+    Despite various utility propositions, the broader NFT market has seen dramatic declines in trading volume and floor prices since 2022, with the vast majority of projects struggling to maintain active communities or practical utility beyond speculative trading. Overall volumes remain a fraction of their peak. But blue-chip collections like CryptoPunks and Bored Apes have retained cultural significance and meaningful floor prices even as the long tail of projects went to zero, reinforcing that the NFT market mirrors traditional art and collectibles: a handful of established names hold value while most everything else doesn't.
+
+    ### Supply Mechanics
+
+    How projects manage supply is equally critical to understanding NFT value and market dynamics:
+
+    Fixed supplies create absolute scarcity. The famous 10,000 CryptoPunks will never increase, making each one a known fraction of a finite set.
+
+    Bonding curves use algorithmic pricing where each mint costs progressively more. A collection might start at 0.1 ETH and increase by 0.01 ETH with each mint, so the 50th token costs 0.59 ETH. This rewards early minters while discouraging late speculation.
+
+    Burning mechanisms allow tokens to be permanently destroyed, creating deflationary pressure. Some collections use burning as a way to evolve NFTs (burn three common items to mint one rare item) or to access exclusive benefits.
+
+=== "한국어"
+
+    ### 스토리지 솔루션
+
+    NFT를 생성하면 즉각적인 기술적 딜레마가 발생한다: 최대한의 영속성을 위해 모든 것을 온체인에 저장하되 엄청난 가스 비용을 지불하거나, 경제성을 위해 대부분의 콘텐츠를 오프체인에 저장하되 수년 후 NFT가 죽은 링크를 가리킬 위험을 감수하거나.
+
+    대부분의 프로젝트는 하이브리드 접근법을 선택한다. 블록체인은 토큰 소유권을 기록하고 토큰의 이름, 설명, 이미지 및 속성을 포함하는 파일을 가리키는 링크를 포함한다. 소유권 레지스트리는 불변이 되지만 실제 콘텐츠는 외부 스토리지가 계속 사용 가능한 것에 의존한다.
+
+    다양한 스토리지 솔루션이 등장했다:
+
+    * 중앙화 서버: 가장 저렴하고 유연하지만, 서버가 종료되면 NFT에 접근할 수 없게 된다
+    * IPFS (행성간 파일 시스템, InterPlanetary File System): 파일이 콘텐츠 해시로 식별되는 콘텐츠 주소 지정 분산 스토리지로, 파일이 손실되기 어렵지만 사용 가능하게 유지하려면 지속적인 "피닝(Pinning)"이 필요하다 (Chapter XIII의 DePIN 스토리지 섹션에서도 논의됨)
+    * Arweave: 기부금(영구 웹, "permaweb")을 통해 영구 저장에 한 번만 지불; 초기 비용이 더 높다
+    * 온체인 스토리지: 최대한의 영속성과 검열 저항(예: Autoglyphs)이지만, 단일 이미지에 수천 달러의 가스 비용이 들 수 있다
+
+    더 정교한 NFT 컬렉션은 계층화된 접근법을 취한다. 콘텐츠 주소 지정 URI(IPFS/Arweave 해시)를 사용하여 파일이 은밀하게 변경될 수 없도록 한다. 중요한 출처 정보는 직접 온체인에 저장한다. 그리고 백업으로 여러 피닝 제공자를 사용한다. 신뢰할 수 있는 스토리지 인프라가 갖춰지면, NFT는 정적 이미지를 넘어 프로그래밍 가능한 동적 자산으로 진화한다.
+
+    ### 고급 토큰 유형
+
+    **다이나믹 NFT(Dynamic NFT)**는 시간이 지남에 따라 진화한다. 스포츠 카드 NFT는 각 경기 후 선수의 통계를 자동으로 업데이트할 수 있다. 디지털 아트는 소유자 도시의 날씨 데이터에 따라 색상이 변할 수 있다. 게임 캐릭터는 경험치를 축적하고 레벨업하며, 외관과 능력이 그에 따라 변한다. 토큰 자체가 주변 세계에 반응하는 살아 숨 쉬는 존재가 된다.
+
+    조합 가능한 NFT(Composable NFT)는 속성 계층 구조를 만든다: 다른 토큰을 포함하는 토큰. 가상 세계 토지(하나의 NFT)를 구매하면 그 안에 집(또 다른 NFT)이 있고 가구(더 많은 NFT)로 채워져 있다고 상상해 보라. 보유자가 토지를 판매할 때, 컬렉션이 이러한 종류의 중첩을 지원하도록 설계되었다면 내부의 모든 것이 함께 전송될 수 있다. 우리가 물리적 부동산에 대해 생각하는 방식을 반영하는 복잡한 속성 트리가 등장한다.
+
+    반대체 가능 토큰(Semi-fungible Token)은 대체 가능과 고유 사이의 경계를 흐린다. 이벤트 티켓은 동일(대체 가능)하게 시작할 수 있지만 사용될 때 고유해지며, 특정 좌석, 입장 시간, 이벤트 세부 정보를 기록한다. 게임 아이템은 미사용일 때 쌓일 수 있지만 플레이어가 장착하면 개별 히스토리를 얻는다.
+
+    **소울바운드 토큰(Soulbound Token, SBT)**은 반대 방향으로 간다: 의도적으로 전송 불가능하며, 특정 개인에게 영구적으로 연결되어야 하는 신원, 자격증, 성취 또는 평판을 나타내도록 설계되었다. 대학 학위 NFT는 다른 개인에게 판매할 수 없어야 한다.
+
+    ### 사용 사례별 NFT 카테고리
+
+    프로필 사진 프로젝트(Profile Picture Project)는 CryptoPunks, Bored Apes, Pudgy Penguins와 같은 컬렉션을 대표하며, 디지털 신분 상징과 소셜 미디어 아바타로 기능하며 초기 붐을 지배했다. 이러한 컬렉션은 폭발적인 성장을 보였지만 투기적 열기가 식으면서 최고점에서 상당한 가치 하락을 경험했다. 예를 들어, 2026년 초 기준으로 Bored Apes의 **바닥 가격(Floor Price)**(컬렉션에서 구매 가능한 가장 저렴한 NFT의 비용)은 $400,000 이상의 사상 최고가에서 90% 이상 하락했다.
+
+    외부인들을 지속적으로 당혹스럽게 하는 질문은 왜 이러한 디지털 자산이 집이나 미술품과 같은 물리적 사치품에 필적하거나 심지어 초과하는 가격을 요구하는가이다. 답은 부분적으로 투기에 있지만 대부분은 디지털 부족 신호에 대한 근본적인 인간의 필요에 있다. 점점 더 온라인화되는 세상에서, 이러한 디지털 산물은 시각적 매력을 훨씬 넘어서는 목적을 수행한다.
+
+    물리적 영역에서 롤렉스를 착용하는 것이 성공과 사회적 위치를 전달하는 것처럼, Bored Ape를 트위터 아바타로 표시하는 것은 독점적인 디지털 커뮤니티의 멤버십을 신호한다. 이러한 이미지는 전통적인 지위 상징이 의미를 잃는 디지털 공간에서 정체성, 부, 문화적 정렬을 전달한다.
+
+    가치는 자기 강화 네트워크 효과를 통해 축적된다. Jay-Z, Serena Williams, Steph Curry와 같은 유명인이 이러한 아바타를 채택하면 문화적 관련성이 증폭되어 주류 인지도를 가져온다. 희소성이 근본적인 역할을 하는데, 각 컬렉션에 존재할 수 있는 수에 항상 상한이 있기 때문이다.
+
+    제너레이티브 아트(Generative Art): PFP와 구별되는 이 카테고리는 자율 시스템에 의해 생성된 아트에 초점을 맞춘다. Art Blocks와 같은 플랫폼은 아티스트가 민팅 시점에 실행되는 알고리즘을 작성하여 고유하고 종종 복잡하며 미적으로 구동되는 출력을 생성할 수 있게 한다. Tyler Hobbs의 *Fidenzas*나 Snowfro의 *Chromie Squiggles*와 같은 컬렉션은 예술적 가치, 역사적 중요성, 알고리즘적 참신함으로 가치가 있으며, 커뮤니티 중심 PFP와는 다른 수집가 기반에 어필한다.
+
+    게임 및 가상 세계 NFT: 이러한 프로젝트는 블록체인 기반 게임 내의 디지털 자산을 나타내며, *Axie Infinity*의 크리처부터 *The Sandbox*의 토지 필지까지 다양하다. "플레이-투-언(Play-to-earn)" 경제와 진정한 자산 소유권의 약속은 강력한 내러티브였지만, 대부분의 프로젝트는 지속 가능한 경제 모델을 만들거나 초기 투기를 넘어 플레이어를 유지하는 데 어려움을 겪었다.
+
+    유틸리티 및 접근 NFT: 이는 디지털 키로 기능하여 보유자에게 독점 커뮤니티, 이벤트, 소프트웨어 또는 서비스에 대한 접근을 부여한다. 로열티 프로그램과 구독 모델에 점점 더 탐색되고 있으며, 검증 가능하고 거래 가능한 멤버십 증명으로 작동한다.
+
+    신원 및 자격증 NFT는 졸업장, 자격증 또는 전문 라이선스와 같은 검증 가능한 자격증에 블록체인 기술을 사용하는 것을 제안한다. 전송할 수 없는 소울바운드 NFT는 양도 불가능한 성취 또는 평판을 나타내는 것을 목표로 한다.
+
+    다양한 유틸리티 제안에도 불구하고, 더 넓은 NFT 시장은 2022년 이후 거래량과 바닥 가격에서 극적인 하락을 보였으며, 대다수의 프로젝트는 투기적 거래를 넘어 활성 커뮤니티나 실용적 유틸리티를 유지하는 데 어려움을 겪었다. 전체 거래량은 최고점의 일부에 불과하다. 그러나 CryptoPunks와 Bored Apes와 같은 블루칩 컬렉션은 프로젝트의 롱테일이 제로로 갔음에도 문화적 중요성과 의미 있는 바닥 가격을 유지했으며, NFT 시장이 전통적인 아트와 수집품을 반영한다는 것을 강화한다: 소수의 확립된 이름이 가치를 유지하고 대부분의 다른 것들은 그렇지 않다.
+
+    ### 공급 메커니즘
+
+    프로젝트가 공급을 어떻게 관리하는지는 NFT 가치와 시장 역학을 이해하는 데 똑같이 중요하다:
+
+    고정 공급(Fixed Supply)은 절대적 희소성을 만든다. 유명한 10,000개의 CryptoPunks는 절대 증가하지 않아, 각각이 유한한 세트의 알려진 분수가 된다.
+
+    본딩 커브(Bonding Curve)는 각 민팅에 점진적으로 더 많은 비용이 드는 알고리즘 가격 책정을 사용한다. 컬렉션은 0.1 ETH에서 시작하여 각 민팅마다 0.01 ETH씩 증가할 수 있어, 50번째 토큰은 0.59 ETH가 된다. 이는 초기 민터에게 보상하면서 늦은 투기를 억제한다.
+
+    소각 메커니즘(Burning Mechanism)은 토큰이 영구적으로 파괴되어 디플레이션 압력을 만들 수 있게 한다. 일부 컬렉션은 NFT를 진화시키는 방법(일반 아이템 세 개를 소각하여 희귀 아이템 하나를 민팅)이나 독점적 혜택에 접근하는 방법으로 소각을 사용한다.
+
+## Section III: The Technical Foundation
+
+=== "English"
+
+    ### ERC-721: The Rulebook
+
+    The vast majority of NFTs on Ethereum follow the ERC-721 standard, which defines how unique tokens work at the smart contract level. While ERC-20 (introduced in Chapter II) created a standard for fungible tokens where every unit is identical, ERC-721 does the same for non-fungible tokens where each is unique. At its core, it's surprisingly simple: just a few essential functions that every NFT contract must implement:
+
+    * ownerOf(tokenId): "Who owns NFT \#1234?"
+    * transferFrom(from, to, tokenId): "Move NFT \#1234 from Alice to Bob"
+    * approve(to, tokenId): "Alice gives Bob permission to transfer her NFT \#1234"
+    * setApprovalForAll(operator, approved): "Alice gives the marketplace permission to transfer any of her NFTs"
+
+    The standard also includes optional extensions for metadata (linking to those JSON files containing name, description, and image) and enumeration (letting applications discover all tokens in a collection).
+
+    ### ERC-1155: The Multi-Token Standard
+
+    While ERC-721 handles unique tokens, ERC-1155 takes a more flexible approach. It allows a single smart contract to manage both fungible and non-fungible tokens simultaneously, making it particularly powerful for gaming ecosystems that need both unique items (legendary weapons with individual histories) and fungible resources (gold coins that are interchangeable).
+
+    ERC-1155 introduces batch operations: instead of making separate transactions for each token transfer, dozens of tokens can be moved in a single transaction, dramatically reducing gas costs. This efficiency made it the standard of choice for blockchain games and applications that need to handle large numbers of diverse assets.
+
+    ### Security and Common Scams
+
+    These powerful token standards enable sophisticated functionality, but they also create security vulnerabilities. The approval functions (particularly setApprovalForAll) grant sweeping permissions that scammers actively exploit. Because blockchain transactions are irreversible, users must navigate constant threats:
+
+    * Phishing Attacks: Scammers create convincing replicas of official websites or send deceptive links in Discord and X (formerly Twitter), tricking users into connecting their wallets to a malicious site for a "free mint" or "airdrop."
+    * Wallet Drainers: More advanced scams involve tricking users into signing what appears to be a legitimate transaction (like a signature request) but is actually a malicious payload that grants the attacker permission to drain all valuable assets, NFTs and tokens alike, from the victim's wallet.
+
+    These risks underscore a core principle of self-custody: vigilance is paramount. Best practices, such as using a hardware wallet for storing high-value assets and using a separate "burner" wallet for minting from new projects, have become essential for navigating the space safely.
+
+    ### Launch Strategies
+
+    When projects launch NFTs, they face the same fundamental challenge as any scarce resource: how to distribute fairly while preventing bots and bad actors from dominating the sale.
+
+    Launch patterns have evolved in response. Fair launches offer everyone the same price on a first-come-first-served basis, though these are often dominated by automated bots. Dutch auctions start at a high price that drops over time until demand meets supply, making them more resistant to bot manipulation. **Allowlists** grant pre-approved wallets early access, rewarding community building and engagement before the public sale. Some projects also use bonding curves, as described earlier, where the price increases with each mint.
+
+    ### Solana NFTs: A Parallel Ecosystem
+
+    Solana (whose architecture was covered in Chapter III) developed its own NFT ecosystem largely independent of Ethereum, using different standards and tooling. The Metaplex framework became the foundation for most Solana NFTs, handling metadata, collections, and royalty configurations. Newer standards added more sophisticated controls over how NFTs can be transferred and used.
+
+    The marketplace landscape evolved differently as well. Magic Eden dominated early volumes with a user-friendly experience and launch tools, while Tensor attracted professional traders with advanced features like trait-based bidding and automated pricing pools. Unlike Ethereum where OpenSea long dominated, Solana's NFT liquidity remained concentrated in native marketplaces.
+
+    A major innovation unique to Solana is **compressed NFTs** (state compression was introduced in Chapter III), which allow millions of NFTs to be minted for a fraction of a cent. This works by storing only a cryptographic summary on-chain while keeping detailed data off-chain, dramatically reducing costs. This technology unlocked use cases like large-scale airdrops, loyalty programs, and gaming assets that would be prohibitively expensive on other networks.
+
+    The royalty situation mirrors Ethereum's evolution. Marketplace competition pushed creator fees toward optional, and while some NFT standards attempted to enforce royalties at the contract level, enforcement still depends on marketplace cooperation.
+
+    Combined with Solana's fast execution and low fees, these features created high-velocity trading cultures and frequent price changes. Notable collections include Solana Monkey Business, Mad Lads, and Claynosaurz, each reflecting Solana's lower-cost, experiment-driven culture.
+
+=== "한국어"
+
+    ### ERC-721: 규칙서
+
+    이더리움의 대다수 NFT는 스마트 컨트랙트 수준에서 고유 토큰이 어떻게 작동하는지 정의하는 ERC-721 표준을 따른다. ERC-20(Chapter II에서 소개됨)이 모든 단위가 동일한 대체 가능 토큰에 대한 표준을 만들었다면, ERC-721은 각각이 고유한 대체 불가능 토큰에 대해 동일한 역할을 한다. 핵심적으로 놀랍도록 간단하다: 모든 NFT 컨트랙트가 구현해야 하는 몇 가지 필수 함수뿐이다:
+
+    * ownerOf(tokenId): "NFT #1234의 소유자는 누구인가?"
+    * transferFrom(from, to, tokenId): "NFT #1234를 Alice에서 Bob으로 이동"
+    * approve(to, tokenId): "Alice가 Bob에게 자신의 NFT #1234를 전송할 수 있는 권한을 부여"
+    * setApprovalForAll(operator, approved): "Alice가 마켓플레이스에 자신의 모든 NFT를 전송할 수 있는 권한을 부여"
+
+    이 표준은 또한 메타데이터(이름, 설명, 이미지를 포함하는 JSON 파일에 연결)와 열거(애플리케이션이 컬렉션의 모든 토큰을 발견할 수 있게 함)를 위한 선택적 확장을 포함한다.
+
+    ### ERC-1155: 다중 토큰 표준
+
+    ERC-721이 고유 토큰을 처리하는 반면, ERC-1155는 더 유연한 접근법을 취한다. 단일 스마트 컨트랙트가 대체 가능 토큰과 대체 불가능 토큰을 동시에 관리할 수 있게 하여, 고유 아이템(개별 히스토리를 가진 전설적 무기)과 대체 가능 자원(상호 교환 가능한 골드 코인) 모두가 필요한 게임 생태계에 특히 강력하다.
+
+    ERC-1155는 배치 작업을 도입한다: 각 토큰 전송에 대해 별도의 트랜잭션을 만드는 대신, 수십 개의 토큰을 단일 트랜잭션으로 이동할 수 있어 가스 비용을 극적으로 줄인다. 이 효율성은 블록체인 게임과 다양한 자산을 대량으로 처리해야 하는 애플리케이션에서 선택하는 표준이 되었다.
+
+    ### 보안과 일반적인 사기
+
+    이러한 강력한 토큰 표준은 정교한 기능을 가능하게 하지만, 보안 취약점도 만든다. 승인 함수(특히 setApprovalForAll)는 사기꾼들이 적극적으로 악용하는 광범위한 권한을 부여한다. 블록체인 트랜잭션은 되돌릴 수 없기 때문에, 사용자는 지속적인 위협을 탐색해야 한다:
+
+    * 피싱 공격: 사기꾼들은 공식 웹사이트의 설득력 있는 복제본을 만들거나 Discord와 X(이전 Twitter)에서 기만적인 링크를 보내, 사용자가 "무료 민팅"이나 "에어드롭"을 위해 악성 사이트에 지갑을 연결하도록 속인다.
+    * 지갑 드레이너(Wallet Drainer): 더 고급 사기는 합법적인 트랜잭션(서명 요청처럼)으로 보이지만 실제로는 공격자에게 피해자의 지갑에서 NFT와 토큰 모두 모든 가치 있는 자산을 빼낼 권한을 부여하는 악성 페이로드에 서명하도록 사용자를 속인다.
+
+    이러한 위험은 자기 수탁(Self-custody)의 핵심 원칙을 강조한다: 경계가 가장 중요하다. 고가 자산을 저장하기 위해 하드웨어 지갑을 사용하고 새 프로젝트에서 민팅할 때 별도의 "버너" 지갑을 사용하는 것과 같은 모범 사례는 공간을 안전하게 탐색하는 데 필수적이 되었다.
+
+    ### 런칭 전략
+
+    프로젝트가 NFT를 출시할 때, 희소한 자원과 동일한 근본적인 과제에 직면한다: 봇과 악의적 행위자가 판매를 지배하는 것을 방지하면서 어떻게 공정하게 배포할 것인가.
+
+    런칭 패턴은 이에 대응하여 진화했다. 공정 출시(Fair Launch)는 선착순으로 모든 사람에게 동일한 가격을 제공하지만, 종종 자동화된 봇에 의해 지배된다. 더치 옥션(Dutch Auction)은 높은 가격에서 시작하여 수요가 공급을 충족할 때까지 시간이 지남에 따라 하락하여 봇 조작에 더 강하다. **허용 목록(Allowlist)**은 사전 승인된 지갑에 공개 판매 전 조기 접근을 부여하여 퍼블릭 세일 전 커뮤니티 구축과 참여에 보상한다. 일부 프로젝트는 앞서 설명한 대로 각 민팅마다 가격이 증가하는 본딩 커브를 사용하기도 한다.
+
+    ### 솔라나 NFT: 병렬 생태계
+
+    솔라나(Chapter III에서 아키텍처가 다뤄짐)는 이더리움과 대체로 독립적으로 다른 표준과 도구를 사용하여 자체 NFT 생태계를 개발했다. Metaplex 프레임워크는 대부분의 솔라나 NFT의 기반이 되어 메타데이터, 컬렉션, 로열티 구성을 처리한다. 새로운 표준은 NFT가 전송되고 사용될 수 있는 방법에 대한 더 정교한 제어를 추가했다.
+
+    마켓플레이스 환경도 다르게 진화했다. Magic Eden은 사용자 친화적인 경험과 런칭 도구로 초기 거래량을 지배했고, Tensor는 특성 기반 입찰과 자동화된 가격 책정 풀과 같은 고급 기능으로 전문 트레이더를 끌어들였다. OpenSea가 오랫동안 지배했던 이더리움과 달리, 솔라나의 NFT 유동성은 네이티브 마켓플레이스에 집중되어 있었다.
+
+    솔라나에 고유한 주요 혁신은 **압축 NFT(Compressed NFT)**(상태 압축은 Chapter III에서 소개됨)로, 수백만 개의 NFT를 1센트의 일부 비용으로 민팅할 수 있게 한다. 이는 온체인에 암호학적 요약만 저장하고 상세 데이터는 오프체인에 보관하여 비용을 극적으로 줄인다. 이 기술은 다른 네트워크에서는 비용이 너무 많이 드는 대규모 에어드롭, 로열티 프로그램, 게임 자산과 같은 사용 사례를 열었다.
+
+    로열티 상황은 이더리움의 진화를 반영한다. 마켓플레이스 경쟁은 창작자 수수료를 선택 사항으로 밀어붙였고, 일부 NFT 표준은 컨트랙트 수준에서 로열티를 강제하려고 시도했지만, 집행은 여전히 마켓플레이스 협력에 달려 있다.
+
+    솔라나의 빠른 실행과 낮은 수수료와 결합하여, 이러한 기능은 고속 거래 문화와 빈번한 가격 변동을 만들었다. 주목할 만한 컬렉션으로는 Solana Monkey Business, Mad Lads, Claynosaurz가 있으며, 각각 솔라나의 저비용 실험 중심 문화를 반영한다.
+
+## Section IV: Where NFTs Actually Trade
+
+=== "English"
+
+    ### The Marketplace Wars
+
+    NFT marketplaces started as simple listing sites but quickly evolved into sophisticated financial infrastructure. OpenSea dominated the early market by being first to launch and offering the easiest user experience. But during the peak NFT boom, OpenSea became complacent and slow to innovate, creating an opening for competitors.
+
+    The competition intensified around a fundamental technical flaw. NFT royalties were never built into the core ERC-721 and ERC-1155 token standards, which meant creator fees couldn't be automatically enforced. While a newer standard called **ERC-2981** allowed contracts to suggest royalty amounts, actually paying those royalties remained completely optional. This technical gap gave marketplaces a powerful way to compete: they could simply ignore creator fees.
+
+    Most NFT collections set creator royalties between 5-10%, which buyers traditionally paid on top of the purchase price. Blur, a new marketplace, saw an opportunity to exploit this weakness. They launched with a three-part strategy. First, they built tools for professional traders, including advanced portfolio management, real-time pricing feeds, and sophisticated filtering. Second, they made royalties optional, requiring only a 0.5% minimum payment to creators. Third, they incentivized trading activity by rewarding users with BLUR tokens.
+
+    OpenSea's response was inconsistent and ultimately ineffective. They enforced full royalties for newer collections through their Operator Filter (launched in November 2022) but couldn't enforce fees on older collections. Traders naturally migrated to Blur's lower-fee structure, and OpenSea's market dominance began to crumble.
+
+    The situation grew more complicated with the rise of aggregator protocols. These platforms, including Gem and Genie, solved a different problem: market fragmentation. They checked prices across multiple marketplaces and automatically executed trades wherever users got the best deal. This innovation inadvertently amplified Blur's advantage. Since aggregators routed users to the lowest-cost marketplace, Blur's fee discount became a structural advantage that attracted more and more volume. The value of this infrastructure layer became obvious when both aggregators were quickly acquired: Gem by OpenSea and Genie by Uniswap. Aggregators have since faded in relevance as trading activity consolidated back to OpenSea, making cross-marketplace routing less necessary.
+
+    Blur's strategy worked, at first. By February 2023, Blur had surpassed OpenSea in trading volume. By August 2023, this competition helped push OpenSea to abandon its royalty enforcement policy entirely. But Blur's dominance proved temporary. Much of its volume was driven by token incentives and airdrop farming rather than organic demand, and as those incentives dried up and NFT trading volumes collapsed across the board, Blur's structural advantages mattered less. By 2025, OpenSea had reclaimed its position as the dominant Ethereum NFT marketplace, a comeback few predicted during the height of Blur's ascent.
+
+    ### The Pricing Mechanics
+
+    Understanding how NFTs are priced requires grasping a few key concepts that differ from traditional markets.
+
+    The most watched metric in any NFT collection is the floor price. It serves as the collection's baseline valuation, but it can be deeply misleading. An NFT with rare traits might sell for 10x or more above the floor. A Bored Ape with golden fur and laser eyes, for example, is worth far more than one with common brown fur and normal eyes.
+
+    This variability created a need for more sophisticated pricing approaches. Trait-based pricing emerged as one solution, taking into account the individual characteristics of each NFT rather than treating all pieces in a collection as equivalent.
+
+    Another innovation, collection-wide bidding, addressed a different problem: illiquidity. Instead of bidding on one specific NFT, buyers could place bids on any NFT meeting certain criteria, like "any Bored Ape with laser eyes." This improved liquidity for sellers and made price discovery more efficient. The tradeoff was philosophical: it commoditized supposedly unique assets. Blur attempted to popularize trait-level bidding by rewarding it with loyalty points, and OpenSea added support for both collection and trait offers, but in practice trait bidding never gained widespread adoption. Most trading activity continued to center on floor sweeps and collection-wide bids rather than granular trait-based strategies.
+
+    This tension between uniqueness and fungibility sits at the heart of NFTs. Every design decision, from marketplace features to pricing mechanisms, reflects this fundamental paradox and shapes everything about how NFTs are used and valued.
+
+=== "한국어"
+
+    ### 마켓플레이스 전쟁
+
+    NFT 마켓플레이스는 단순한 리스팅 사이트로 시작했지만 빠르게 정교한 금융 인프라로 진화했다. OpenSea는 가장 먼저 출시하고 가장 쉬운 사용자 경험을 제공함으로써 초기 시장을 지배했다. 그러나 NFT 붐의 정점에서 OpenSea는 안주하고 혁신이 느려져 경쟁자들에게 기회를 만들었다.
+
+    경쟁은 근본적인 기술적 결함을 중심으로 강화되었다. NFT 로열티는 핵심 ERC-721 및 ERC-1155 토큰 표준에 내장되지 않았으며, 이는 창작자 수수료가 자동으로 집행될 수 없음을 의미했다. **ERC-2981**이라는 새로운 표준이 컨트랙트가 로열티 금액을 제안할 수 있게 했지만, 실제로 그 로열티를 지불하는 것은 완전히 선택 사항이었다. 이 기술적 격차는 마켓플레이스에 강력한 경쟁 방법을 제공했다: 단순히 창작자 수수료를 무시할 수 있었다.
+
+    대부분의 NFT 컬렉션은 창작자 로열티를 5-10% 사이로 설정했으며, 구매자는 전통적으로 구매 가격에 더해 이를 지불했다. 새로운 마켓플레이스인 Blur는 이 약점을 악용할 기회를 보았다. 그들은 세 부분 전략으로 출시했다. 첫째, 고급 포트폴리오 관리, 실시간 가격 피드, 정교한 필터링을 포함한 전문 트레이더용 도구를 구축했다. 둘째, 로열티를 선택 사항으로 만들어 창작자에게 최소 0.5%만 지불하도록 요구했다. 셋째, BLUR 토큰으로 사용자에게 보상하여 거래 활동에 인센티브를 제공했다.
+
+    OpenSea의 대응은 일관성이 없었고 궁극적으로 효과가 없었다. 그들은 운영자 필터(Operator Filter, 2022년 11월 출시)를 통해 새로운 컬렉션에 전체 로열티를 강제했지만 이전 컬렉션에는 수수료를 강제할 수 없었다. 트레이더들은 자연스럽게 Blur의 저수수료 구조로 이동했고, OpenSea의 시장 지배력이 무너지기 시작했다.
+
+    상황은 애그리게이터 프로토콜의 부상으로 더 복잡해졌다. Gem과 Genie를 포함한 이러한 플랫폼은 다른 문제인 시장 파편화를 해결했다. 그들은 여러 마켓플레이스에서 가격을 확인하고 사용자가 최고의 거래를 얻을 수 있는 곳에서 자동으로 거래를 실행했다. 이 혁신은 의도치 않게 Blur의 이점을 증폭시켰다. 애그리게이터가 사용자를 가장 저렴한 마켓플레이스로 라우팅했기 때문에, Blur의 수수료 할인은 점점 더 많은 거래량을 끌어들이는 구조적 이점이 되었다. 이 인프라 레이어의 가치는 두 애그리게이터가 빠르게 인수되면서 명백해졌다: Gem은 OpenSea에, Genie는 Uniswap에 인수되었다. 애그리게이터는 거래 활동이 OpenSea로 다시 통합되면서 이후 관련성이 줄어들어, 마켓플레이스 간 라우팅이 덜 필요해졌다.
+
+    Blur의 전략은 처음에는 효과가 있었다. 2023년 2월까지 Blur는 거래량에서 OpenSea를 앞질렀다. 2023년 8월까지 이 경쟁은 OpenSea가 로열티 집행 정책을 완전히 포기하는 데 도움이 되었다. 그러나 Blur의 지배는 일시적인 것으로 판명되었다. 그들의 거래량 대부분은 유기적 수요가 아닌 토큰 인센티브와 에어드롭 파밍에 의해 주도되었고, 이러한 인센티브가 줄어들고 NFT 거래량이 전반적으로 붕괴하면서 Blur의 구조적 이점은 덜 중요해졌다. 2025년까지 OpenSea는 지배적인 이더리움 NFT 마켓플레이스로 자리를 되찾았으며, 이는 Blur의 전성기에 거의 예상하지 못한 컴백이었다.
+
+    ### 가격 책정 메커니즘
+
+    NFT가 어떻게 가격이 매겨지는지 이해하려면 전통 시장과 다른 몇 가지 핵심 개념을 파악해야 한다.
+
+    NFT 컬렉션에서 가장 주목받는 지표는 바닥 가격(Floor Price)이다. 이는 컬렉션의 기준 평가로 기능하지만, 심하게 오해의 소지가 있을 수 있다. 희귀한 특성을 가진 NFT는 바닥 가격의 10배 이상에 팔릴 수 있다. 예를 들어, 골든 퍼와 레이저 눈을 가진 Bored Ape는 일반적인 갈색 퍼와 평범한 눈을 가진 것보다 훨씬 더 가치가 있다.
+
+    이 변동성은 더 정교한 가격 책정 접근법에 대한 필요성을 만들었다. 특성 기반 가격 책정(Trait-based Pricing)이 하나의 해결책으로 등장하여, 컬렉션의 모든 조각을 동등하게 취급하는 대신 각 NFT의 개별 특성을 고려한다.
+
+    또 다른 혁신인 컬렉션 전체 입찰(Collection-wide Bidding)은 다른 문제인 비유동성을 해결했다. 특정 NFT 하나에 입찰하는 대신, 구매자는 "레이저 눈을 가진 모든 Bored Ape"와 같이 특정 기준을 충족하는 모든 NFT에 입찰을 넣을 수 있었다. 이는 판매자의 유동성을 개선하고 가격 발견을 더 효율적으로 만들었다. 트레이드오프는 철학적이었다: 가정상 고유한 자산을 상품화했다. Blur는 로열티 포인트로 보상하여 특성 수준 입찰을 대중화하려 시도했고, OpenSea는 컬렉션과 특성 오퍼 모두에 대한 지원을 추가했지만, 실제로 특성 입찰은 광범위한 채택을 얻지 못했다. 대부분의 거래 활동은 세분화된 특성 기반 전략보다는 바닥 스윕과 컬렉션 전체 입찰을 중심으로 계속되었다.
+
+    고유성과 대체 가능성 사이의 이 긴장은 NFT의 핵심에 있다. 마켓플레이스 기능에서 가격 책정 메커니즘에 이르기까지 모든 설계 결정은 이 근본적인 역설을 반영하며, NFT가 어떻게 사용되고 가치 평가되는지에 대한 모든 것을 형성한다.

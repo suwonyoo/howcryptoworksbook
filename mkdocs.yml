@@ -1,0 +1,87 @@
+site_name: How Crypto Works
+site_description: A comprehensive bilingual guide to cryptocurrency technology (English/Korean)
+site_author: Original Author
+site_url: https://lawmaster10.github.io/howcryptoworksbook/
+repo_url: https://github.com/lawmaster10/howcryptoworksbook
+repo_name: lawmaster10/howcryptoworksbook
+
+theme:
+  name: material
+  language: en
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.copy
+
+markdown_extensions:
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+
+docs_dir: gitbook
+
+nav:
+  - Introduction: README.md
+  - Preface: preface.md
+  - Core Protocols:
+    - 'Chapter I: Bitcoin': chapters/ch01_bitcoin.md
+    - 'Chapter II: Ethereum': chapters/ch02_ethereum.md
+    - 'Chapter III: Solana': chapters/ch03_solana.md
+    - 'Chapter IV: L1 Blockchains': chapters/ch04_l1_blockchains.md
+  - Infrastructure & Markets:
+    - 'Chapter V: Custody': chapters/ch05_custody.md
+    - 'Chapter VI: Market Structure': chapters/ch06_market_structure.md
+  - Advanced Topics:
+    - 'Chapter VII: DeFi': chapters/ch07_defi.md
+    - 'Chapter VIII: MEV': chapters/ch08_mev.md
+    - 'Chapter IX: Stablecoins & RWAs': chapters/ch09_stablecoins_rwas.md
+  - Applications & Governance:
+    - 'Chapter X: Hyperliquid': chapters/ch10_hyperliquid.md
+    - 'Chapter XI: NFTs': chapters/ch11_nfts.md
+    - 'Chapter XII: Governance': chapters/ch12_governance.md
+  - Future Challenges:
+    - 'Chapter XIII: DePIN': chapters/ch13_depin.md
+    - 'Chapter XIV: Quantum Resistance': chapters/ch14_quantum_resistance.md
+    - 'Chapter XV: Prediction Markets': chapters/ch15_prediction_markets.md
+  - Appendix:
+    - Glossary: appendix/glossary.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/lawmaster10/howcryptoworksbook

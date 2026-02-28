@@ -1,0 +1,12 @@
+{
+  "title": "How Crypto Works",
+  "description": "A comprehensive bilingual guide to cryptocurrency technology (English/Korean)",
+  "author": "Original Author",
+  "language": "en",
+  "gitbook": ">=3.0.0",
+  "plugins": [
+    "tabs"
+  ],
+  "pluginsConfig": {},
+  "variables": {}
+}

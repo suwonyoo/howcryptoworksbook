@@ -1,0 +1,898 @@
+# Chapter VI: Crypto Market Structure and Trading
+
+## Section I: Exchange Architecture and Core Products
+
+=== "EN"
+
+    ### The Centralized Exchange Model
+
+    When institutional traders need to execute a $100 million BTC position, they generally don't turn to decentralized protocols. Instead, they rely on centralized exchanges (CEXs) that can handle the scale, speed, and complexity their strategies demand. CEXs operate as custodial venues that maintain internal **order books**, run matching engines, and hold client collateral, unlike their decentralized counterparts.
+
+    This architecture enables the complex financial products and high-frequency trading that characterizes modern crypto markets. The custodial model allows CEXs to offer leverage, sophisticated order types, and institutional-grade features, but introduces **counterparty risk**, a fundamental trade-off that shapes how different market participants engage with these platforms.
+
+    Understanding crypto market structure requires examining how products, infrastructure, and participants interconnect. We'll start with exchange products: spot, perpetuals, options, and futures. Then we'll examine how different regulatory frameworks shape venue offerings and institutional adoption pathways including ETFs and corporate treasury strategies.
+
+    With this foundation in place, we'll explore execution mechanics: how orders interact with liquidity, why latency matters, and how sophisticated traders minimize market impact and slippage. This naturally leads to market makers, the firms that continuously supply the liquidity enabling efficient execution. We'll then examine risk management frameworks such as margin modes, liquidation mechanics, and hedging strategies before turning to the analytical tools traders use to read market signals through open interest and volatility metrics. Together, these elements form an interconnected system where products enable strategies, strategies require liquidity, and liquidity demands sophisticated risk management.
+
+    ### Spot Markets: The Foundation
+
+    While derivatives grab headlines with their leverage and complexity, spot trading remains the bedrock of crypto markets. At its core, spot trading is straightforward: the immediate exchange of one asset for another, like converting USD to BTC. Most CEXs maintain banking connections that allow fiat deposits. When a trade executes, ownership transfers on the exchange's internal ledger, with the option to withdraw assets on-chain.
+
+    This simple product differs from traditional exchanges in three fundamental ways. First, most trading occurs in stablecoin pairs (USDT, USDC) rather than fiat currency. This creates a dollar-denominated but blockchain-native trading ecosystem. Second, markets operate continuously, 24/7 with no fixed hours or holidays. This enables constant price discovery and liquidity provision, though individual venues may still experience maintenance windows or trading halts. Third, spot trades settle instantly (T+0) on the exchange's internal ledger, far faster than the T+1 or T+2 settlement in traditional equities. Withdrawing assets to on-chain addresses, however, requires blockchain confirmation times that vary by network congestion and security requirements.
+
+    Spot trading comes in two primary forms. Unlevered spot carries no liquidation risk, as traders use only their existing capital. Margin spot trading involves borrowing funds to amplify position size, which introduces liquidation risk.
+
+    These markets serve multiple critical functions. Traders use them for portfolio rebalancing, treasury management, hedging the price gap between spot and derivatives (known as basis), and settling profit and loss from complex strategies.
+
+    Alongside centralized venues, on-chain spot markets (covered in depth in Chapter VII) have become meaningful for price discovery and liquidity, especially for long-tail assets. Many tokens now begin their lifecycle entirely on-chain, trading first on AMMs and on-chain order books before reaching major CEXs. Solana memecoins and highly speculative assets exemplify this pattern. DEXs typically account for 10 to 20% of global spot volumes, with some months exceeding one-fifth of total activity. These figures are sensitive to how data providers treat incentivized and wash trading, but the trend is clear: on-chain spot is no longer a rounding error.
+
+    ### Perpetual Futures: The Crypto Innovation
+
+    #### Mechanics: Funding, Mark Price, and Operational Role
+
+    Perpetual futures, first introduced by BitMEX, represent one of crypto's most innovative contributions to finance. Unlike traditional futures with fixed expiry dates that force traders to roll or settle positions, perpetual futures never expire. Instead, they use a funding mechanism to keep prices aligned with the underlying asset, solving the hassle and complexity of managing contract maturities.
+
+    The funding payment system periodically transfers value between long and short positions to anchor the contract's price to the spot index. When perpetual contracts trade above the underlying index price, longs pay shorts. When perpetuals trade below the index, payments reverse. Exchanges pay funding on position notional (the total face value of a position, calculated as price multiplied by quantity), though calculation basis varies by venue. Some use mark price × position size, others use oracle spot price × size.
+
+    Most exchanges cap funding rates to prevent extremes. Binance caps the BTC perp at ±0.3% per 8-hour period. Funding cadence is commonly 8 hours on CEXs but varies across platforms. For BTCUSDT and certain pairs, if funding hits ±0.3% at scheduled settlement, Binance switches to hourly settlement until conditions normalize. Hyperliquid (examined in detail in Chapter X), the largest DEX perp platform by volume as of early 2026, uses 1-hour funding intervals with a ±4.00% per hour cap, less restrictive than typical CEX limits. These venue-specific parameters matter for practitioners, but the core principle is that funding nudges perp prices toward spot, while mark price governs liquidation and PnL.
+
+    Mark price is an exchange-calculated estimate of a futures contract's true worth, using fair-value formulas that blend several inputs (index/spot prices, bid/ask spreads, sometimes a basis component). It prevents liquidations from wild price swings due to manipulation or temporary spikes. Exchanges use mark price for liquidation triggers and unrealized profit-and-loss (PnL) calculation. Last price is simply the latest executed trade price, which is more volatile and reactive to specific trading activity.
+
+    A practical example: Bitcoin trades at $100,000 across major spot exchanges, but a whale's large sell order crashes the BTC perpetual's last trade to $99,500. Rather than using either extreme, the exchange might calculate mark price at $99,950 using its fair-value formula. The exchange bases all unrealized PnL, liquidation risks, and funding obligations on this $99,950 mark price. This prevents leveraged longs from getting liquidated at $99,500 due to one whale's sell-off when the broader market still values Bitcoin near $100,000.
+
+    Critically, funding is an incentive mechanism, not a hard peg. High positive funding attracts arbitrageurs to short the perp and buy spot (or dated futures), but nothing forces them to act. In liquid large-cap markets this usually keeps perp prices reasonably close to spot. In smaller, less liquid tokens with thin liquidity or limited borrow capacity, however, spreads between perp and spot can persist despite elevated or extreme funding rates.
+
+    This mechanism prevents manipulation of liquidations through artificial price spikes while ensuring perpetual contracts maintain their intended economic relationship with the underlying spot market, albeit with some slack when arbitrage capital, borrow markets, or risk appetite are constrained.
+
+    #### Market Impact, Strategies, and Risks
+
+    The funding rate and mark-price mechanics have enabled perpetual futures to reshape the derivatives landscape. By solving the expiry problem and providing robust liquidation protection, perpetuals have become the dominant instrument for directional views, hedging, and basis trades (strategies that profit from price differences between related instruments, explained in detail in Section II). Through 2025, perpetuals represented roughly 70% of BTC trading volume, consistently exceeding spot and often by substantial multiples during volatile periods.
+
+    Perpetual futures support leveraged directional positioning, efficient hedging of spot holdings or corporate treasuries (using short positions to offset price exposure), basis trades exploiting differences between perp, spot, and dated futures, and complex relative-value setups across venues. The absence of expiry eliminates roll-date friction and timing risk: traders can maintain positions as long as they remain solvent and willing to pay (or receive) funding. This makes perps attractive for short- and medium-term views, systematic strategies, and high-turnover books.
+
+    The funding mechanism that tethers perps to spot also introduces path-dependent financing costs. Unlike traditional futures where basis is mostly locked in at entry and realized at settlement, perp funding resets every period. Over long horizons, these flows can dominate PnL. In bullish regimes, large caps like BTC and ETH frequently exhibit positive funding averaging high single- to low double-digit annualized yields for shorts. For structural longs, that translates into ongoing financing drag, often around 10% APY or more during extended euphoric periods. Holding a perpetual long for months in such environments means paying a variable interest rate to shorts and market makers.
+
+    This has two important consequences. First, long-term directional investors often find perps economically inferior to alternative leverage channels. Similar capital efficiency can be achieved by borrowing via margin or lending markets and buying spot, where the trader owns the underlying asset and pays an explicit borrow rate that may be cheaper or more predictable than implied funding costs. Many sophisticated desks compare perp funding curves against borrow rates when choosing where to warehouse leveraged exposure.
+
+    Second, the interaction between perps and expiring futures creates arbitrage opportunities. When perp funding is strongly positive and dated futures trade at a smaller premium to spot, traders can short the perp, go long a dated future or spot, and lock in expected funding receipts plus basis convergence. Conversely, if dated futures are trading at a large premium relative to perps, opposite configurations become attractive. These trades help link perp markets, spot markets, and traditional futures into a connected pricing web.
+
+    Still, funding and arbitrage do not strictly enforce equality between perp and spot prices. Persistent spreads arise from balance-sheet constraints, limited borrow availability, venue-specific risks, and the opportunity costs of arbitrage capital. This is particularly visible in smaller or highly speculative tokens, where perps may trade at sustained premia or discounts relative to spot despite elevated funding. In those environments, funding becomes less of a precise tether and more of a risk premium paid to whoever is willing to warehouse the imbalance. Section II examines specific trading strategies that exploit these dynamics.
+
+    All usual leverage-related risks apply on top of these structural considerations. Leverage amplifies both gains and losses, creating liquidation risk that can result in total position loss if price moves exceed margin capacity (detailed in Section V). Long-dated positions are especially vulnerable because they accumulate both market moves and financing costs. Sudden spikes in funding, changes in borrow rates, or shifts in volatility can transform a comfortable position into a stressed one.
+
+    Additional operational risks include auto-deleveraging (ADL) events and oracle risks. ADL occurs when liquidations create losses that exceed insurance fund capacity, forcing exchanges to close the most profitable opposing positions to cover the shortfall. If you hold a profitable long during a crash and the exchange cannot process all the losing shorts, your winning position may be forcibly reduced. Oracle risks involve price feed manipulation or failures that impact exchange calculations. Funding rates and caps differ substantially across venues, as do mark-price methodologies and margin frameworks, making venue selection and risk controls critical.
+
+    From a market-structure perspective, perpetuals sit alongside spot margin and collateralized lending as parallel ways to obtain leveraged exposure. Margin trading on CEXs or through DeFi lending protocols combines spot ownership with a loan, often in stablecoins, where the "price" of leverage is paid as an interest rate rather than funding. Economically, both perps and margin provide synthetic leverage; they simply route financing flows through different channels and expose traders to different mixes of counterparty, oracle, and liquidity risk. Understanding how these instruments relate and when each is more capital-efficient is central to navigating modern crypto derivatives markets.
+
+    ### Traditional Derivatives
+
+    While perpetuals dominate derivatives volumes, options contribute a smaller but growing share (approximately 2% by notional in 2025\) and remain essential to market structure for volatility pricing, hedging, and risk transfer.
+
+    Options provide the right, but not obligation, to buy (calls) or sell (puts) at predetermined strikes before or at expiry. Options primarily serve to hedge tail events, express volatility views, create structured payoffs, and generate yield through covered strategies.
+
+    Dated futures maintain the traditional structure of expiring on specific dates (typically quarterly). On regulated venues, most prominently CME, BTC and ETH futures are cash-settled to reference indices and attract substantial institutional volume and open interest, serving as a primary gateway for hedging, price discovery, and basis trades. CME's BTC futures, launched in 2017, have grown alongside the broader crypto complex to command significant notional volumes, with CME's total crypto average daily volume exceeding $10B in 2025\. These provide a regulated alternative to CEX offerings, with tighter oversight and surveillance. At expiry, CME contracts are always cash-settled to benchmark rates, while some CEX dated futures may settle in the underlying coin or cash to an index.
+
+    CME's Bitcoin futures market and surveillance-sharing arrangements with listing exchanges were central to the SEC's rationale for approving spot Bitcoin ETFs, providing regulatory comfort through established oversight mechanisms and demonstrated price correlation.
+
+    ### Exchange Landscape and Regulation
+
+    The products we've discussed (spot, perpetuals, options, and dated futures) don't exist in isolation. They're offered across a diverse exchange ecosystem that ranges from heavily regulated entities operating within traditional financial frameworks to offshore venues offering broader product suites and higher leverage. Understanding these differences is crucial for navigating market structure, assessing counterparty risks, and selecting appropriate venues for specific trading needs.
+
+    A regulated exchange operates under the oversight of financial authorities, typically holding licenses such as money transmitter status, BitLicense in New York, or full derivatives exchange authorization from bodies like the CFTC. This involves rigorous compliance with Know Your Customer (KYC) and Anti-Money Laundering (AML) requirements, regular audits, customer fund segregation, and robust risk management protocols.
+
+    For instance, regulated platforms often restrict product offerings to comply with local laws, such as limiting leverage or prohibiting certain derivatives for retail users. In regulated futures markets, risk is managed through clearinghouses and default funds with strict segregation of customer assets under CFTC rules, while some crypto exchanges maintain separate insurance funds (like Binance's SAFU fund) as additional protection mechanisms.
+
+    The main benefit of regulation is robust access to traditional banking rails for fiat on/off-ramps. However, this comes at the cost of slower innovation, higher operational overhead, and geographical restrictions; many regulated exchanges cannot serve users in certain jurisdictions without proper licensing. In the U.S., platforms must navigate a complex patchwork of state and federal regulations, which has historically limited their product scope compared to global competitors.
+
+    U.S.-regulated exchanges like Coinbase and Kraken prioritize compliance and institutional appeal, often at the expense of product breadth and leverage. Coinbase, for example, operates as a publicly traded company with SEC oversight, offering spot trading, limited derivatives through Coinbase International, and custodial services while maintaining strong fiat integration. Kraken similarly emphasizes security and regulatory adherence, providing spot markets, futures (outside the U.S.), and staking services with a focus on transparency through proof-of-reserves audits.
+
+    In contrast, offshore exchanges such as Binance, OKX, and Bybit cater to a global audience with fewer restrictions, enabling higher leverage (up to 100x or more on some products), broader token listings, and products that enable token sales. These platforms often operate from jurisdictions with lighter regulatory touch, such as the Seychelles, Caymans or British Virgin Islands, allowing them to list new tokens quickly and offer perps quickly. However, this flexibility introduces higher counterparty risks, including potential for sudden regulatory crackdowns, as seen with Binance's 2023 settlement with U.S. authorities over AML violations. Offshore venues dominate in trading volume due to their accessibility and product depth. As of early 2026, this dichotomy persists, though increasing global regulatory harmonization, such as the EU's MiCA framework, is blurring the lines.
+
+    ### Market Leaders
+
+    The cryptocurrency exchange landscape is shaped by distinct market leaders across different product categories, each commanding significant influence within their specialized domains. Understanding these competitive dynamics reveals much about the structure and evolution of digital asset trading.
+
+    In spot markets, Binance has established itself as the undisputed leader, commanding roughly 40% of centralized spot trading volume in 2025, depending on the month. This dominance reflects the exchange's comprehensive token offerings and global reach. Within the regulated U.S. market, Coinbase emerges as the premier option, particularly notable for its institutional flows in Bitcoin and Ethereum pairs. Beyond these giants, Bybit and OKX have carved out strong positions through their extensive token diversity, while Kraken has distinguished itself as a particularly effective gateway for fiat-to-crypto conversions.
+
+    The perpetual futures market tells a story of concentrated offshore dominance. Binance, Bybit, and OKX together account for nearly 70% of open contracts on Bitcoin perpetual futures, and they also command a similarly dominant share of trading volume on centralized venues. Binance maintains the leading position, while Bybit and OKX engage in close competition for second place, all three known for offering high leverage and sophisticated features such as unified or portfolio-margin accounts. On the regulated side, CME continues to provide dated Bitcoin and Ethereum futures and options. A major shift occurred in July 2025, when Coinbase Derivatives began listing U.S. Perpetual-Style Futures on Bitcoin and Ethereum: long-dated five-year futures with hourly funding adjustments that mimic the economics of perpetual contracts. These instruments trade on a CFTC-regulated Designated Contract Market and are accessed via a regulated futures broker, bringing perpetual-style trading into the mainstream U.S. regulatory framework, following earlier, smaller institutional-only launches.
+
+    In the options market, Deribit’s dominance remains particularly pronounced. It has historically held around 85% of crypto options open interest, and it continues to serve as the primary liquidity hub for Bitcoin and Ethereum options, especially for volatility-focused strategies. This position was further reinforced when Coinbase closed its $2.9 billion acquisition of Deribit in August 2025, after which Deribit has continued operating as the leading options venue under Coinbase’s broader derivatives umbrella. While Binance and OKX have built growing options markets of their own, Deribit’s depth, tooling, and institutional-grade risk management maintain its competitive edge for on-exchange crypto options. At the same time, the regulated options landscape has evolved: CME offers a smaller but fully compliant set of Bitcoin and Ether options, and a significant share of regulated Bitcoin options liquidity has migrated into options on spot ETFs such as BlackRock’s IBIT, which now rivals Deribit’s BTC options open interest.
+
+    This landscape underscores cryptocurrency’s unique hybrid nature: a dynamic blend of traditional regulation and borderless innovation. The choice of venue directly impacts not just execution quality, but fundamental aspects of trading strategy, risk exposure, and potential returns, making venue selection a critical decision for any serious market participant.
+
+    ### Institutional Adoption Pathways
+
+    For most of this chapter, we've looked at the venues and instruments that crypto-native traders use directly: spot, perps, options, and futures on CEXs, and regulated futures exchanges. Large pools of traditional capital rarely interact with that infrastructure head-on. Pension funds, mutual funds, insurers, corporates, and wealth managers tend to access crypto through familiar wrappers and balance-sheet structures that fit inside existing mandates, operational processes, and regulatory constraints.
+
+    Broadly speaking, two channels have emerged. The first is listed fund products, specifically spot ETFs and their non-U.S. analogues (ETPs and ETNs), that package BTC, ETH, SOL, XRP, and baskets of other assets into exchange-traded securities. The second is corporate and digital asset treasury strategies, where operating companies raise capital in equity and debt markets and then hold or actively deploy crypto on their balance sheets. Together, these pathways explain how crypto exposure has migrated from a niche trading playground into mainstream portfolios and corporate finance.
+
+    #### Spot ETFs
+
+    The approval of spot crypto ETFs created a new layer of market structure that sits between on-chain markets and traditional brokerages. In the U.S., these vehicles are typically organized as spot ETFs under the 1933 or 1940 Acts. In Europe and other regions, the closest equivalents are physically backed ETPs or ETNs that hold the underlying coins in custody. The wrappers differ legally, but from a portfolio and market-structure perspective they all do roughly the same thing: they let investors trade exchange-listed shares while a fund vehicle holds and safekeeps the underlying BTC, ETH, SOL, XRP, and other assets on their behalf.
+
+    ##### The Bitcoin Breakthrough
+
+    The U.S. story began with Bitcoin. In January 2024, the SEC approved a first cohort of spot Bitcoin ETFs, ending a decade-long debate over whether U.S. investors could hold physically backed BTC in an ETF format. These funds hold actual bitcoin with qualified custodians and list on mainstream stock exchanges, giving investors brokerage-native exposure without touching crypto exchanges or wallets. The impact was immediate and dramatic. Within their first year, these funds gathered more than $75 billion in assets. By early 2026, BlackRock's iShares Bitcoin Trust (IBIT) alone was nearing $75 billion in AUM, making it the fastest-growing ETF launch in history and the dominant channel for listed bitcoin exposure.
+
+    The scale of Bitcoin's success in the ETF format dwarfs all other crypto assets. Currently, approximately 86% of all crypto spot ETF assets under management sits in Bitcoin ETFs, reflecting by far the deepest institutional demand in the space. Ethereum ETFs account for roughly 12% of total crypto ETF AUM, while newer products tracking SOL, XRP, and other altcoins represent only a small fraction of the total. This concentration underscores that institutional capital, particularly from retirement accounts, RIAs, and traditional asset managers, views Bitcoin as the primary (and often only) crypto allocation worth making at scale.
+
+    ##### Expanding to Ethereum
+
+    Ethereum followed as the next major step. In mid-2024 the SEC approved spot Ether ETFs, which began trading in July. These gave institutions a way to hold ETH in brokerage and retirement accounts under familiar rules, mirroring the Bitcoin playbook. Flows were smaller than for BTC but still meaningful: Ether spot ETFs saw billions in cumulative inflows and occasional single-day records in the hundreds of millions, establishing a regulated path into the second-largest crypto asset.
+
+    The ETH products brought a key design question into focus: staking. European ETPs from issuers like VanEck and 21Shares had long passed through a portion of staking rewards to investors, while the first generation of U.S. Ether ETFs launched without staking to satisfy SEC concerns. Over 2025, that line started to move. Specialized structures such as REX-Osprey's ESK and later Grayscale's spot Ether ETFs introduced staking features, and BlackRock and other issuers filed to add staking to their ETH products. This incremental shift matters for market structure because it routes validator power and staking yield through regulated fund complexes rather than only native wallets and DeFi protocols.
+
+    ##### The Altcoin Wave
+
+    By end of 2025, a third wave extended the model beyond BTC and ETH. European markets had already listed physically backed Solana and XRP ETPs from issuers like 21Shares, VanEck, and WisdomTree, some of them with staking enabled.
+
+    The breakthrough for U.S. altcoin ETFs came in September 2025, when the SEC adopted "generic" listing standards that allowed exchanges like Nasdaq, Cboe, and NYSE Arca to list certain crypto ETFs without going through a bespoke, months-long approval process for each new asset. This regulatory shift opened the floodgates. The first altcoin ETFs arrived quickly, including Solana, Litecoin, and Hedera products from Bitwise and Canary Capital. Shortly after, the first U.S. spot Solana ETF launched: the Bitwise Solana Staking ETF (BSOL), which debuted in late October 2025 and pulled in hundreds of millions of dollars within its first week.
+
+    XRP followed almost immediately. In November 2025, Canary Capital listed the first U.S. spot XRP ETF (XRPC) on Nasdaq, giving investors direct XRP exposure via an ETF for the first time. The fund's debut set launch-year records for trading volume and net inflows among new ETFs, signaling that investor demand extends beyond Bitcoin and Ether once a regulatory path exists.
+
+    At the same time, several issuers began rolling out diversified crypto index ETFs under the 1940 Act, tracking baskets like "Crypto Top 10" or "ex-Bitcoin" indices that include ETH, SOL, DOGE and others. These multi-asset products appeal more to asset allocators and advisors than to directional traders and further blur the line between "crypto" and mainstream equity-ETF lineups.
+
+    ##### How the Plumbing Works
+
+    Under the hood, all of these spot ETFs and ETPs share similar operational mechanics. Authorized participants (APs) create and redeem shares in the **primary market** by delivering either cash or crypto to the fund in exchange for ETF shares (creations), or by returning ETF shares to receive cash or crypto back (redemptions). In the early U.S. Bitcoin ETF cohort, this process was initially "cash only": APs delivered dollars, the issuer or its trading partners bought BTC in the open market, and the ETF took custody.
+
+    This changed in mid-2025 when the SEC granted relief to allow in-kind creations and redemptions for certain bitcoin and ether ETPs, letting APs deliver or receive crypto directly instead of routing everything through cash. That change reduced friction, tightened spreads, and made the arbitrage mechanism between ETF price and net asset value more efficient.
+
+    ##### Market Structure Impacts
+
+    From a market-structure perspective, spot ETFs affect crypto in three main ways.
+
+    First, they broaden the buyer base. Retirement accounts, RIAs, and institutions that cannot hold native tokens for legal or operational reasons can now hold ETF shares that are operationally indistinguishable from any other listed fund.
+
+    Second, they change how supply is held. Large, persistent inflows into spot ETFs move coins into long-term, institutional custody, often cold storage with a small set of large custodians such as Coinbase. This reduces liquid float on exchanges and concentrates key-management and operational risk.
+
+    Third, they create new hedging and basis relationships. APs and market makers routinely hedge primary-market inventory with CME futures, CEX perps, or on-chain instruments, so flows into or out of ETFs propagate into funding rates, futures basis, and order-book pressure across venues.
+
+    ##### The Risk Surface
+
+    Finally, spot ETFs introduce their own risk surface. Custody and key-management failures, regulatory actions against a dominant custodian, or suspensions of creations/redemptions can all break the arbitrage link between ETF price and underlying coins, causing ETF shares to trade at premiums or discounts. Concentration is particularly acute: a handful of custodians and sponsors now control the majority of listed BTC and ETH exposure, and staking-enabled ETFs for proof-of-stake assets like ETH and SOL centralize validator power and governance influence in those same institutions. From a trader's perspective, ETFs are therefore both another venue for price discovery and an additional layer of counterparty and structural risk that sits on top of the core spot and derivatives markets.
+
+    #### Corporate Treasury Adoption
+
+    While ETFs opened the door for passive institutional exposure, a parallel development emerged: corporations allocating treasury capital to Bitcoin as a strategic asset. Beginning in 2020, a few public companies spearheaded by Michael Saylor began moving portions of their corporate cash reserves to Bitcoin, viewing it as a long-duration, non-sovereign monetary asset that could serve multiple purposes: portfolio diversification, inflation hedging, and brand alignment with digital-native finance.
+
+    This trend reflects Bitcoin's evolution from niche digital experiment to an asset class that major corporations consider suitable for treasury management, though adoption remains limited relative to total corporate cash balances. To illustrate how these rails translate into balance-sheet behavior, consider a representative corporate case study. The most dramatic example is Strategy's (formerly MicroStrategy) aggressive accumulation playbook, which illustrates how sophisticated financial engineering can leverage the market infrastructure examined throughout this chapter.
+
+    ##### The Strategy Playbook
+
+    Strategy, formerly known as MicroStrategy, has developed a unique approach to buying large amounts of Bitcoin. The company raises money by issuing two main types of financial instruments: convertible bonds with very low interest rates (some even at 0%) and selling new shares of its stock directly into the market.
+
+    Here's why this works. Convertible bonds give investors the option to convert their bonds into company stock at a predetermined price. Even at 0% interest, these bonds are valuable because the conversion option itself has worth. If the stock rises significantly, bondholders can convert and profit from the appreciation. Strategy's stock price tends to swing up and down much more dramatically than typical stocks, which makes these conversion options particularly valuable to specialized investment funds. These funds buy Strategy's convertible bonds, which can later be converted into company stock. They then use complex trading strategies to profit from the stock's price swings. Because these investors find value in the volatility, they're willing to accept very low interest rates on the bonds.
+
+    This creates a powerful cycle when things go well. Strategy uses the money from bond sales to buy more Bitcoin. As the Bitcoin holdings grow, the company's overall value increases. The stock price rises, often trading at a premium above what the Bitcoin alone would be worth per share. This higher stock price and continued volatility make it even cheaper and easier for Strategy to raise more money through new bond or stock sales. Then the cycle repeats.
+
+    However, this cycle can also work in reverse. If Bitcoin's price falls, the company's overall value shrinks. The premium that the stock trades at above its Bitcoin value can disappear. When this happens, raising new money becomes more expensive or even impossible, which slows down or stops the company's ability to buy more Bitcoin.
+
+    ##### Performance and Risk Profile
+
+    The strategy has produced impressive results while avoiding the kind of forced selling that can happen with margin loans. By early 2025, Strategy reported a 74% increase in its Bitcoin per share for 2024, which is the key metric the company tracks. By early 2026, it held nearly 690,000 BTC, worth roughly $64 billion.
+
+    The risk of forced liquidation is very low in the traditional sense. The convertible bonds and preferred shares are not backed by specific Bitcoin as collateral. There's no price level where lenders can automatically seize the company's Bitcoin. The only scenario where Strategy might have to sell Bitcoin would be if it couldn't refinance or pay back its debts when they come due.
+
+    The company has major convertible note maturities spread across 2028 to 2032, with some investor repurchase rights kicking in as early as 2027\. This staggered structure reduces the pressure in any single year. In fact, Strategy successfully paid off its 2027 bonds earlier in 2025, with almost all bondholders choosing to convert their bonds into stock rather than demanding cash repayment.
+
+    Each bond issuance has different conversion prices, meaning some are more likely to be converted into stock than others depending on where the stock price trades. The interest costs on these bonds are quite low, ranging from 0% to just over 2%. The company also has perpetual preferred shares trading under tickers like STRK, STRD, STRF, and STRC. These preferred shares sit below the convertible bonds in priority and pay dividend rates generally in the high single digits to low double digits.
+
+    One particularly clever feature is the Stretch preferred shares (STRC), which allow management to reduce the dividend rate over time and let dividends accumulate without triggering a default. This gives Strategy even more flexibility to avoid forced Bitcoin sales if market conditions turn bad, though it comes at the expense of those preferred shareholders.
+
+    Strategy has enormous capacity to raise additional capital. It has authorization for up to 21 billion dollars in common stock sales and another 21 billion dollars in preferred stock sales, both through programs that let it sell directly into the market over time.
+
+    ##### Strategic Risks and Limitations
+
+    The flywheel mechanism faces several important vulnerabilities. The biggest risk is what happens if Strategy's stock price falls toward the value of its Bitcoin holdings. Historically, the stock has traded at a sizable premium, meaning investors were willing to pay more than the underlying Bitcoin was worth, but that premium has already shrunk significantly in early 2026 compared with prior years. If the premium disappears or flips into a discount, the entire strategy becomes less effective. Selling new shares becomes less attractive, and issuing new convertible bonds becomes harder and more expensive.
+
+    There is also the challenge of diminishing returns as the company grows larger. Back in 2021, Strategy only needed to acquire about 2.6 Bitcoin to increase its Bitcoin per share by one basis point (0.01 percent). By 2025, it needed around 58 Bitcoin to achieve the same result. This reflects the reality that as the balance sheet grows, each new capital raise has a smaller relative impact, even if the absolute dollar amounts are getting bigger.
+
+    Strategy's continued success depends on three things happening at the same time. First, Bitcoin needs to keep trending upward over the long term. Second, the stock needs to maintain high volatility and at least some premium above the value of its Bitcoin holdings so that specialized convertible bond buyers still find the structure attractive. That condition has already weakened as the premium has compressed, which makes new issuance less powerful than it was at the peak. Third, capital markets need to remain open for the company to refinance its debts as they come due. As long as these conditions roughly hold, Strategy will continue accumulating Bitcoin without facing forced sales.
+
+    ##### The DAT Trend
+
+    Beyond Bitcoin-centric digital asset treasuries (DATs) like Strategy, a second wave of altcoin DATs has emerged, applying the same capital formation playbook to Ethereum, Solana, and other tokens. Leading this movement are Ethereum-focused treasuries such as BitMine Immersion (holding $10.8B in ETH) and SharpLink Gaming ($2.6B in ETH), alongside Solana-focused treasuries including Forward Industries ($940M in SOL) and Solana Company ($310M in SOL).
+
+    These companies raise capital through equity and convertible financings to build substantial token reserves. Rather than relying on passive price exposure alone, they enhance returns by deploying assets into staking and DeFi strategies, extracting incremental yield from proof-of-stake economics and on-chain opportunities.
+
+    This approach generalizes the Strategy model beyond Bitcoin, offering public-equity investors leveraged exposure to alternative tokens with built-in yield generation. However, the added complexity introduces new risk dimensions. Equity investors effectively underwrite smart-contract vulnerabilities, validator dependencies, and protocol-specific uncertainties. These are operational hazards that simply don't exist in Bitcoin-only treasury structures.
+
+=== "KO"
+
+    ### 중앙화 거래소 모델(The Centralized Exchange Model)
+
+    기관 트레이더가 1억 달러 규모의 BTC 포지션을 실행해야 할 때, 일반적으로 탈중앙화 프로토콜을 사용하지 않는다. 대신 그들의 전략이 요구하는 규모, 속도, 복잡성을 처리할 수 있는 중앙화 거래소(Centralized Exchange, CEX)에 의존한다. CEX는 탈중앙화 거래소와 달리 내부 **호가창(Order Book)**을 유지하고, 매칭 엔진을 운영하며, 고객 담보를 보관하는 수탁형 거래 장소로 운영된다.
+
+    이러한 아키텍처는 현대 암호화폐 시장을 특징짓는 복잡한 금융 상품과 고빈도 거래를 가능하게 한다. 수탁형 모델은 CEX가 레버리지, 정교한 주문 유형, 기관급 기능을 제공할 수 있게 하지만, **거래상대방 리스크(Counterparty Risk)**를 도입하는데, 이는 다양한 시장 참여자들이 이러한 플랫폼과 어떻게 관계를 맺는지를 형성하는 근본적인 트레이드오프다.
+
+    암호화폐 시장 구조를 이해하려면 상품, 인프라, 참여자가 어떻게 상호 연결되어 있는지 살펴봐야 한다. 먼저 거래소 상품인 현물(Spot), 무기한 선물(Perpetual), 옵션(Option), 선물(Future)을 시작하겠다. 그런 다음 서로 다른 규제 프레임워크가 거래소 제공 상품과 ETF 및 기업 재무 전략을 포함한 기관 채택 경로를 어떻게 형성하는지 살펴볼 것이다.
+
+    이러한 기반이 마련되면, 실행 메커니즘을 탐구할 것이다: 주문이 유동성과 어떻게 상호작용하는지, 지연시간(Latency)이 왜 중요한지, 그리고 정교한 트레이더가 시장 영향과 슬리피지(Slippage)를 어떻게 최소화하는지. 이는 자연스럽게 마켓 메이커(Market Maker)로 이어지는데, 이들은 효율적인 실행을 가능하게 하는 유동성을 지속적으로 공급하는 회사들이다. 그런 다음 마진 모드(Margin Mode), 청산 메커니즘(Liquidation Mechanics), 헤징 전략과 같은 리스크 관리 프레임워크를 살펴본 후, 트레이더가 미결제약정(Open Interest)과 변동성(Volatility) 지표를 통해 시장 신호를 읽는 데 사용하는 분석 도구로 전환할 것이다. 이러한 요소들은 함께 상호 연결된 시스템을 형성하는데, 여기서 상품은 전략을 가능하게 하고, 전략은 유동성을 필요로 하며, 유동성은 정교한 리스크 관리를 요구한다.
+
+    ### 현물 시장: 기반(Spot Markets: The Foundation)
+
+    파생상품이 레버리지와 복잡성으로 헤드라인을 장식하는 동안, 현물 거래는 암호화폐 시장의 기반으로 남아 있다. 핵심적으로 현물 거래는 간단하다: USD를 BTC로 변환하는 것과 같이 한 자산을 다른 자산으로 즉시 교환하는 것이다. 대부분의 CEX는 법정화폐 입금을 허용하는 은행 연결을 유지한다. 거래가 실행되면 거래소의 내부 원장에서 소유권이 이전되며, 자산을 온체인으로 인출할 수 있는 옵션이 있다.
+
+    이 간단한 상품은 전통적인 거래소와 세 가지 근본적인 방식에서 다르다. 첫째, 대부분의 거래는 법정화폐가 아닌 스테이블코인 쌍(USDT, USDC)으로 이루어진다. 이는 달러 표시이지만 블록체인 네이티브 거래 생태계를 만든다. 둘째, 시장은 고정된 시간이나 공휴일 없이 연중무휴 24시간 운영된다. 이는 지속적인 가격 발견(Price Discovery)과 유동성 제공을 가능하게 하지만, 개별 거래소는 여전히 유지보수 시간이나 거래 중단을 경험할 수 있다. 셋째, 현물 거래는 거래소의 내부 원장에서 즉시(T+0) 결제되는데, 이는 전통적인 주식의 T+1 또는 T+2 결제보다 훨씬 빠르다. 그러나 자산을 온체인 주소로 인출하려면 네트워크 혼잡도와 보안 요구사항에 따라 달라지는 블록체인 확인 시간이 필요하다.
+
+    현물 거래는 두 가지 주요 형태로 제공된다. 레버리지가 없는 현물은 트레이더가 기존 자본만 사용하므로 청산 리스크가 없다. 마진 현물 거래(Margin Spot Trading)는 포지션 규모를 확대하기 위해 자금을 빌리는 것을 포함하므로 청산 리스크가 도입된다.
+
+    이러한 시장은 여러 중요한 기능을 수행한다. 트레이더는 이를 포트폴리오 리밸런싱, 재무 관리, 현물과 파생상품 간의 가격 차이(베이시스(Basis)라고 알려진) 헤징, 그리고 복잡한 전략의 손익 결제에 사용한다.
+
+    중앙화 거래소와 함께, 온체인 현물 시장(Chapter VII에서 심층 다룸)은 특히 롱테일 자산의 가격 발견과 유동성에 의미 있는 역할을 하게 되었다. 많은 토큰이 이제 완전히 온체인에서 라이프사이클을 시작하여, 주요 CEX에 도달하기 전에 먼저 AMM과 온체인 호가창에서 거래된다. 솔라나 밈코인과 고도로 투기적인 자산이 이 패턴을 예시한다. DEX는 일반적으로 전체 현물 거래량의 10~20%를 차지하며, 일부 월에는 전체 활동의 5분의 1을 초과한다. 이러한 수치는 데이터 제공업체가 인센티브화 및 워시 트레이딩(Wash Trading)을 어떻게 처리하는지에 민감하지만, 추세는 분명하다: 온체인 현물은 더 이상 단순한 반올림 오차가 아니다.
+
+    ### 무기한 선물: 암호화폐의 혁신(Perpetual Futures: The Crypto Innovation)
+
+    #### 메커니즘: 펀딩, 마크 프라이스, 운영 역할(Mechanics: Funding, Mark Price, and Operational Role)
+
+    BitMEX가 처음 도입한 무기한 선물(Perpetual Future)은 암호화폐의 가장 혁신적인 금융 기여 중 하나를 나타낸다. 트레이더가 포지션을 롤오버하거나 결제하도록 강제하는 고정 만기일이 있는 전통적인 선물과 달리, 무기한 선물은 절대 만료되지 않는다. 대신, 기초 자산과 가격을 정렬하기 위해 펀딩 메커니즘(Funding Mechanism)을 사용하여, 계약 만기 관리의 번거로움과 복잡성을 해결한다.
+
+    펀딩 결제 시스템(Funding Payment System)은 계약 가격을 현물 지수에 고정하기 위해 롱 포지션과 숏 포지션 간에 주기적으로 가치를 이전한다. 무기한 계약이 기초 지수 가격보다 높게 거래되면, 롱이 숏에게 지불한다. 무기한 선물이 지수 아래에서 거래되면 지불 방향이 역전된다. 거래소는 포지션 명목 가치(Notional, 가격에 수량을 곱한 포지션의 총 액면 가치)에 대해 펀딩을 지불하지만, 계산 기준은 거래소마다 다르다. 일부는 마크 프라이스 × 포지션 크기를 사용하고, 다른 일부는 오라클 현물 가격 × 크기를 사용한다.
+
+    대부분의 거래소는 극단을 방지하기 위해 펀딩 비율을 제한한다. 바이낸스는 BTC 무기한 선물을 8시간당 ±0.3%로 제한한다. 펀딩 주기는 CEX에서 일반적으로 8시간이지만 플랫폼마다 다르다. BTCUSDT 및 특정 쌍의 경우, 펀딩이 예정된 결제 시 ±0.3%에 도달하면 바이낸스는 조건이 정상화될 때까지 시간당 결제로 전환한다. Hyperliquid(Chapter X에서 상세히 다룸)는 2026년 초 기준 거래량 기준 최대 DEX 무기한 선물 플랫폼으로, 시간당 ±4.00% 상한선과 함께 1시간 펀딩 간격을 사용하는데, 이는 일반적인 CEX 제한보다 덜 제한적이다. 이러한 거래소별 매개변수는 실무자에게 중요하지만, 핵심 원칙은 펀딩이 무기한 선물 가격을 현물로 밀어내는 반면, 마크 프라이스(Mark Price)가 청산과 손익을 관리한다는 것이다.
+
+    마크 프라이스는 거래소가 계산한 선물 계약의 실제 가치 추정치로, 여러 입력(지수/현물 가격, 호가 스프레드, 때로는 베이시스 구성요소)을 혼합하는 공정 가치 공식을 사용한다. 이는 조작이나 일시적인 급등으로 인한 극단적인 가격 변동으로부터 청산을 방지한다. 거래소는 청산 트리거와 미실현 손익(Unrealized Profit-and-Loss, PnL) 계산에 마크 프라이스를 사용한다. 최종 가격(Last Price)은 단순히 최신 실행 거래 가격으로, 특정 거래 활동에 더 변동성이 크고 반응적이다.
+
+    실제 예시: 비트코인이 주요 현물 거래소에서 $100,000에 거래되지만, 고래의 대규모 매도 주문이 BTC 무기한 선물의 최종 거래를 $99,500로 급락시킨다. 어느 극단을 사용하는 대신, 거래소는 공정 가치 공식을 사용하여 마크 프라이스를 $99,950로 계산할 수 있다. 거래소는 모든 미실현 손익, 청산 리스크, 펀딩 의무를 이 $99,950 마크 프라이스 기준으로 한다. 이는 더 넓은 시장이 여전히 비트코인을 $100,000 근처로 평가할 때 한 고래의 매도로 인해 $99,500에서 레버리지 롱이 청산되는 것을 방지한다.
+
+    중요한 점은 펀딩이 인센티브 메커니즘이지 하드 페그(Hard Peg)가 아니라는 것이다. 높은 양의 펀딩은 차익거래자가 무기한 선물을 숏하고 현물(또는 만기 선물)을 매수하도록 유도하지만, 그들이 행동하도록 강제하는 것은 없다. 유동성이 풍부한 대형 주류 시장에서 이는 일반적으로 무기한 선물 가격을 현물에 합리적으로 가깝게 유지한다. 그러나 유동성이 얕거나 차입 능력이 제한된 소규모, 유동성이 낮은 토큰에서는 극단적인 펀딩 비율에도 불구하고 무기한 선물과 현물 간의 스프레드가 지속될 수 있다.
+
+    이 메커니즘은 인위적인 가격 급등을 통한 청산 조작을 방지하는 동시에, 무기한 계약이 기초 현물 시장과의 의도된 경제적 관계를 유지하도록 보장하지만, 차익거래 자본, 차입 시장 또는 리스크 선호도가 제약될 때 약간의 여유가 있다.
+
+    #### 시장 영향, 전략, 리스크(Market Impact, Strategies, and Risks)
+
+    펀딩 비율과 마크 프라이스 메커니즘은 무기한 선물이 파생상품 환경을 재편할 수 있게 했다. 만기 문제를 해결하고 강력한 청산 보호를 제공함으로써, 무기한 선물은 방향성 견해(Directional View), 헤징, 베이시스 거래(Basis Trade, Section II에서 상세히 설명하는 관련 상품 간의 가격 차이로부터 이익을 얻는 전략)를 위한 지배적인 도구가 되었다. 2025년을 통틀어, 무기한 선물은 BTC 거래량의 약 70%를 차지했으며, 변동성이 큰 기간 동안 현물을 일관되게 초과하고 종종 상당한 배수로 초과했다.
+
+    무기한 선물은 레버리지 방향성 포지셔닝, 현물 보유 또는 기업 재무의 효율적인 헤징(가격 노출을 상쇄하기 위해 숏 포지션 사용), 무기한 선물, 현물 및 만기 선물 간의 차이를 이용하는 베이시스 거래, 그리고 거래소 간 복잡한 상대 가치 설정을 지원한다. 만기가 없다는 것은 롤 데이트 마찰과 타이밍 리스크를 제거한다: 트레이더는 지급 능력이 유지되고 펀딩을 지불(또는 수취)할 의향이 있는 한 포지션을 유지할 수 있다. 이는 무기한 선물을 단기 및 중기 견해, 체계적 전략, 높은 회전율 장부에 매력적으로 만든다.
+
+    무기한 선물을 현물에 묶는 펀딩 메커니즘은 또한 경로 의존적(Path-Dependent) 금융 비용을 도입한다. 베이시스가 대부분 진입 시 고정되고 결제 시 실현되는 전통적인 선물과 달리, 무기한 선물 펀딩은 매 기간마다 재설정된다. 긴 시간 동안, 이러한 흐름은 손익을 지배할 수 있다. 강세 체제에서 BTC와 ETH와 같은 대형주는 숏에 대해 평균적으로 연율 높은 한 자릿수에서 낮은 두 자릿수 수익률을 나타내는 양의 펀딩을 자주 나타낸다. 구조적 롱의 경우, 이는 지속적인 금융 드래그로 해석되며, 연장된 황홀한 기간 동안 종종 연간 10% 이상이다. 이러한 환경에서 몇 달 동안 무기한 선물 롱을 보유한다는 것은 숏과 마켓 메이커에게 변동 금리를 지불하는 것을 의미한다.
+
+    이는 두 가지 중요한 결과를 낳는다. 첫째, 장기 방향성 투자자는 종종 무기한 선물이 대체 레버리지 채널보다 경제적으로 열등하다는 것을 발견한다. 유사한 자본 효율성은 마진이나 대출 시장을 통해 차입하고 현물을 매수함으로써 달성될 수 있는데, 트레이더가 기초 자산을 소유하고 암묵적 펀딩 비용보다 저렴하거나 예측 가능한 명시적 차입 비율을 지불한다. 많은 정교한 데스크는 레버리지 노출을 어디에 보관할지 선택할 때 무기한 선물 펀딩 곡선과 차입 비율을 비교한다.
+
+    둘째, 무기한 선물과 만기 선물 간의 상호작용은 차익거래 기회를 창출한다. 무기한 선물 펀딩이 강하게 양수이고 만기 선물이 현물에 대해 더 작은 프리미엄으로 거래될 때, 트레이더는 무기한 선물을 숏하고, 만기 선물이나 현물을 롱하고, 예상 펀딩 수령과 베이시스 수렴을 고정할 수 있다. 반대로, 만기 선물이 무기한 선물에 비해 큰 프리미엄으로 거래되면, 반대 구성이 매력적이 된다. 이러한 거래는 무기한 선물 시장, 현물 시장, 전통적인 선물을 연결된 가격 웹으로 연결하는 데 도움이 된다.
+
+    그럼에도 불구하고, 펀딩과 차익거래는 무기한 선물과 현물 가격 간의 동등성을 엄격하게 강제하지 않는다. 지속적인 스프레드는 대차대조표 제약, 제한된 차입 가용성, 거래소별 리스크, 차익거래 자본의 기회 비용에서 발생한다. 이는 특히 소규모 또는 고도로 투기적인 토큰에서 눈에 띄는데, 여기서 무기한 선물은 상승된 펀딩에도 불구하고 현물에 비해 지속적인 프리미엄이나 디스카운트로 거래될 수 있다. 이러한 환경에서 펀딩은 정확한 고정 장치가 아니라 불균형을 보관할 의향이 있는 사람에게 지불되는 리스크 프리미엄이 된다. Section II는 이러한 역학을 활용하는 특정 거래 전략을 살펴본다.
+
+    모든 일반적인 레버리지 관련 리스크가 이러한 구조적 고려 사항 위에 적용된다. 레버리지는 이익과 손실을 모두 증폭시켜, 가격 변동이 마진 용량을 초과하면 전체 포지션 손실을 초래할 수 있는 청산 리스크를 생성한다(Section V에서 상세히 설명). 장기 포지션은 시장 변동과 금융 비용을 모두 축적하기 때문에 특히 취약하다. 펀딩의 급격한 급등, 차입 비율의 변화 또는 변동성의 변화는 편안한 포지션을 스트레스 받는 포지션으로 변환할 수 있다.
+
+    추가적인 운영 리스크에는 자동 디레버리징(Auto-Deleveraging, ADL) 이벤트와 오라클 리스크가 포함된다. ADL은 청산이 보험 기금 용량을 초과하는 손실을 생성할 때 발생하며, 거래소가 부족분을 충당하기 위해 가장 수익성 있는 반대 포지션을 강제로 종료한다. 급락 중에 수익성 있는 롱을 보유하고 있고 거래소가 모든 손실 숏을 처리할 수 없다면, 당신의 승리 포지션이 강제로 감소될 수 있다. 오라클 리스크는 거래소 계산에 영향을 미치는 가격 피드 조작이나 실패를 포함한다. 펀딩 비율과 상한선은 마크 프라이스 방법론 및 마진 프레임워크와 마찬가지로 거래소마다 크게 다르므로 거래소 선택과 리스크 통제가 중요하다.
+
+    시장 구조 관점에서 무기한 선물은 레버리지 노출을 얻는 병렬 방법으로 현물 마진 및 담보 대출과 함께 자리한다. CEX 또는 DeFi 대출 프로토콜을 통한 마진 거래는 현물 소유권과 대출(종종 스테이블코인으로)을 결합하는데, 여기서 레버리지의 "가격"은 펀딩이 아닌 이자율로 지불된다. 경제적으로 무기한 선물과 마진은 모두 합성 레버리지를 제공한다; 단지 서로 다른 채널을 통해 금융 흐름을 라우팅하고 트레이더를 거래상대방, 오라클, 유동성 리스크의 다른 혼합에 노출시킬 뿐이다. 이러한 도구가 어떻게 관련되어 있고 각각이 언제 더 자본 효율적인지 이해하는 것은 현대 암호화폐 파생상품 시장을 탐색하는 데 핵심적이다.
+
+    ### 전통적 파생상품(Traditional Derivatives)
+
+    무기한 선물이 파생상품 거래량을 지배하는 동안, 옵션은 더 작지만 성장하는 비중(2025년 명목 가치 기준 약 2%)을 기여하며 변동성 가격 책정, 헤징, 리스크 이전을 위한 시장 구조에 필수적으로 남아 있다.
+
+    옵션은 만기 전 또는 만기 시 미리 정해진 행사가(Strike)에서 매수(콜(Call))하거나 매도(풋(Put))할 권리를 제공하지만 의무는 아니다. 옵션은 주로 테일 이벤트(Tail Event) 헤징, 변동성 견해 표현, 구조화된 페이오프 생성, 커버드 전략(Covered Strategy)을 통한 수익 창출에 사용된다.
+
+    만기 선물(Dated Future)은 특정 날짜(일반적으로 분기별)에 만료되는 전통적인 구조를 유지한다. 규제된 거래소, 가장 두드러지게는 CME에서 BTC와 ETH 선물은 참조 지수에 현금 결제되며 상당한 기관 거래량과 미결제약정을 유치하여 헤징, 가격 발견, 베이시스 거래를 위한 주요 게이트웨이 역할을 한다. 2017년에 출시된 CME의 BTC 선물은 더 넓은 암호화폐 복합체와 함께 성장하여 상당한 명목 거래량을 지휘했으며, 2025년 CME의 총 암호화폐 일일 평균 거래량은 100억 달러를 초과했다. 이들은 더 엄격한 감독 및 감시와 함께 CEX 제공 상품에 대한 규제된 대안을 제공한다. 만기 시 CME 계약은 항상 벤치마크 비율로 현금 결제되는 반면, 일부 CEX 만기 선물은 기초 코인 또는 지수로 현금 결제될 수 있다.
+
+    CME의 비트코인 선물 시장과 상장 거래소와의 감시 공유 약정은 SEC의 현물 비트코인 ETF 승인 근거의 핵심이었으며, 확립된 감독 메커니즘과 입증된 가격 상관관계를 통해 규제 편안함을 제공했다.
+
+    ### 거래소 환경과 규제(Exchange Landscape and Regulation)
+
+    우리가 논의한 상품들(현물, 무기한 선물, 옵션, 만기 선물)은 고립되어 존재하지 않는다. 이들은 전통적인 금융 프레임워크 내에서 운영되는 규제가 엄격한 기업부터 더 넓은 상품 스위트와 더 높은 레버리지를 제공하는 오프쇼어 거래소에 이르기까지 다양한 거래소 생태계에서 제공된다. 이러한 차이를 이해하는 것은 시장 구조를 탐색하고, 거래상대방 리스크를 평가하며, 특정 거래 요구에 적절한 거래소를 선택하는 데 중요하다.
+
+    규제된 거래소는 금융 당국의 감독 하에 운영되며, 일반적으로 송금업체 지위(Money Transmitter Status), 뉴욕의 비트라이선스(BitLicense), CFTC와 같은 기관의 완전한 파생상품 거래소 승인과 같은 라이선스를 보유한다. 이는 고객 신원 확인(Know Your Customer, KYC) 및 자금세탁 방지(Anti-Money Laundering, AML) 요구사항, 정기 감사, 고객 자금 분리, 강력한 리스크 관리 프로토콜에 대한 엄격한 준수를 포함한다.
+
+    예를 들어, 규제된 플랫폼은 종종 현지 법률을 준수하기 위해 상품 제공을 제한하는데, 소매 사용자의 레버리지를 제한하거나 특정 파생상품을 금지하는 것과 같다. 규제된 선물 시장에서 리스크는 CFTC 규칙에 따른 엄격한 고객 자산 분리와 함께 청산소 및 디폴트 펀드를 통해 관리되는 반면, 일부 암호화폐 거래소는 추가 보호 메커니즘으로 별도의 보험 기금(바이낸스의 SAFU 펀드와 같은)을 유지한다.
+
+    규제의 주요 이점은 법정화폐 온/오프램프를 위한 전통적인 은행 레일에 대한 강력한 접근이다. 그러나 이는 더 느린 혁신, 더 높은 운영 오버헤드, 지리적 제한의 비용으로 제공된다; 많은 규제된 거래소는 적절한 라이선스 없이 특정 관할권의 사용자에게 서비스를 제공할 수 없다. 미국에서 플랫폼은 복잡한 주 및 연방 규제 패치워크를 탐색해야 하며, 이는 역사적으로 글로벌 경쟁업체에 비해 상품 범위를 제한했다.
+
+    코인베이스(Coinbase)와 크라켄(Kraken)과 같은 미국 규제 거래소는 종종 상품 폭과 레버리지를 희생하여 준수와 기관 호소를 우선시한다. 예를 들어 코인베이스는 SEC 감독을 받는 상장 기업으로 운영되며, 현물 거래, 코인베이스 인터내셔널(Coinbase International)을 통한 제한된 파생상품, 강력한 법정화폐 통합을 유지하면서 수탁 서비스를 제공한다. 크라켄은 유사하게 보안과 규제 준수를 강조하며, 준비금 증명(Proof-of-Reserves) 감사를 통한 투명성에 중점을 두고 현물 시장, 선물(미국 외), 스테이킹 서비스를 제공한다.
+
+    대조적으로, 바이낸스(Binance), OKX, 바이비트(Bybit)와 같은 오프쇼어 거래소는 더 적은 제한으로 글로벌 고객에게 서비스를 제공하여, 더 높은 레버리지(일부 상품에서 100배 이상), 더 넓은 토큰 상장, 토큰 세일을 가능하게 하는 상품을 제공한다. 이러한 플랫폼은 종종 세이셸, 케이맨 또는 영국령 버진 아일랜드와 같이 규제가 가벼운 관할권에서 운영되어, 새로운 토큰을 빠르게 상장하고 무기한 선물을 빠르게 제공할 수 있다. 그러나 이러한 유연성은 더 높은 거래상대방 리스크를 도입하는데, 바이낸스가 AML 위반으로 미국 당국과 2023년 합의한 것과 같이 갑작스러운 규제 단속의 가능성을 포함한다. 오프쇼어 거래소는 접근성과 상품 깊이로 인해 거래량에서 지배적이다. 2026년 초 기준, 이러한 이분법은 지속되지만, EU의 MiCA 프레임워크와 같은 글로벌 규제 조화 증가는 경계를 흐리게 하고 있다.
+
+    ### 시장 리더(Market Leaders)
+
+    암호화폐 거래소 환경은 서로 다른 상품 카테고리에 걸쳐 뚜렷한 시장 리더에 의해 형성되며, 각각은 전문 영역 내에서 상당한 영향력을 발휘한다. 이러한 경쟁 역학을 이해하는 것은 디지털 자산 거래의 구조와 진화에 대해 많은 것을 드러낸다.
+
+    현물 시장에서 바이낸스는 월에 따라 2025년 중앙화 현물 거래량의 약 40%를 차지하며 확고한 리더로 자리매김했다. 이러한 지배력은 거래소의 포괄적인 토큰 제공과 글로벌 도달 범위를 반영한다. 규제된 미국 시장 내에서 코인베이스는 특히 비트코인과 이더리움 쌍의 기관 흐름에 주목할 만한 최고의 옵션으로 부상한다. 이러한 거인들을 넘어 바이비트와 OKX는 광범위한 토큰 다양성을 통해 강력한 지위를 차지했으며, 크라켄은 법정화폐-암호화폐 전환을 위한 특히 효과적인 게이트웨이로 차별화했다.
+
+    무기한 선물 시장은 집중된 오프쇼어 지배의 이야기를 들려준다. 바이낸스, 바이비트, OKX는 함께 비트코인 무기한 선물의 미결제약정(Open Contract)의 거의 70%를 차지하며, 중앙화 거래소의 거래량에서도 유사하게 지배적인 점유율을 차지한다. 바이낸스는 선두 위치를 유지하는 반면, 바이비트와 OKX는 2위를 위해 긴밀한 경쟁을 벌이며, 세 거래소 모두 통합 또는 포트폴리오-마진 계정(Unified or Portfolio-Margin Account)과 같은 정교한 기능과 함께 높은 레버리지를 제공하는 것으로 알려져 있다. 규제 측면에서 CME는 만기 비트코인 및 이더리움 선물과 옵션을 계속 제공한다. 2025년 7월에 주요 변화가 발생했는데, 코인베이스 파생상품(Coinbase Derivatives)이 비트코인과 이더리움에 대한 미국 무기한 스타일 선물(U.S. Perpetual-Style Future)의 상장을 시작했다: 무기한 계약의 경제를 모방하는 시간당 펀딩 조정을 가진 5년 장기 선물. 이러한 도구는 CFTC 규제 지정 계약 시장(Designated Contract Market)에서 거래되며 규제된 선물 브로커를 통해 액세스되어, 이전의 더 작은 기관 전용 출시에 이어 무기한 스타일 거래를 주류 미국 규제 프레임워크로 가져온다.
+
+    옵션 시장에서 데리빗(Deribit)의 지배력은 특히 두드러진다. 역사적으로 암호화폐 옵션 미결제약정의 약 85%를 보유했으며, 특히 변동성 중심 전략을 위한 비트코인 및 이더리움 옵션의 주요 유동성 허브로 계속 서비스를 제공한다. 이 지위는 2025년 8월 코인베이스가 데리빗의 29억 달러 인수를 완료한 후 더욱 강화되었으며, 그 후 데리빗은 코인베이스의 더 넓은 파생상품 우산 아래에서 선도적인 옵션 거래소로 계속 운영되고 있다. 바이낸스와 OKX가 성장하는 옵션 시장을 구축했지만, 데리빗의 깊이, 도구, 기관급 리스크 관리는 온-거래소 암호화폐 옵션에 대한 경쟁 우위를 유지한다. 동시에, 규제된 옵션 환경이 진화했다: CME는 더 작지만 완전히 준수하는 비트코인 및 이더 옵션 세트를 제공하며, 규제된 비트코인 옵션 유동성의 상당 부분이 블랙록의 IBIT와 같은 현물 ETF 옵션으로 이동했는데, 이는 현재 데리빗의 BTC 옵션 미결제약정에 필적한다.
+
+    이 환경은 암호화폐의 독특한 하이브리드 특성을 강조한다: 전통적인 규제와 국경 없는 혁신의 역동적인 혼합. 거래소 선택은 실행 품질뿐만 아니라 거래 전략, 리스크 노출, 잠재적 수익의 근본적인 측면에 직접적인 영향을 미치므로, 거래소 선택을 진지한 시장 참여자에게 중요한 결정으로 만든다.
+
+    ### 기관 채택 경로(Institutional Adoption Pathways)
+
+    이 장의 대부분을 위해, 우리는 암호화폐 네이티브 트레이더가 직접 사용하는 거래소와 도구를 살펴봤다: CEX의 현물, 무기한 선물, 옵션, 선물, 그리고 규제된 선물 거래소. 전통적인 자본의 대규모 풀은 해당 인프라와 직접 상호작용하는 경우가 거의 없다. 연금 기금, 뮤추얼 펀드, 보험사, 기업, 자산 관리자는 기존 위임, 운영 프로세스, 규제 제약 내에 맞는 친숙한 래퍼 및 대차대조표 구조를 통해 암호화폐에 액세스하는 경향이 있다.
+
+    광범위하게 말하면, 두 가지 채널이 등장했다. 첫 번째는 상장 펀드 상품, 특히 BTC, ETH, SOL, XRP 및 기타 자산 바스켓을 거래소에서 거래되는 증권으로 패키징하는 현물 ETF 및 비미국 유사물(ETP 및 ETN)이다. 두 번째는 기업 및 디지털 자산 재무 전략으로, 운영 회사가 주식 및 채권 시장에서 자본을 조달한 다음 대차대조표에서 암호화폐를 보유하거나 적극적으로 배포한다. 함께 이러한 경로는 암호화폐 노출이 어떻게 틈새 거래 놀이터에서 주류 포트폴리오와 기업 금융으로 이동했는지 설명한다.
+
+    #### 현물 ETF(Spot ETFs)
+
+    현물 암호화폐 ETF의 승인은 온체인 시장과 전통적인 중개 간에 새로운 시장 구조 계층을 만들었다. 미국에서 이러한 수단은 일반적으로 1933년 또는 1940년 법에 따라 현물 ETF로 조직된다. 유럽 및 기타 지역에서 가장 가까운 동등물은 수탁 중인 기초 코인을 보유하는 물리적 뒷받침 ETP 또는 ETN이다. 래퍼는 법적으로 다르지만, 포트폴리오 및 시장 구조 관점에서 그들은 모두 대략 같은 일을 한다: 투자자가 거래소 상장 주식을 거래할 수 있게 하는 동시에 펀드 수단이 그들을 대신하여 기초 BTC, ETH, SOL, XRP 및 기타 자산을 보유하고 보호한다.
+
+    ##### 비트코인 돌파구(The Bitcoin Breakthrough)
+
+    미국 이야기는 비트코인으로 시작되었다. 2024년 1월, SEC는 미국 투자자가 ETF 형식으로 물리적 뒷받침 BTC를 보유할 수 있는지에 대한 10년간의 논쟁을 끝내고 현물 비트코인 ETF의 첫 번째 코호트를 승인했다. 이러한 펀드는 적격 수탁자와 함께 실제 비트코인을 보유하고 주류 증권 거래소에 상장하여, 투자자에게 암호화폐 거래소나 지갑을 건드리지 않고 중개 네이티브 노출을 제공한다. 영향은 즉각적이고 극적이었다. 첫 해에 이러한 펀드는 750억 달러 이상의 자산을 모았다. 2026년 초까지, 블랙록의 아이셰어스 비트코인 트러스트(iShares Bitcoin Trust, IBIT) 단독으로 750억 달러의 AUM에 근접하여 역사상 가장 빠르게 성장하는 ETF 출시이자 상장 비트코인 노출의 지배적인 채널이 되었다.
+
+    ETF 형식에서 비트코인의 성공 규모는 다른 모든 암호화폐 자산을 왜소하게 만든다. 현재 관리 중인 모든 암호화폐 현물 ETF 자산의 약 86%가 비트코인 ETF에 있으며, 이는 공간에서 가장 깊은 기관 수요를 반영한다. 이더리움 ETF는 총 암호화폐 ETF AUM의 약 12%를 차지하는 반면, SOL, XRP 및 기타 알트코인을 추적하는 최신 상품은 전체의 작은 부분만 차지한다. 이러한 집중은 기관 자본, 특히 퇴직 계좌, RIA, 전통적인 자산 관리자로부터의 자본이 비트코인을 규모에 맞게 만들 가치가 있는 주요(그리고 종종 유일한) 암호화폐 할당으로 보고 있음을 강조한다.
+
+    ##### 이더리움으로 확장(Expanding to Ethereum)
+
+    이더리움은 다음 주요 단계로 이어졌다. 2024년 중반 SEC는 현물 이더(Ether) ETF를 승인했으며, 이는 7월에 거래를 시작했다. 이들은 기관에 비트코인 플레이북을 미러링하여 친숙한 규칙 하에서 중개 및 퇴직 계좌에 ETH를 보유할 수 있는 방법을 제공했다. 흐름은 BTC보다 작았지만 여전히 의미가 있었다: 이더 현물 ETF는 수십억의 누적 유입과 수억의 단일 일 기록을 보았으며, 두 번째로 큰 암호화폐 자산으로의 규제된 경로를 확립했다.
+
+    ETH 상품은 핵심 설계 질문을 초점에 가져왔다: 스테이킹. VanEck 및 21Shares와 같은 발행자의 유럽 ETP는 오랫동안 스테이킹 보상의 일부를 투자자에게 전달했지만, 첫 번째 세대의 미국 이더 ETF는 SEC 우려를 만족시키기 위해 스테이킹 없이 출시되었다. 2025년 동안 그 선이 움직이기 시작했다. REX-Osprey의 ESK 및 나중에 그레이스케일(Grayscale)의 현물 이더 ETF와 같은 전문 구조가 스테이킹 기능을 도입했으며, 블랙록 및 기타 발행자가 ETH 상품에 스테이킹을 추가하기 위해 신청했다. 이 점진적 변화는 검증자 권력과 스테이킹 수익률을 네이티브 지갑 및 DeFi 프로토콜만이 아닌 규제된 펀드 복합체를 통해 라우팅하기 때문에 시장 구조에 중요하다.
+
+    ##### 알트코인 물결(The Altcoin Wave)
+
+    2025년 말까지, 세 번째 물결이 모델을 BTC와 ETH를 넘어 확장했다. 유럽 시장은 이미 21Shares, VanEck, WisdomTree와 같은 발행자의 물리적 뒷받침 솔라나 및 XRP ETP를 상장했으며, 일부는 스테이킹이 활성화되어 있다.
+
+    미국 알트코인 ETF의 돌파구는 2025년 9월에 왔는데, SEC가 나스닥(Nasdaq), Cboe, NYSE Arca와 같은 거래소가 각 새로운 자산에 대해 맞춤형, 수개월 긴 승인 프로세스를 거치지 않고 특정 암호화폐 ETF를 상장할 수 있게 하는 "일반(Generic)" 상장 표준을 채택했다. 이 규제 변화는 홍수 문을 열었다. 첫 번째 알트코인 ETF는 Bitwise 및 Canary Capital의 솔라나, 라이트코인(Litecoin), 헤데라(Hedera) 상품을 포함하여 빠르게 도착했다. 직후 첫 번째 미국 현물 솔라나 ETF가 출시되었다: 2025년 10월 말에 데뷔한 Bitwise 솔라나 스테이킹 ETF(BSOL)는 첫 주 내에 수억 달러를 끌어들였다.
+
+    XRP는 거의 즉시 뒤따랐다. 2025년 11월, Canary Capital은 나스닥에 첫 번째 미국 현물 XRP ETF(XRPC)를 상장하여 투자자에게 처음으로 ETF를 통한 직접 XRP 노출을 제공했다. 펀드의 데뷔는 출시 연도 거래량 및 순유입에 대한 기록을 세웠으며, 규제 경로가 존재하면 투자자 수요가 비트코인과 이더를 넘어 확장된다는 신호를 보냈다.
+
+    동시에, 여러 발행자가 1940년 법에 따라 "암호화폐 상위 10개(Crypto Top 10)" 또는 "비트코인 제외(ex-Bitcoin)" 지수를 추적하는 다양화된 암호화폐 지수 ETF를 출시하기 시작했으며, 이는 ETH, SOL, DOGE 및 기타를 포함한다. 이러한 다중 자산 상품은 방향성 트레이더보다 자산 할당자 및 고문에게 더 호소하며, "암호화폐"와 주류 주식-ETF 라인업 간의 경계를 더욱 흐리게 한다.
+
+    ##### 배관 작동 방식(How the Plumbing Works)
+
+    후드 아래에서 모든 이러한 현물 ETF 및 ETP는 유사한 운영 메커니즘을 공유한다. 승인된 참가자(Authorized Participant, AP)는 ETF 주식의 대가로 펀드에 현금 또는 암호화폐를 전달(생성(Creation))하거나, ETF 주식을 반환하여 현금 또는 암호화폐를 다시 받음(환매(Redemption))으로써 **1차 시장(Primary Market)**에서 주식을 생성하고 환매한다. 초기 미국 비트코인 ETF 코호트에서 이 프로세스는 처음에 "현금 전용"이었다: AP가 달러를 전달하고, 발행자 또는 그 거래 파트너가 공개 시장에서 BTC를 매수하고, ETF가 보관했다.
+
+    이것은 2025년 중반에 SEC가 특정 비트코인 및 이더 ETP에 대해 현물 생성 및 환매를 허용하는 구제를 부여하여 AP가 모든 것을 현금을 통해 라우팅하는 대신 직접 암호화폐를 전달하거나 받을 수 있게 했을 때 변경되었다. 이러한 변화는 마찰을 줄이고, 스프레드를 좁히고, ETF 가격과 순자산 가치 간의 차익거래 메커니즘을 더욱 효율적으로 만들었다.
+
+    ##### 시장 구조 영향(Market Structure Impacts)
+
+    시장 구조 관점에서 현물 ETF는 세 가지 주요 방식으로 암호화폐에 영향을 미친다.
+
+    첫째, 구매자 기반을 넓힌다. 법적 또는 운영상의 이유로 네이티브 토큰을 보유할 수 없는 퇴직 계좌, RIA, 기관은 이제 다른 상장 펀드와 운영적으로 구별할 수 없는 ETF 주식을 보유할 수 있다.
+
+    둘째, 공급이 보유되는 방식을 변경한다. 현물 ETF로의 대규모, 지속적인 유입은 코인을 장기, 기관 보관, 종종 코인베이스와 같은 소수의 대형 수탁자와 함께 콜드 스토리지로 이동시킨다. 이는 거래소의 유동 유통(Liquid Float)을 줄이고 키 관리 및 운영 리스크를 집중시킨다.
+
+    셋째, 새로운 헤징 및 베이시스 관계를 생성한다. AP와 마켓 메이커는 일상적으로 CME 선물, CEX 무기한 선물 또는 온체인 도구로 1차 시장 재고를 헤징하므로, ETF로의 유입 또는 유출은 거래소 간 펀딩 비율, 선물 베이시스, 호가창 압력으로 전파된다.
+
+    ##### 리스크 표면(The Risk Surface)
+
+    마지막으로, 현물 ETF는 자체 리스크 표면을 도입한다. 보관 및 키 관리 실패, 지배적인 수탁자에 대한 규제 조치, 또는 생성/환매의 중단은 모두 ETF 가격과 기초 코인 간의 차익거래 링크를 깨뜨려 ETF 주식이 프리미엄이나 디스카운트로 거래되게 할 수 있다. 집중은 특히 심각하다: 소수의 수탁자와 스폰서가 이제 상장 BTC 및 ETH 노출의 대부분을 제어하며, ETH 및 SOL과 같은 지분 증명 자산에 대한 스테이킹 지원 ETF는 동일한 기관에 검증자 권력과 거버넌스 영향력을 집중시킨다. 트레이더의 관점에서 ETF는 따라서 가격 발견을 위한 또 다른 거래소이자 핵심 현물 및 파생상품 시장 위에 있는 추가 거래상대방 및 구조적 리스크 계층이다.
+
+    #### 기업 재무 채택(Corporate Treasury Adoption)
+
+    ETF가 수동적 기관 노출의 문을 열었지만, 병렬 개발이 등장했다: 기업이 재무 자본을 비트코인에 전략적 자산으로 할당하는 것. 2020년부터 Michael Saylor가 이끄는 몇몇 공개 기업은 기업 현금 준비금의 일부를 비트코인으로 이동하기 시작했으며, 이를 포트폴리오 다각화, 인플레이션 헤징, 디지털 네이티브 금융과의 브랜드 정렬과 같은 여러 목적을 제공할 수 있는 장기, 비주권 통화 자산으로 보았다.
+
+    이러한 추세는 비트코인이 틈새 디지털 실험에서 주요 기업이 재무 관리에 적합하다고 여기는 자산 클래스로의 진화를 반영하지만, 채택은 총 기업 현금 잔고에 비해 제한적이다. 이러한 레일이 대차대조표 행동으로 어떻게 변환되는지 설명하기 위해, 대표적인 기업 사례 연구를 고려하자. 가장 극적인 예는 Strategy(이전 MicroStrategy)의 공격적인 축적 플레이북으로, 이 장 전체에서 검토된 시장 인프라를 어떻게 정교한 금융 공학이 활용할 수 있는지를 보여준다.
+
+    ##### Strategy 플레이북(The Strategy Playbook)
+
+    이전에 MicroStrategy로 알려진 Strategy는 대량의 비트코인을 구매하는 독특한 접근 방식을 개발했다. 회사는 두 가지 주요 유형의 금융 도구를 발행하여 돈을 조달한다: 매우 낮은 이자율(일부는 심지어 0%)의 전환사채(Convertible Bond)와 시장에 직접 신주를 판매하는 것.
+
+    이것이 왜 작동하는지 설명하겠다. 전환사채는 투자자에게 미리 정해진 가격에서 사채를 회사 주식으로 전환할 수 있는 옵션을 제공한다. 0% 이자에서도 이러한 사채는 전환 옵션 자체가 가치가 있기 때문에 가치가 있다. 주가가 크게 상승하면, 채권 보유자는 전환하여 가치 상승으로부터 이익을 얻을 수 있다. Strategy의 주가는 일반적인 주식보다 훨씬 더 극적으로 상하로 움직이는 경향이 있으며, 이는 이러한 전환 옵션을 전문 투자 펀드에게 특히 가치 있게 만든다. 이러한 펀드는 나중에 회사 주식으로 전환될 수 있는 Strategy의 전환사채를 구매한다. 그런 다음 주가 변동으로부터 이익을 얻기 위해 복잡한 거래 전략을 사용한다. 이러한 투자자는 변동성에서 가치를 찾기 때문에 사채에 대해 매우 낮은 이자율을 기꺼이 받아들인다.
+
+    이것은 일이 잘 풀릴 때 강력한 순환을 만든다. Strategy는 사채 판매로부터 받은 돈을 더 많은 비트코인을 사는 데 사용한다. 비트코인 보유량이 증가함에 따라 회사의 전체 가치가 증가한다. 주가가 상승하며, 종종 비트코인 단독이 주당 가치가 있는 것 이상의 프리미엄으로 거래된다. 이 더 높은 주가와 지속적인 변동성은 Strategy가 새로운 사채 또는 주식 판매를 통해 더 많은 돈을 더 저렴하고 쉽게 조달할 수 있게 만든다. 그런 다음 순환이 반복된다.
+
+    그러나 이 순환은 또한 역으로 작동할 수 있다. 비트코인의 가격이 하락하면 회사의 전체 가치가 줄어든다. 주식이 비트코인 가치 이상으로 거래되는 프리미엄이 사라질 수 있다. 이런 일이 발생하면, 새로운 돈을 조달하는 것이 더 비싸지거나 불가능해져 회사가 더 많은 비트코인을 사는 능력을 늦추거나 중단시킨다.
+
+    ##### 성과 및 리스크 프로필(Performance and Risk Profile)
+
+    전략은 마진 대출로 발생할 수 있는 강제 매도를 피하면서 인상적인 결과를 낳았다. 2025년 초까지 Strategy는 2024년 주당 비트코인이 74% 증가했다고 보고했는데, 이는 회사가 추적하는 핵심 지표다. 2026년 초까지 약 690,000 BTC를 보유했으며, 약 640억 달러 가치가 있다.
+
+    전통적인 의미에서 강제 청산 리스크는 매우 낮다. 전환사채와 우선주는 특정 비트코인을 담보로 뒷받침되지 않는다. 대출자가 자동으로 회사의 비트코인을 압류할 수 있는 가격 수준은 없다. Strategy가 비트코인을 팔아야 할 유일한 시나리오는 부채가 만기될 때 재융자하거나 상환할 수 없는 경우다.
+
+    회사는 2028년부터 2032년까지 펼쳐진 주요 전환사채 만기를 가지고 있으며, 일부 투자자 재매입 권리는 2027년부터 시작된다. 이 엇갈린 구조는 단일 연도의 압력을 줄인다. 실제로 Strategy는 2025년 초에 2027년 사채를 성공적으로 상환했으며, 거의 모든 채권 보유자가 현금 상환을 요구하는 대신 사채를 주식으로 전환하기로 선택했다.
+
+    각 사채 발행은 서로 다른 전환 가격을 가지고 있으며, 이는 일부가 주가가 어디서 거래되는지에 따라 다른 것보다 주식으로 전환될 가능성이 더 높다는 것을 의미한다. 이러한 사채의 이자 비용은 0%에서 2% 조금 넘는 수준으로 상당히 낮다. 회사는 또한 STRK, STRD, STRF, STRC와 같은 티커로 거래되는 영구 우선주(Perpetual Preferred Share)를 가지고 있다. 이러한 우선주는 전환사채보다 우선순위가 낮으며 일반적으로 높은 한 자릿수에서 낮은 두 자릿수의 배당률을 지불한다.
+
+    특히 영리한 기능 중 하나는 Stretch 우선주(STRC)로, 경영진이 시간이 지남에 따라 배당률을 줄이고 디폴트를 유발하지 않고 배당이 축적되도록 허용한다. 이는 Strategy에게 시장 상황이 나쁠 경우 강제 비트코인 판매를 피할 수 있는 훨씬 더 많은 유연성을 제공하지만, 해당 우선주 주주의 희생으로 제공된다.
+
+    Strategy는 추가 자본을 조달할 수 있는 막대한 능력을 가지고 있다. 시간이 지남에 따라 시장에 직접 판매할 수 있는 프로그램을 통해 최대 210억 달러의 보통주 판매 및 또 다른 210억 달러의 우선주 판매에 대한 승인을 받았다.
+
+    ##### 전략적 리스크 및 제한(Strategic Risks and Limitations)
+
+    플라이휠 메커니즘은 몇 가지 중요한 취약성에 직면한다. 가장 큰 리스크는 Strategy의 주가가 비트코인 보유 가치로 하락하면 어떻게 되는지다. 역사적으로 주식은 상당한 프리미엄으로 거래되었는데, 이는 투자자가 기초 비트코인이 가치가 있는 것보다 더 많은 비용을 기꺼이 지불했다는 것을 의미하지만, 그 프리미엄은 이전 연도에 비해 2026년 초에 이미 크게 줄어들었다. 프리미엄이 사라지거나 디스카운트로 전환되면, 전체 전략이 덜 효과적이 된다. 새로운 주식을 판매하는 것이 덜 매력적이 되고, 새로운 전환사채를 발행하는 것이 더 어렵고 비싸진다.
+
+    회사가 더 크게 성장함에 따라 수익 감소의 도전도 있다. 2021년으로 돌아가서, Strategy는 주당 비트코인을 1 베이시스 포인트(0.01%) 증가시키기 위해 약 2.6 비트코인만 획득하면 됐다. 2025년까지 동일한 결과를 달성하기 위해 약 58 비트코인이 필요했다. 이는 대차대조표가 성장함에 따라 각 새로운 자본 조달이 상대적으로 더 작은 영향을 미치는 현실을 반영하는데, 절대 달러 금액은 더 커지더라도 마찬가지다.
+
+    Strategy의 지속적인 성공은 세 가지가 동시에 일어나는 데 달려 있다. 첫째, 비트코인은 장기적으로 상승 추세를 유지해야 한다. 둘째, 주식은 높은 변동성과 비트코인 보유 가치 이상의 적어도 일부 프리미엄을 유지해야 전문 전환사채 구매자가 여전히 구조를 매력적으로 찾을 수 있다. 해당 조건은 프리미엄이 압축됨에 따라 이미 약화되어 새로운 발행이 정점에 있을 때보다 덜 강력하게 만든다. 셋째, 자본 시장은 회사가 부채가 만기될 때 재융자할 수 있도록 열려 있어야 한다. 이러한 조건이 대략적으로 유지되는 한, Strategy는 강제 판매에 직면하지 않고 비트코인을 계속 축적할 것이다.
+
+    ##### DAT 추세(The DAT Trend)
+
+    Strategy와 같은 비트코인 중심 디지털 자산 재무(Digital Asset Treasury, DAT)를 넘어, 알트코인 DAT의 두 번째 물결이 등장하여 동일한 자본 형성 플레이북을 이더리움, 솔라나 및 기타 토큰에 적용하고 있다. 이 운동을 이끄는 것은 BitMine Immersion(ETH $108억 보유) 및 SharpLink Gaming(ETH $26억) 같은 이더리움 중심 재무와 Forward Industries(SOL $9억 4천만) 및 Solana Company(SOL $3억 1천만)를 포함한 솔라나 중심 재무다.
+
+    이러한 회사는 상당한 토큰 준비금을 구축하기 위해 주식 및 전환 금융을 통해 자본을 조달한다. 수동적인 가격 노출만 의존하는 대신, 스테이킹 및 DeFi 전략에 자산을 배포하여 수익률을 향상시키며, 지분 증명 경제 및 온체인 기회로부터 증분 수익률을 추출한다.
+
+    이 접근법은 Strategy 모델을 비트코인을 넘어 일반화하여, 공개 주식 투자자에게 내장 수익률 생성과 함께 대체 토큰에 대한 레버리지 노출을 제공한다. 그러나 추가된 복잡성은 새로운 리스크 차원을 도입한다. 주식 투자자는 효과적으로 스마트 컨트랙트 취약성, 검증자 의존성, 프로토콜별 불확실성을 인수한다. 이는 비트코인 전용 재무 구조에는 단순히 존재하지 않는 운영 위험이다.
+
+## Section II: Perpetual Futures Strategies
+
+=== "EN"
+
+    Section I introduced the mechanics of perpetual futures, including how funding rates anchor perp prices to spot and how mark price protects against manipulation. But these features only matter insofar as they enable practical trading strategies. This section examines the five primary ways market participants deploy perpetuals, from straightforward directional bets to sophisticated arbitrage structures. Each strategy exploits different aspects of perpetual futures design while introducing distinct risk profiles.
+
+    ### Directional Exposure: The Core Use Case
+
+    The most straightforward application of perpetual futures is taking leveraged directional positions without managing expiry dates or rolling contracts. A trader bullish on Bitcoin can deploy $10,000 of capital with 10x leverage to control a $100,000 position, amplifying potential returns while accepting proportionally magnified losses. This capital efficiency explains perpetuals' dominance in crypto derivatives markets.
+
+    The mechanics are simple: go long if you expect prices to rise, short if you expect them to fall. The leverage multiplier determines both opportunity and risk. At 10x leverage, a 10% favorable price move doubles the initial capital, while a 10% adverse move triggers liquidation. This makes position sizing critical.
+
+    Funding rates add a time dimension to directional trades. A long position in a rising market might pay 0.05% every eight hours in funding, which annualizes to roughly 55%. If the trade thesis plays out quickly, funding costs are negligible. But a position held for months while paying persistent funding can see returns eroded substantially. Successful directional traders monitor funding rates alongside price action, sometimes closing winning positions to re-enter later when funding resets, or switching to dated futures to avoid ongoing payments.
+
+    The strategy demands discipline around entry timing, position sizing, and exit criteria. Professional traders typically use lower leverage than retail participants because survival matters more than maximizing theoretical upside. A 5x leveraged position can withstand a 15-20% adverse move before liquidation; a 20x position liquidates after just a 4-5% move. In volatile crypto markets, that difference often separates traders who capture trends from those who get stopped out at the worst possible moment.
+
+    ### Hedging: Protecting Existing Exposure
+
+    Perpetual futures excel as hedging instruments because they track spot prices closely while offering indefinite holding periods. This makes them ideal for protecting existing spot positions against adverse price movements without requiring the overhead of rolling dated futures contracts.
+
+    The most common hedging applications address specific crypto market frictions. When tokens are locked in unstaking queues (sometimes for weeks), holders face directional price risk with no ability to exit. A validator unstaking 1,000 ETH worth $3.5 million might short 1,000 ETH perpetuals to lock in the current price, eliminating downside exposure during the withdrawal period. The hedge costs whatever funding rate prevails, but this is often cheaper than potential loss from a market drawdown.
+
+    Airdrop farming creates similar dynamics. Protocols frequently require token holdings over specified time periods to qualify for airdrops, during which holders cannot sell without forfeiting eligibility. A participant holding $500,000 in tokens can short an equivalent notional value in perpetuals, maintaining airdrop eligibility while neutralizing price risk. Hedge effectiveness depends on funding costs remaining below the expected airdrop value.
+
+    Partial hedging offers another application for traders who want to reduce but not eliminate directional exposure. A portfolio manager long $10 million in spot Bitcoin might short $3 million notional in perpetuals, creating a net long position of $7 million that maintains upside participation while providing cushion against drawdowns. This approach allows dynamic risk adjustment without disturbing the underlying spot position.
+
+    The risks are asymmetric. Perfect hedges are rare in practice. Basis risk (the possibility that perpetual and spot prices diverge temporarily) can create losses on both sides during volatile periods. Funding rates can swing dramatically, turning an expected small carry cost into a material expense. And liquidation risk remains present on the short perpetual leg even when the overall portfolio is hedged, since exchanges evaluate margin on the perpetual position independently of external spot holdings unless using portfolio margining.
+
+    ### Pair Trading: Relative Value in Crypto
+
+    Pair trading exploits relative mispricings between correlated assets by simultaneously taking offsetting long and short positions. The strategy bets on convergence or divergence of the price relationship rather than absolute directional moves. In crypto markets, a classic structure involves going long Bitcoin while shorting a basket of altcoins, expressing the view that BTC will outperform regardless of overall market direction.
+
+    The mechanics require careful construction. A trader might establish a $1 million long position in BTC perpetuals while shorting $1 million notional across a weighted basket of ETH, SOL, and other large-cap altcoins. If Bitcoin rises 20% while the altcoin basket rises only 10%, the trade profits from the relative outperformance. The trade can also profit in declining markets: if Bitcoin falls 10% while altcoins fall 20%, the relative relationship still favors the long BTC leg.
+
+    Asset selection determines success or failure. The pair must have some fundamental relationship (correlated price movements, shared market dynamics, or clear relative value disconnects), otherwise the trade devolves into two independent directional bets. Bitcoin versus altcoins works because altcoins tend to move more dramatically than Bitcoin during both rallies and selloffs, rising faster when markets are up and falling harder when markets decline.
+
+    The strategy introduces risks beyond simple directional exposure. ADL becomes critical because both legs are leveraged positions that can be forcibly reduced during extreme market moves, potentially leaving the trader with unhedged exposure. If a severe altcoin crash triggers ADL on the short positions, the trader is left exposed with only the long Bitcoin leg. This makes position sizing crucial.
+
+    Short squeezes present another asymmetric risk. While long positions can only fall to zero, short positions face theoretically unlimited losses if prices spike. An altcoin catching momentum from a major partnership announcement can squeeze shorts violently. During the 2021 bull market, numerous altcoins experienced 50-100% single-day rallies that liquidated short sellers.
+
+    Funding rate dynamics complicate the economics. A pair trade might have positive funding on one leg and negative on the other, or both legs might persistently pay out, creating a steady drain on returns. A long BTC / short altcoin pair during a bull market often sees the trader paying funding on both sides. This steady bleed must be weighed against the expected convergence of the relative value thesis.
+
+    ### Funding Arbitrage: Cross-Venue Opportunities
+
+    Funding arbitrage exploits differences in funding rates across venues rather than the existence of funding itself. If one exchange pays longs 0.10% every eight hours on BTC perps while another pays only 0.05%, an arbitrageur can short on the higher-funding venue and go long on the lower-funding venue, locking in the 0.05% spread on a delta-neutral book (see Section I for funding mechanics).
+
+    The strategy appears deceptively simple but requires sophisticated execution. Capital must be pre-positioned across multiple venues since transferring funds introduces lag that often eliminates the spread. Successful funding arbitrageurs maintain working capital on five to ten major exchanges, continuously monitoring rate differentials and rebalancing inventory.
+
+    For major assets like Bitcoin and Ethereum, the strategy carries relatively contained risks. Funding rates on established pairs correlate strongly across venues, and perpetual prices track spot tightly due to deep liquidity and active arbitrage. The primary risks are operational: exchange outages that prevent closing positions, sudden changes in margin requirements, or withdrawal restrictions that trap capital.
+
+    The risk profile deteriorates sharply for newer or less liquid tokens. Funding rates can swing violently (from \+2% to \-2% in hours) as positioning shifts. Price volatility increases liquidation risk on both legs despite the positions being theoretically hedged; mark prices can diverge between venues during flash crashes, triggering liquidations on one exchange while the other remains unaffected.
+
+    The short leg introduces particular concern. Shorting a thinly traded altcoin perpetual exposes the arbitrageur to short squeeze risk if the token catches sudden momentum. A surprise protocol announcement or exchange listing can spike prices 30-50% in minutes, liquidating shorts before hedges can be adjusted.
+
+    Funding rate volatility also affects position maintenance. What begins as an attractive 0.30% daily spread can flip to \-0.50% after a sharp market move, creating losses that exceed prior gains if the position isn't actively managed. The venues themselves contribute to instability through differing funding caps, calculation methodologies, and settlement frequencies.
+
+    ### Basis Trade: Spot and Perpetual Convergence
+
+    The basis trade represents one of the most institutionally favored strategies in crypto markets, combining spot or ETF positions with short perpetual futures to capture funding rate premiums while maintaining market-neutral exposure (meaning the position has no net directional bet on whether prices rise or fall). When perpetuals trade above spot (as they typically do during bull markets when leveraged longs dominate), traders can buy Bitcoin spot at $100,000 and simultaneously short BTC perpetuals at an effective premium, collecting funding payments indefinitely.
+
+    The mechanics create a synthetic fixed-income instrument with crypto-native yields. If BTC perpetuals are paying \+0.10% funding every eight hours (approximately 110% annualized), a basis trader deploys $10 million to buy spot Bitcoin and shorts an equivalent $10 million notional in perpetuals. The position is delta-neutral: if Bitcoin rises to $110,000, the spot gains $1 million while the short perpetual loses $1 million, with the only net effect being the continued collection of funding payments.
+
+    The strategy's institutional appeal stems from its combination of theoretical simplicity and attractive risk-adjusted returns. Traditional fixed-income yields in 2024-2025 range from 4-5% for U.S. Treasuries to 6-8% for investment-grade corporate debt. Crypto basis trades frequently offer double or triple these returns with minimal directional exposure. This has attracted hedge funds, family offices, and treasury operations seeking yield enhancement.
+
+    Several structural factors explain why the opportunity persists. Limited arbitrage capital means insufficient institutional capital is allocated to crypto basis trades to fully eliminate the premium. Regulatory barriers prevent many traditional finance participants from accessing crypto derivatives markets. Retail traders create persistent imbalanced positioning through their preference for leveraged long positions. Borrow constraints affect the ability to scale: shorting perpetuals at scale requires significant collateral. Finally, venue-specific liquidity fragmentation means opportunities may exist on one exchange but not another.
+
+    The risks, while different from directional trading, remain material. Funding rate reversals pose the primary threat: what yields 100% annualized can flip to \-50% if market sentiment shifts and shorts begin outnumbering longs. Position unwinding becomes difficult during these reversals because the trader must simultaneously sell spot and buy back perpetual shorts.
+
+    Liquidation risk exists despite the hedged structure. Exchanges evaluate margin on the perpetual position independently from external spot holdings unless using portfolio margining features. A 50% Bitcoin rally can liquidate short perpetuals if leverage is too high, even though the trader holds offsetting spot. This forces basis traders to use conservative leverage, which reduces capital efficiency and overall returns.
+
+    Counterparty and custody risk layers additional exposure. The spot Bitcoin must be held somewhere (exchange, ETF, or custody), while the short perpetual creates exposure to the derivatives venue. A failure at either point can convert a hedged position into naked directional exposure.
+
+    Opportunity cost represents a subtle but important consideration. Capital deployed to basis trades earns funding rate yields but forgoes potential appreciation if Bitcoin enters a strong bull run. A trader collecting 80% annualized funding misses out if Bitcoin doubles in six months, a 100% return that dwarfs the carry income.
+
+    ### Strategic Selection and Risk Integration
+
+    These five strategies represent a spectrum from simple to sophisticated, with directional exposure requiring only a market view while cross-venue funding arbitrage demands operational infrastructure across multiple platforms. The choice among them depends on capital available, risk tolerance, technical capabilities, and market outlook.
+
+    Directional trading suits participants with strong conviction and acceptance of volatility. Hedging serves holders of spot positions who need temporary protection without liquidating underlying assets. Pair trading appeals to traders with relative value insights and the discipline to manage multi-leg exposures. Funding arbitrage attracts operationally sophisticated participants with capital distributed across venues. Basis trades work for institutions seeking yield with minimal directional exposure.
+
+    The strategies are not mutually exclusive. A sophisticated participant might run a core basis trade to generate steady yields, overlay directional positions during high-conviction setups, and opportunistically capture funding arbitrage when cross-venue spreads widen. The key is understanding how each strategy's risk profile interacts with the others, particularly around liquidation mechanics, funding rate exposure, and counterparty risk.
+
+    The execution requirements examined in Section III and risk management frameworks detailed in Section V apply across all these strategies, but their relative importance shifts. Directional traders care intensely about order execution and slippage; funding arbitrageurs prioritize operational reliability and venue connectivity; basis traders focus on custody risk and funding rate monitoring.
+
+=== "KO"
+
+    Section I은 펀딩 비율이 무기한 선물 가격을 현물에 고정하는 방법과 마크 프라이스가 조작으로부터 보호하는 방법을 포함하여 무기한 선물의 메커니즘을 소개했다. 그러나 이러한 기능은 실용적인 거래 전략을 가능하게 하는 한에서만 중요하다. 이 섹션은 시장 참여자가 무기한 선물을 배포하는 다섯 가지 주요 방법을 살펴보는데, 간단한 방향성 베팅부터 정교한 차익거래 구조까지이다. 각 전략은 무기한 선물 설계의 다른 측면을 활용하면서 뚜렷한 리스크 프로필을 도입한다.
+
+    ### 방향성 노출: 핵심 사용 사례(Directional Exposure: The Core Use Case)
+
+    무기한 선물의 가장 간단한 적용은 만기일이나 롤링 계약을 관리하지 않고 레버리지 방향성 포지션을 취하는 것이다. 비트코인에 대해 강세인 트레이더는 $10,000의 자본을 10배 레버리지로 배포하여 $100,000 포지션을 제어할 수 있으며, 비례적으로 확대된 손실을 받아들이면서 잠재적 수익을 증폭시킨다. 이 자본 효율성은 암호화폐 파생상품 시장에서 무기한 선물의 지배를 설명한다.
+
+    메커니즘은 간단하다: 가격이 상승할 것으로 예상하면 롱, 하락할 것으로 예상하면 숏. 레버리지 배수는 기회와 리스크를 모두 결정한다. 10배 레버리지에서 10% 유리한 가격 변동은 초기 자본을 두 배로 만드는 반면, 10% 불리한 변동은 청산을 유발한다. 이는 포지션 크기 조정을 중요하게 만든다.
+
+    펀딩 비율은 방향성 거래에 시간 차원을 추가한다. 상승하는 시장의 롱 포지션은 8시간마다 0.05%를 지불할 수 있으며, 이는 연간 약 55%로 환산된다. 거래 논리가 빠르게 전개되면 펀딩 비용은 미미하다. 그러나 지속적인 펀딩을 지불하면서 몇 달 동안 보유한 포지션은 수익이 상당히 침식될 수 있다. 성공적인 방향성 트레이더는 가격 행동과 함께 펀딩 비율을 모니터링하며, 때로는 펀딩이 재설정될 때 나중에 재진입하기 위해 승리 포지션을 종료하거나, 지속적인 지불을 피하기 위해 만기 선물로 전환한다.
+
+    전략은 진입 타이밍, 포지션 크기 조정, 종료 기준에 대한 규율을 요구한다. 전문 트레이더는 일반적으로 소매 참여자보다 낮은 레버리지를 사용하는데, 이는 이론적인 상승을 최대화하는 것보다 생존이 더 중요하기 때문이다. 5배 레버리지 포지션은 청산 전에 15-20% 불리한 변동을 견딜 수 있다; 20배 포지션은 단지 4-5% 변동 후에 청산된다. 변동성이 큰 암호화폐 시장에서 그 차이는 종종 추세를 포착하는 트레이더와 최악의 순간에 중단되는 트레이더를 구분한다.
+
+    ### 헤징: 기존 노출 보호(Hedging: Protecting Existing Exposure)
+
+    무기한 선물은 만기 선물 계약을 롤링하는 오버헤드를 요구하지 않고 현물 가격을 밀접하게 추적하고 무기한 보유 기간을 제공하기 때문에 헤징 도구로 탁월하다. 이는 불리한 가격 변동으로부터 기존 현물 포지션을 보호하는 데 이상적이다.
+
+    가장 일반적인 헤징 적용은 특정 암호화폐 시장 마찰을 해결한다. 토큰이 언스테이킹 큐(때로는 몇 주 동안)에 잠겨 있을 때, 보유자는 종료 능력 없이 방향성 가격 리스크에 직면한다. 350만 달러 가치의 1,000 ETH를 언스테이킹하는 검증자는 현재 가격을 고정하기 위해 1,000 ETH 무기한 선물을 숏할 수 있으며, 출금 기간 동안 하방 노출을 제거한다. 헤지는 지배적인 펀딩 비율이 무엇이든 비용이 들지만, 이는 종종 시장 하락으로 인한 잠재적 손실보다 저렴하다.
+
+    에어드롭 파밍(Airdrop Farming)은 유사한 역학을 만든다. 프로토콜은 종종 에어드롭 자격을 얻기 위해 지정된 기간 동안 토큰 보유를 요구하는데, 이 기간 동안 보유자는 자격을 상실하지 않고는 팔 수 없다. $500,000의 토큰을 보유한 참가자는 무기한 선물에서 동등한 명목 가치를 숏할 수 있으며, 에어드롭 자격을 유지하면서 가격 리스크를 중립화한다. 헤지 효과는 펀딩 비용이 예상 에어드롭 가치보다 낮게 유지되는지에 달려 있다.
+
+    부분 헤징은 방향성 노출을 줄이되 제거하지 않으려는 트레이더에게 또 다른 적용을 제공한다. 현물 비트코인 $1,000만 롱 포트폴리오 관리자는 무기한 선물에서 $300만 명목을 숏할 수 있으며, 하락에 대한 쿠션을 제공하면서 상승 참여를 유지하는 $700만의 순 롱 포지션을 만든다. 이 접근법은 기초 현물 포지션을 방해하지 않고 동적 리스크 조정을 허용한다.
+
+    리스크는 비대칭적이다. 완벽한 헤지는 실제로 드물다. 베이시스 리스크(무기한 선물과 현물 가격이 일시적으로 발산할 가능성)는 변동성이 큰 기간 동안 양측에서 손실을 생성할 수 있다. 펀딩 비율은 극적으로 흔들릴 수 있으며, 예상된 작은 캐리 비용을 실질적인 비용으로 전환한다. 그리고 청산 리스크는 숏 무기한 선물 레그에 남아 있는데, 포트폴리오 마진을 사용하지 않는 한 거래소가 외부 현물 보유와 독립적으로 무기한 선물 포지션에 대한 마진을 평가하기 때문이다.
+
+    ### 페어 트레이딩: 암호화폐의 상대 가치(Pair Trading: Relative Value in Crypto)
+
+    페어 트레이딩은 상관된 자산 간의 상대적 가격 오류를 활용하여 상쇄 롱 및 숏 포지션을 동시에 취한다. 전략은 절대 방향성 변동이 아닌 가격 관계의 수렴 또는 발산에 베팅한다. 암호화폐 시장에서 고전적인 구조는 비트코인을 롱하면서 알트코인 바스켓을 숏하는 것을 포함하며, 전체 시장 방향과 관계없이 BTC가 아웃퍼폼할 것이라는 견해를 표현한다.
+
+    메커니즘은 신중한 구성을 요구한다. 트레이더는 BTC 무기한 선물에서 $100만 롱 포지션을 설정하는 동시에 ETH, SOL 및 기타 대형 알트코인의 가중 바스켓에서 $100만 명목을 숏할 수 있다. 비트코인이 20% 상승하는 동안 알트코인 바스켓이 10%만 상승하면, 거래는 상대적 아웃퍼포먼스로부터 이익을 얻는다. 거래는 또한 하락 시장에서도 이익을 얻을 수 있다: 비트코인이 10% 하락하는 동안 알트코인이 20% 하락하면, 상대적 관계는 여전히 롱 BTC 레그를 선호한다.
+
+    자산 선택이 성공 또는 실패를 결정한다. 쌍은 일부 근본적인 관계(상관된 가격 변동, 공유된 시장 역학 또는 명확한 상대 가치 단절)를 가져야 하며, 그렇지 않으면 거래는 두 개의 독립적인 방향성 베팅으로 변질된다. 비트코인 대 알트코인은 알트코인이 랠리와 매도 모두에서 비트코인보다 더 극적으로 움직이는 경향이 있기 때문에 작동하며, 시장이 상승할 때 더 빠르게 상승하고 시장이 하락할 때 더 심하게 하락한다.
+
+    전략은 단순 방향성 노출을 넘어 리스크를 도입한다. ADL은 양 레그가 극단적인 시장 변동 중에 강제로 감소될 수 있는 레버리지 포지션이기 때문에 중요해지며, 잠재적으로 트레이더를 헤지되지 않은 노출로 남긴다. 심각한 알트코인 붕괴가 숏 포지션에서 ADL을 유발하면, 트레이더는 롱 비트코인 레그만으로 노출된 채 남겨진다. 이는 포지션 크기 조정을 중요하게 만든다.
+
+    숏 스퀴즈(Short Squeeze)는 또 다른 비대칭 리스크를 제시한다. 롱 포지션은 0까지만 하락할 수 있지만, 숏 포지션은 가격이 급등하면 이론적으로 무한한 손실에 직면한다. 주요 파트너십 발표로 모멘텀을 잡는 알트코인은 숏을 격렬하게 스퀴즈할 수 있다. 2021년 강세장 동안 수많은 알트코인이 50-100% 단일 일 랠리를 경험하여 숏 셀러를 청산했다.
+
+    펀딩 비율 역학은 경제를 복잡하게 한다. 페어 트레이드는 한 레그에서 양의 펀딩을, 다른 레그에서 음의 펀딩을 가질 수 있거나, 양 레그 모두 지속적으로 지불하여 수익에 대한 꾸준한 드레인을 만들 수 있다. 강세장 동안 롱 BTC / 숏 알트코인 페어는 종종 트레이더가 양측에서 펀딩을 지불하는 것을 본다. 이 꾸준한 출혈은 상대 가치 논리의 예상 수렴과 비교되어야 한다.
+
+    ### 펀딩 차익거래: 거래소 간 기회(Funding Arbitrage: Cross-Venue Opportunities)
+
+    펀딩 차익거래는 펀딩 자체의 존재가 아닌 거래소 간 펀딩 비율의 차이를 활용한다. 한 거래소가 BTC 무기한 선물에서 롱에게 8시간마다 0.10%를 지불하는 반면 다른 거래소가 0.05%만 지불하면, 차익거래자는 더 높은 펀딩 거래소에서 숏하고 더 낮은 펀딩 거래소에서 롱하여, 델타 중립 장부(Delta-Neutral Book)에서 0.05% 스프레드를 고정할 수 있다(펀딩 메커니즘은 Section I 참조).
+
+    전략은 기만적으로 간단해 보이지만 정교한 실행을 요구한다. 자금을 이전하면 종종 스프레드를 제거하는 지연이 도입되므로 자본은 여러 거래소에 미리 배치되어야 한다. 성공적인 펀딩 차익거래자는 5~10개의 주요 거래소에 운용 자본을 유지하며, 지속적으로 비율 차이를 모니터링하고 재고를 리밸런싱한다.
+
+    비트코인 및 이더리움과 같은 주요 자산의 경우, 전략은 상대적으로 제한된 리스크를 수반한다. 확립된 쌍의 펀딩 비율은 깊은 유동성과 활발한 차익거래로 인해 거래소 간에 강하게 상관되며, 무기한 선물 가격은 현물을 밀접하게 추적한다. 주요 리스크는 운영적이다: 포지션 종료를 방지하는 거래소 정지, 마진 요구 사항의 갑작스러운 변화, 또는 자본을 가두는 출금 제한.
+
+    리스크 프로필은 새롭거나 유동성이 낮은 토큰의 경우 급격히 악화된다. 펀딩 비율은 포지셔닝이 이동함에 따라 격렬하게 흔들릴 수 있다(+2%에서 -2%로 몇 시간 내). 가격 변동성은 포지션이 이론적으로 헤지되어 있음에도 불구하고 양 레그에서 청산 리스크를 증가시킨다; 플래시 크래시 중에 마크 프라이스가 거래소 간에 발산할 수 있으며, 한 거래소에서 청산을 유발하는 동안 다른 거래소는 영향을 받지 않은 상태로 유지된다.
+
+    숏 레그는 특별한 우려를 도입한다. 유동성이 낮은 알트코인 무기한 선물을 숏하는 것은 토큰이 갑작스러운 모멘텀을 잡으면 차익거래자를 숏 스퀴즈 리스크에 노출시킨다. 놀라운 프로토콜 발표나 거래소 상장은 가격을 몇 분 안에 30-50% 급등시킬 수 있으며, 헤지가 조정되기 전에 숏을 청산한다.
+
+    펀딩 비율 변동성은 또한 포지션 유지에 영향을 미친다. 매력적인 0.30% 일일 스프레드로 시작된 것이 급격한 시장 변동 후 -0.50%로 전환될 수 있으며, 포지션이 적극적으로 관리되지 않으면 이전 이익을 초과하는 손실을 생성한다. 거래소 자체는 서로 다른 펀딩 상한선, 계산 방법론, 결제 빈도를 통해 불안정성에 기여한다.
+
+    ### 베이시스 거래: 현물 및 무기한 선물 수렴(Basis Trade: Spot and Perpetual Convergence)
+
+    베이시스 거래는 암호화폐 시장에서 가장 기관적으로 선호되는 전략 중 하나를 나타내며, 현물 또는 ETF 포지션을 숏 무기한 선물과 결합하여 시장 중립 노출(포지션이 가격이 상승하든 하락하든 순 방향성 베팅을 하지 않는다는 의미)을 유지하면서 펀딩 비율 프리미엄을 포착한다. 무기한 선물이 현물 이상으로 거래될 때(강세장 동안 레버리지 롱이 지배할 때 일반적으로), 트레이더는 $100,000에 비트코인 현물을 매수하고 동시에 효과적인 프리미엄으로 BTC 무기한 선물을 숏하여, 무기한으로 펀딩 지불을 수집할 수 있다.
+
+    메커니즘은 암호화폐 네이티브 수익률을 가진 합성 고정 수입 도구를 만든다. BTC 무기한 선물이 8시간마다 +0.10% 펀딩을 지불하면(연간 약 110%), 베이시스 트레이더는 $1,000만을 배포하여 현물 비트코인을 매수하고 무기한 선물에서 동등한 $1,000만 명목을 숏한다. 포지션은 델타 중립이다: 비트코인이 $110,000로 상승하면, 현물은 $100만을 얻는 반면 숏 무기한 선물은 $100만을 잃으며, 유일한 순 효과는 펀딩 지불의 지속적인 수집이다.
+
+    전략의 기관 호소는 이론적 단순성과 매력적인 리스크 조정 수익의 조합에서 비롯된다. 2024-2025년의 전통적인 고정 수입 수익률은 미국 국채의 4-5%에서 투자 등급 회사채의 6-8%까지 다양하다. 암호화폐 베이시스 거래는 최소한의 방향성 노출로 종종 이러한 수익의 2배 또는 3배를 제공한다. 이는 수익률 향상을 추구하는 헤지 펀드, 패밀리 오피스, 재무 운영을 유치했다.
+
+    여러 구조적 요인이 기회가 지속되는 이유를 설명한다. 제한된 차익거래 자본은 프리미엄을 완전히 제거하기에 불충분한 기관 자본이 암호화폐 베이시스 거래에 할당되는 것을 의미한다. 규제 장벽은 많은 전통적인 금융 참여자가 암호화폐 파생상품 시장에 접근하는 것을 방지한다. 소매 트레이더는 레버리지 롱 포지션에 대한 선호를 통해 지속적인 불균형 포지셔닝을 생성한다. 차입 제약은 규모로 확장하는 능력에 영향을 미친다: 규모로 무기한 선물을 숏하는 것은 상당한 담보를 요구한다. 마지막으로, 거래소별 유동성 단편화는 기회가 한 거래소에 존재할 수 있지만 다른 거래소에는 없을 수 있음을 의미한다.
+
+    리스크는 방향성 거래와 다르지만 여전히 실질적이다. 펀딩 비율 반전은 주요 위협을 제기한다: 연간 100%를 수익내는 것이 시장 심리가 변하고 숏이 롱을 능가하기 시작하면 -50%로 전환될 수 있다. 포지션 풀기는 이러한 반전 중에 어려워지는데, 트레이더가 동시에 현물을 팔고 무기한 선물 숏을 매수해야 하기 때문이다.
+
+    청산 리스크는 헤지된 구조에도 불구하고 존재한다. 거래소는 포트폴리오 마진 기능을 사용하지 않는 한 외부 현물 보유와 독립적으로 무기한 선물 포지션에 대한 마진을 평가한다. 50% 비트코인 랠리는 레버리지가 너무 높으면 숏 무기한 선물을 청산할 수 있는데, 트레이더가 상쇄 현물을 보유하고 있더라도. 이는 베이시스 트레이더가 보수적인 레버리지를 사용하도록 강제하며, 이는 자본 효율성과 전체 수익을 감소시킨다.
+
+    거래상대방 및 보관 리스크는 추가 노출을 계층화한다. 현물 비트코인은 어딘가(거래소, ETF 또는 보관)에 보유되어야 하는 반면, 숏 무기한 선물은 파생상품 거래소에 대한 노출을 생성한다. 어느 지점에서의 실패는 헤지된 포지션을 네이키드 방향성 노출로 전환할 수 있다.
+
+    기회 비용은 미묘하지만 중요한 고려사항을 나타낸다. 베이시스 거래에 배포된 자본은 펀딩 비율 수익률을 얻지만 비트코인이 강한 강세장에 진입하면 잠재적 가치 상승을 포기한다. 6개월에 비트코인이 두 배가 되면 연간 80% 펀딩을 수집하는 트레이더는 캐리 소득을 왜소하게 만드는 100% 수익을 놓친다.
+
+    ### 전략 선택 및 리스크 통합(Strategic Selection and Risk Integration)
+
+    이 다섯 가지 전략은 간단한 것에서 정교한 것까지의 스펙트럼을 나타내며, 방향성 노출은 시장 견해만 요구하는 반면 거래소 간 펀딩 차익거래는 여러 플랫폼에 걸친 운영 인프라를 요구한다. 그들 사이의 선택은 사용 가능한 자본, 리스크 허용도, 기술 능력, 시장 전망에 달려 있다.
+
+    방향성 거래는 강한 확신과 변동성 수용을 가진 참가자에게 적합하다. 헤징은 기초 자산을 청산하지 않고 일시적인 보호가 필요한 현물 포지션 보유자에게 서비스를 제공한다. 페어 트레이딩은 상대 가치 통찰력과 다중 레그 노출을 관리하는 규율을 가진 트레이더에게 호소한다. 펀딩 차익거래는 거래소에 분산된 자본을 가진 운영적으로 정교한 참가자를 유치한다. 베이시스 거래는 최소한의 방향성 노출로 수익률을 추구하는 기관에게 작동한다.
+
+    전략은 상호 배타적이지 않다. 정교한 참가자는 꾸준한 수익률을 생성하기 위해 핵심 베이시스 거래를 실행하고, 높은 확신 설정 중에 방향성 포지션을 오버레이하고, 거래소 간 스프레드가 확대될 때 기회적으로 펀딩 차익거래를 포착할 수 있다. 핵심은 각 전략의 리스크 프로필이 다른 전략과 어떻게 상호작용하는지, 특히 청산 메커니즘, 펀딩 비율 노출, 거래상대방 리스크 주변에서 이해하는 것이다.
+
+    Section III에서 검토된 실행 요구 사항과 Section V에서 상세히 설명된 리스크 관리 프레임워크는 이러한 모든 전략에 걸쳐 적용되지만, 상대적 중요성은 변한다. 방향성 트레이더는 주문 실행과 슬리피지에 강렬하게 관심을 갖는다; 펀딩 차익거래자는 운영 신뢰성과 거래소 연결성을 우선시한다; 베이시스 트레이더는 보관 리스크와 펀딩 비율 모니터링에 초점을 맞춘다.
+
+## Section III: Order Types and Execution
+
+=== "EN"
+
+    We've examined the products that define crypto markets, the strategic applications of perpetual futures, and the institutional pathways that provide access to them. But understanding what's available matters little without knowing how to interact with these markets efficiently. Execution quality determines whether a trading strategy succeeds or fails: the difference between paying $100,000 or $100,250 for a Bitcoin position can cascade across an entire portfolio. This section explores the mechanics of order books, the strategic choices embedded in different order types, and the latency considerations that separate successful execution from costly slippage.
+
+    ### Order Book Dynamics
+
+    An order book reveals the supply and demand structure of a market by displaying resting limit orders ranked by price and size. The best bid and offer (BBO) represents the highest buy order and lowest sell order, with their difference forming the bid-ask spread, a key measure of market liquidity and trading costs.
+
+    Depth measures the quantity of resting orders at or near the top of book. "Depth at 10 basis points" counts all size within ±0.10% of the midpoint. However, quantity alone doesn't determine liquidity quality since order stability and cancel/replace rates significantly impact whether displayed liquidity will be available when needed.
+
+    Heatmap visualizations show where large orders rest over time, helping identify potential support and resistance levels. However, these require careful interpretation as displayed liquidity can be pulled before prices arrive, and high order-to-trade ratios mean many displayed orders never actually execute.
+
+    ### Order Types and Execution Strategy
+
+    The choice of order type fundamentally determines how a trader's intent interacts with available liquidity. Market orders execute immediately against the best available quotes, paying the bid-ask spread and taker fees in exchange for immediate execution. Market orders are appropriate when timing is more important than price precision.
+
+    Limit orders offer price control by specifying exact execution levels, but risk non-execution if the market doesn't reach the specified price. Limit orders typically earn maker rebates but require liquidity to arrive and match resting orders. This dynamic creates a fundamental trade-off in crypto markets between speed and cost.
+
+    Makers add liquidity by placing limit orders that rest in the order book, while takers remove liquidity by executing market orders or aggressive limit orders that cross the spread. Most CEXs use maker-taker pricing where takers pay higher fees for immediacy, while makers pay lower fees or even earn rebates for adding resting liquidity.
+
+    Maker-taker pricing encourages deeper books and tighter spreads, improving execution quality and helping venues attract more users. Professional market makers often qualify for special fee tiers or bespoke agreements with superior maker rates and volume-based rebates in exchange for quoting obligations (e.g., minimum displayed size, maximum spreads, uptime SLAs).
+
+    Advanced order types include stop-loss orders that trigger market orders when prices move against the position holder, and take-profit orders that capture gains at predetermined levels. These orders help automate risk management but can gap through intended levels during volatile periods or thin liquidity conditions.
+
+    Understanding time-in-force instructions is crucial: Good-Till-Canceled (GTC) orders rest until filled or manually canceled, Immediate-or-Cancel (IOC) orders fill what they can immediately then cancel the rest, and Fill-or-Kill (FOK) orders execute completely or not at all.
+
+    ### Latency
+
+    Latency, the end-to-end delay from decision to trade acknowledgment, shapes market dynamics well beyond high-frequency trading. In CEX environments, latency encompasses network transmission, gateway processing, risk checks, and matching engine cycles.
+
+    This matters in practice: Bitcoin’s best bid is $100,000 with 10 BTC available, and news breaks that could drive prices higher. A trader with 10 ms latency can place a buy order and secure that liquidity before the market moves. A trader with 100 ms latency arrives to find the best bid is now $100,020, having missed the opportunity entirely. That 90-millisecond difference can be the line between a profitable trade and a costly miss.
+
+    To minimize this, traders often place their servers within the same physical data center as an exchange’s systems (co-location) to reduce round-trip time and achieve faster acknowledgments. Ultra-low latency lets automated strategies react in fractions of a second, improving fill probability and reducing slippage during fast markets.
+
+    ### Advanced Execution Techniques
+
+    An order to buy $200 million in Bitcoin shows an expected price of $100,000. By the time it executes, the average paid price is $100,250, costing an extra $500,000. This gap between expectation and reality is slippage, and understanding its sources can save significant money over time. Market impact happens when large orders walk through multiple price levels in the order book.
+
+    Slippage mitigation involves order slicing algorithms (TWAP/VWAP/Participation of Volume), using passive limit orders where feasible, trading during high-liquidity periods, and avoiding predictable clustering around key times or price levels.
+
+    Beyond basic market and limit orders lies a sophisticated toolkit for managing large positions and complex strategies. These techniques become essential when trading size starts to impact market prices or when execution must occur over extended time periods.
+
+    Partial fills occur when limit orders execute in pieces as opposing liquidity arrives. The average price becomes size-weighted across all fills, making execution timing crucial during volatile periods. For example, a 10 BTC buy order at $100,000 might fill 3 BTC immediately, then 4 BTC an hour later at $100,050, and the final 3 BTC the next day at $99,980, resulting in a volume-weighted average price of $100,014.
+
+    Iceberg orders display only a portion of the total size, refreshing as the displayed quantity trades. For instance, a 100 BTC sell order structured as an iceberg shows only 5 BTC at a time. As each 5 BTC portion trades, the system automatically refreshes with another 5 BTC at the same price level. This reduces market signaling by preventing other traders from seeing the full size, at the cost of potentially slower fills and the risk that prices move away from that level.
+
+    Post-only orders ensure traders add liquidity and avoid taker fees by canceling if they would cross the spread. These orders are particularly valuable for market makers and systematic strategies where fee structures significantly impact profitability. If a trader places a post-only buy order at $100,000 when the best offer is $100,001, it will rest in the order book. But if the best offer drops to $99,999 while the order is being processed, the system will cancel the order rather than execute it as a taker.
+
+    Time-weighted strategies like TWAP (Time-Weighted Average Price) and VWAP (Volume-Weighted Average Price) spread large orders across time to minimize market impact. A TWAP algorithm might execute a 1,000 BTC purchase as 100 BTC every hour over 10 hours, regardless of market conditions. VWAP algorithms adjust execution pace based on historical volume patterns, executing more aggressively during typically high-volume periods.
+
+    These execution techniques (limit orders, icebergs, post-only orders, and time-weighted strategies) all share a fundamental dependency: they require liquidity to already exist in the order book. When you place a limit order at $100,000, you're betting that a counterparty will arrive to take the other side. When you slice a large order across time, you're relying on continuous two-sided markets. This liquidity doesn't appear spontaneously. It comes from specialized firms whose entire business model centers on maintaining tight spreads and deep order books across all market conditions.
+
+=== "KO"
+
+    우리는 암호화폐 시장을 정의하는 상품, 무기한 선물의 전략적 적용, 그리고 그들에 대한 접근을 제공하는 기관 경로를 살펴봤다. 그러나 무엇이 사용 가능한지 이해하는 것은 이러한 시장과 효율적으로 상호작용하는 방법을 아는 것 없이는 거의 중요하지 않다. 실행 품질은 거래 전략이 성공하는지 실패하는지를 결정한다: 비트코인 포지션에 대해 $100,000 또는 $100,250를 지불하는 것 사이의 차이는 전체 포트폴리오에 걸쳐 연쇄적으로 작용할 수 있다. 이 섹션은 호가창의 메커니즘, 서로 다른 주문 유형에 내장된 전략적 선택, 성공적인 실행과 비용이 많이 드는 슬리피지를 구분하는 지연시간 고려사항을 탐구한다.
+
+    ### 호가창 역학(Order Book Dynamics)
+
+    호가창은 가격과 크기별로 순위가 매겨진 대기 중인 지정가 주문을 표시하여 시장의 공급 및 수요 구조를 드러낸다. 최고 호가 및 오퍼(Best Bid and Offer, BBO)는 가장 높은 매수 주문과 가장 낮은 매도 주문을 나타내며, 그들의 차이는 호가 스프레드(Bid-Ask Spread)를 형성하는데, 이는 시장 유동성과 거래 비용의 핵심 척도다.
+
+    깊이(Depth)는 장부 상단에 또는 그 근처의 대기 주문 수량을 측정한다. "10 베이시스 포인트에서의 깊이"는 중간 가격의 ±0.10% 내의 모든 크기를 계산한다. 그러나 수량만으로는 유동성 품질을 결정하지 않는데, 주문 안정성과 취소/교체 비율이 필요할 때 표시된 유동성이 사용 가능한지에 크게 영향을 미치기 때문이다.
+
+    히트맵 시각화는 시간이 지남에 따라 큰 주문이 어디에 있는지 보여주며, 잠재적인 지지 및 저항 수준을 식별하는 데 도움이 된다. 그러나 가격이 도달하기 전에 표시된 유동성이 철회될 수 있고, 높은 주문 대 거래 비율은 많은 표시된 주문이 실제로 실행되지 않는다는 것을 의미하므로 신중한 해석이 필요하다.
+
+    ### 주문 유형 및 실행 전략(Order Types and Execution Strategy)
+
+    주문 유형의 선택은 트레이더의 의도가 사용 가능한 유동성과 어떻게 상호작용하는지를 근본적으로 결정한다. 시장가 주문(Market Order)은 즉각적인 실행의 대가로 호가 스프레드와 테이커(Taker) 수수료를 지불하며, 최상의 사용 가능한 견적에 대해 즉시 실행된다. 시장가 주문은 가격 정밀도보다 타이밍이 더 중요할 때 적절하다.
+
+    지정가 주문(Limit Order)은 정확한 실행 수준을 지정하여 가격 제어를 제공하지만, 시장이 지정된 가격에 도달하지 않으면 미실행 리스크가 있다. 지정가 주문은 일반적으로 메이커(Maker) 리베이트를 얻지만 유동성이 도착하여 대기 중인 주문과 일치할 것을 요구한다. 이러한 역학은 암호화폐 시장에서 속도와 비용 간의 근본적인 트레이드오프를 생성한다.
+
+    메이커는 호가창에 대기하는 지정가 주문을 배치하여 유동성을 추가하는 반면, 테이커는 스프레드를 교차하는 시장가 주문 또는 공격적인 지정가 주문을 실행하여 유동성을 제거한다. 대부분의 CEX는 테이커가 즉시성에 대해 더 높은 수수료를 지불하는 반면, 메이커는 대기 유동성을 추가하기 위해 더 낮은 수수료를 지불하거나 심지어 리베이트를 받는 메이커-테이커 가격 책정을 사용한다.
+
+    메이커-테이커 가격 책정은 더 깊은 장부와 더 좁은 스프레드를 장려하여, 실행 품질을 개선하고 거래소가 더 많은 사용자를 유치하는 데 도움이 된다. 전문 마켓 메이커는 종종 견적 의무(예: 최소 표시 크기, 최대 스프레드, 가동 시간 SLA)의 대가로 우수한 메이커 비율과 거래량 기반 리베이트가 있는 특별 수수료 등급 또는 맞춤형 계약 자격을 얻는다.
+
+    고급 주문 유형에는 가격이 포지션 보유자에 반대로 움직일 때 시장가 주문을 유발하는 손절 주문(Stop-Loss Order)과 미리 정해진 수준에서 이익을 포착하는 이익 실현 주문(Take-Profit Order)이 포함된다. 이러한 주문은 리스크 관리를 자동화하는 데 도움이 되지만 변동성이 큰 기간이나 유동성이 얇은 조건 중에 의도된 수준을 넘어 갭을 만들 수 있다.
+
+    유효 시간(Time-in-Force) 지시를 이해하는 것이 중요하다: 취소될 때까지 유효(Good-Till-Canceled, GTC) 주문은 채워지거나 수동으로 취소될 때까지 대기하고, 즉시 또는 취소(Immediate-or-Cancel, IOC) 주문은 즉시 채울 수 있는 것을 채운 다음 나머지를 취소하며, 전부 아니면 전무(Fill-or-Kill, FOK) 주문은 완전히 실행되거나 전혀 실행되지 않는다.
+
+    ### 지연시간(Latency)
+
+    결정에서 거래 승인까지의 종단 간 지연인 지연시간은 고빈도 거래를 훨씬 넘어 시장 역학을 형성한다. CEX 환경에서 지연시간은 네트워크 전송, 게이트웨이 처리, 리스크 검사, 매칭 엔진 사이클을 포함한다.
+
+    이것이 실제로 중요한 이유: 비트코인의 최고 호가는 10 BTC가 사용 가능한 $100,000이고, 가격을 더 높게 밀 수 있는 뉴스가 터진다. 10ms 지연시간을 가진 트레이더는 시장이 움직이기 전에 매수 주문을 배치하고 해당 유동성을 확보할 수 있다. 100ms 지연시간을 가진 트레이더는 최고 호가가 이제 $100,020임을 발견하며 도착하여, 기회를 완전히 놓친다. 그 90밀리초 차이는 수익성 있는 거래와 비용이 많이 드는 미스 사이의 경계가 될 수 있다.
+
+    이를 최소화하기 위해, 트레이더는 종종 서버를 거래소 시스템과 동일한 물리적 데이터 센터 내에 배치(코로케이션(Co-Location))하여 왕복 시간을 줄이고 더 빠른 승인을 달성한다. 초저 지연시간은 자동화된 전략이 몇 분의 1초 안에 반응할 수 있게 하여, 빠른 시장 중 채움 확률을 개선하고 슬리피지를 줄인다.
+
+    ### 고급 실행 기법(Advanced Execution Techniques)
+
+    $2억의 비트코인 매수 주문은 $100,000의 예상 가격을 보여준다. 실행될 때까지 지불된 평균 가격은 $100,250로, 추가 $500,000의 비용이 든다. 기대와 현실 사이의 이 간격은 슬리피지이며, 그 원천을 이해하는 것은 시간이 지남에 따라 상당한 돈을 절약할 수 있다. 시장 영향(Market Impact)은 큰 주문이 호가창에서 여러 가격 수준을 걸을 때 발생한다.
+
+    슬리피지 완화에는 주문 슬라이싱 알고리즘(TWAP/VWAP/참여율(Participation of Volume)), 가능한 경우 수동 지정가 주문 사용, 높은 유동성 기간 동안 거래, 주요 시간이나 가격 수준 주변의 예측 가능한 클러스터링 회피가 포함된다.
+
+    기본 시장가 및 지정가 주문을 넘어 큰 포지션과 복잡한 전략을 관리하기 위한 정교한 툴킷이 있다. 이러한 기법은 거래 크기가 시장 가격에 영향을 미치기 시작하거나 실행이 연장된 기간에 걸쳐 발생해야 할 때 필수적이 된다.
+
+    부분 채움(Partial Fill)은 반대 유동성이 도착함에 따라 지정가 주문이 조각으로 실행될 때 발생한다. 평균 가격은 모든 채움에 걸쳐 크기 가중이 되어, 변동성이 큰 기간 동안 실행 타이밍을 중요하게 만든다. 예를 들어, $100,000의 10 BTC 매수 주문은 즉시 3 BTC를 채울 수 있고, 그런 다음 한 시간 후에 $100,050에서 4 BTC, 다음 날 $99,980에서 최종 3 BTC를 채워, $100,014의 거래량 가중 평균 가격을 초래한다.
+
+    빙산 주문(Iceberg Order)은 총 크기의 일부만 표시하고, 표시된 수량이 거래됨에 따라 새로 고침한다. 예를 들어, 빙산으로 구조화된 100 BTC 매도 주문은 한 번에 5 BTC만 표시한다. 각 5 BTC 부분이 거래됨에 따라, 시스템은 동일한 가격 수준에서 자동으로 또 다른 5 BTC로 새로 고침한다. 이는 다른 트레이더가 전체 크기를 보는 것을 방지하여 시장 신호를 줄이지만, 잠재적으로 더 느린 채움의 비용과 가격이 해당 수준에서 멀어질 리스크가 있다.
+
+    포스트-온리 주문(Post-Only Order)은 트레이더가 유동성을 추가하고 스프레드를 교차하면 취소하여 테이커 수수료를 회피하도록 보장한다. 이러한 주문은 수수료 구조가 수익성에 크게 영향을 미치는 마켓 메이커 및 체계적 전략에 특히 가치가 있다. 트레이더가 최상의 오퍼가 $100,001일 때 $100,000에 포스트-온리 매수 주문을 배치하면, 호가창에 대기한다. 그러나 주문이 처리되는 동안 최상의 오퍼가 $99,999로 떨어지면, 시스템은 테이커로 실행하는 대신 주문을 취소한다.
+
+    TWAP(Time-Weighted Average Price) 및 VWAP(Volume-Weighted Average Price)와 같은 시간 가중 전략은 시장 영향을 최소화하기 위해 시간에 걸쳐 큰 주문을 분산시킨다. TWAP 알고리즘은 시장 조건과 관계없이 10시간 동안 시간당 100 BTC씩 1,000 BTC 구매를 실행할 수 있다. VWAP 알고리즘은 역사적 거래량 패턴을 기반으로 실행 속도를 조정하여, 일반적으로 높은 거래량 기간 동안 더 공격적으로 실행한다.
+
+    이러한 실행 기법(지정가 주문, 빙산, 포스트-온리 주문, 시간 가중 전략)은 모두 근본적인 의존성을 공유한다: 호가창에 이미 존재하는 유동성이 필요하다. $100,000에 지정가 주문을 배치할 때, 당신은 거래상대방이 반대편을 취하기 위해 도착할 것에 베팅하는 것이다. 시간에 걸쳐 큰 주문을 슬라이싱할 때, 지속적인 양면 시장에 의존하는 것이다. 이 유동성은 자발적으로 나타나지 않는다. 그것은 전체 비즈니스 모델이 모든 시장 조건에서 좁은 스프레드와 깊은 호가창을 유지하는 데 중심을 둔 전문 회사로부터 온다.
+
+## Section IV: Market Makers
+
+=== "EN"
+
+    Market makers are the infrastructure providers of crypto trading. While retail traders and institutions execute their strategies using the order types and execution techniques just examined, market makers operate on the other side: continuously quoting both buy and sell prices, capturing small spreads on each trade, and managing inventory risk across multiple venues. Their presence transforms fragmented order books into liquid markets where execution strategies can actually work. Without market makers, the limit orders would sit unfilled, the icebergs would never refresh, and TWAP algorithms would find no counterparties.
+
+    Behind the tight bid-ask spreads and deep order books that define efficient crypto markets stand these specialized trading firms that earn small, consistent profits while supplying the liquidity that keeps exchanges functioning. Their goal is typically to maintain near-flat risk exposure. By continuously quoting both buy and sell prices, they manage the delicate balance between inventory and risk while enabling smoother trading for everyone else.
+
+    ### Revenue Sources
+
+    Market makers draw revenue from a variety of sources, with the core income stream being spread capture. They capture spreads and, depending on the venue, may receive maker rebates. Note that maker rebates/negative fees can be a material PNL line on some venues, and fees can flip signs under volume tiers.
+
+    Market makers also profit from arbitrage, taking advantage of price discrepancies between different exchanges. Cross-exchange arbitrage exploits temporary price differences for the same asset across venues. When BTC trades at $100,000 on Binance but $100,050 on Bybit, an arbitrageur simultaneously buys on Binance and sells on Bybit, capturing the $50 spread (minus fees and transfer costs). The opportunity persists due to fragmented liquidity, varying market depths, differing fee structures across venues, and the time lag required to move capital and inventory between exchanges. Successful execution requires pre-positioned inventory on multiple platforms, fast execution infrastructure to capture fleeting opportunities, and careful management of withdrawal times and cross-chain transfer costs that can erode profits.
+
+    Market makers can also profit from basis when hedging inventory positions, capturing funding rate differentials (see Section I for funding mechanics) or basis spreads between spot and futures. Additional revenue streams include inventory lending and borrowing, as well as yield earned on holdings through staking rewards, treasury bills, or similar instruments.
+
+    #### OTC Desks
+
+    Many of the largest market makers also operate over-the-counter (OTC) trading desks, which facilitate large block trades away from public order books. When institutions, high-net-worth individuals, or treasury operations need to execute trades worth millions or tens of millions of dollars, executing on public exchanges would cause significant market impact and slippage. OTC desks solve this by acting as principals or agents. They either take the other side of the trade directly using their own inventory, or they find counterparties willing to trade at negotiated prices, all without revealing order size or intent to the broader market. This service is critical for large participants who need price certainty and discretion. OTC desks earn spreads on these transactions and can often hedge their exposure across multiple venues. The largest OTC operations are run by firms like Cumberland, Wintermute, GSR, and major exchanges like Coinbase Prime and Kraken. These firms leverage their market making infrastructure and deep liquidity relationships to serve institutional clients.
+
+    #### Token Options
+
+    Market makers can generate significant revenue by providing liquidity for projects with tokens through structured agreements. The most common structure of such deals is the loan/options model, where the protocol loans a few percent of their tokens. This functions economically as a call option on the loaned tokens, often structured with multiple tranches, strike prices, vesting cliffs, hedging permissions, and reporting requirements. The market maker and protocol agree on how many tokens and at what strike price the market maker can purchase them in the future.
+
+    For example, if a protocol provides 100,000 tokens at a $1 strike, the market maker can, after 12 months, either return the tokens or pay $100,000. This is often also done in tranches where there could be several strike prices and not just one. The market maker uses its own cash to create liquidity, taking on the risk of price fluctuations. If the token’s price falls, they can return the cheaper tokens; if it soars, they can opt to pay cash instead, potentially profiting significantly.
+
+    Importantly, since only the project's tokens are borrowed, the market maker must also borrow the other side of the quote (generally stablecoins, but also BTC and SOL), which incurs borrowing costs that may exceed the profits generated from the call options. This additional cost pressure is compounded by intense competition: there may be more than 10 market makers competing for the same token deal, which makes terms very competitive. Projects generally favor known market makers with strong PNL track records but compare across multiple offers, which pushes down the strike prices and overall profitability.
+
+    While beneficial for protocols seeking liquidity, token option agreements introduce risk: if the strike price is set too low or the market maker becomes a large token holder, they could exert selling pressure later. For market makers, the primary risk is capital loss if the token's price declines sharply. Incentives should be generally aligned (a rising token benefits everyone). Market makers often commit to certain spreads and depth and provide a report detailing its activities on exchanges including volume numbers.
+
+    ### Risks
+
+    Market making activities carry significant risks. Traditional challenges include exposure to volatility and potential inventory losses from sudden price movements, adverse selection by informed traders with better data or faster execution, and operational issues such as exchange outages, system failures, or infrastructure problems that can erode a firm's competitive edge.
+
+    In crypto, additional issues arise: funding-rate reversals on perpetual contracts can turn profitable positions into losses; borrow shortages can squeeze short trades or hedges; and auto-deleveraging mechanisms can force position closures. Counterparty and custody risks remain ever-present (detailed in Section V).
+
+    The primary competitive challenges for market makers involve technical execution capabilities: network latency, exchange connectivity quality, data feed reliability, and system performance during high-volatility periods. However, adverse selection from better-informed traders and the challenge of avoiding toxic flow remain important considerations.
+
+    The risks market makers face (counterparty failures, liquidation cascades, funding reversals) aren't unique to liquidity providers. Every market participant navigates the same structural vulnerabilities, from retail traders using leverage to hedge funds running complex arbitrage strategies. Understanding how to manage these risks systematically separates successful traders from those who eventually blow up their accounts.
+
+=== "KO"
+
+    마켓 메이커는 암호화폐 거래의 인프라 제공자다. 소매 트레이더와 기관이 방금 살펴본 주문 유형과 실행 기법을 사용하여 전략을 실행하는 동안, 마켓 메이커는 반대편에서 운영한다: 매수 및 매도 가격을 모두 지속적으로 견적하고, 각 거래에서 작은 스프레드를 포착하며, 여러 거래소에 걸쳐 재고 리스크를 관리한다. 그들의 존재는 단편화된 호가창을 실행 전략이 실제로 작동할 수 있는 유동적인 시장으로 변환한다. 마켓 메이커가 없으면, 지정가 주문은 채워지지 않은 채 있을 것이고, 빙산은 절대 새로 고쳐지지 않을 것이며, TWAP 알고리즘은 거래상대방을 찾지 못할 것이다.
+
+    효율적인 암호화폐 시장을 정의하는 좁은 호가 스프레드와 깊은 호가창 뒤에는 거래소가 기능하도록 하는 유동성을 공급하면서 작고 일관된 이익을 얻는 이러한 전문 거래 회사가 있다. 그들의 목표는 일반적으로 거의 평평한 리스크 노출을 유지하는 것이다. 매수 및 매도 가격을 모두 지속적으로 견적함으로써, 그들은 재고와 리스크 간의 미묘한 균형을 관리하면서 다른 모든 사람을 위한 더 부드러운 거래를 가능하게 한다.
+
+    ### 수익원(Revenue Sources)
+
+    마켓 메이커는 다양한 소스로부터 수익을 끌어내는데, 핵심 수입 흐름은 스프레드 포착이다. 그들은 스프레드를 포착하고, 거래소에 따라 메이커 리베이트를 받을 수 있다. 메이커 리베이트/마이너스 수수료는 일부 거래소에서 실질적인 손익 라인이 될 수 있으며, 수수료는 거래량 등급에 따라 부호를 바꿀 수 있다는 점에 유의하라.
+
+    마켓 메이커는 또한 서로 다른 거래소 간의 가격 불일치를 이용하여 차익거래로부터 이익을 얻는다. 거래소 간 차익거래(Cross-Exchange Arbitrage)는 거래소 간 동일한 자산의 일시적인 가격 차이를 이용한다. BTC가 바이낸스에서 $100,000에 거래되지만 바이비트에서 $100,050에 거래될 때, 차익거래자는 동시에 바이낸스에서 매수하고 바이비트에서 매도하여, $50 스프레드(수수료 및 전송 비용 제외)를 포착한다. 기회는 단편화된 유동성, 다양한 시장 깊이, 거래소 간 다른 수수료 구조, 거래소 간 자본과 재고를 이동하는 데 필요한 시간 지연으로 인해 지속된다. 성공적인 실행은 여러 플랫폼에 미리 배치된 재고, 일시적인 기회를 포착하기 위한 빠른 실행 인프라, 이익을 침식할 수 있는 출금 시간 및 크로스체인 전송 비용의 신중한 관리를 요구한다.
+
+    마켓 메이커는 또한 재고 포지션을 헤징할 때 베이시스로부터 이익을 얻을 수 있으며, 펀딩 비율 차이(펀딩 메커니즘은 Section I 참조) 또는 현물과 선물 간의 베이시스 스프레드를 포착한다. 추가 수익 흐름에는 재고 대여 및 차입, 그리고 스테이킹 보상, 국채 또는 유사한 도구를 통한 보유에서 얻은 수익률이 포함된다.
+
+    #### OTC 데스크(OTC Desks)
+
+    대부분의 가장 큰 마켓 메이커는 또한 장외(Over-the-Counter, OTC) 거래 데스크를 운영하는데, 이는 공개 호가창에서 벗어나 대규모 블록 거래를 촉진한다. 기관, 고액 자산가 또는 재무 운영이 수백만 또는 수천만 달러 가치의 거래를 실행해야 할 때, 공개 거래소에서 실행하면 상당한 시장 영향과 슬리피지를 야기할 것이다. OTC 데스크는 주체 또는 대리인으로 행동함으로써 이를 해결한다. 그들은 자체 재고를 사용하여 거래의 반대편을 직접 취하거나, 협상된 가격으로 거래할 의향이 있는 거래상대방을 찾는데, 모두 주문 크기나 의도를 더 넓은 시장에 공개하지 않는다. 이 서비스는 가격 확실성과 재량을 필요로 하는 대규모 참여자에게 중요하다. OTC 데스크는 이러한 거래에서 스프레드를 얻고 종종 여러 거래소에 걸쳐 노출을 헤징할 수 있다. 가장 큰 OTC 운영은 Cumberland, Wintermute, GSR 및 코인베이스 프라임(Coinbase Prime) 및 크라켄과 같은 주요 거래소와 같은 회사에 의해 운영된다. 이러한 회사는 마켓 메이킹 인프라와 깊은 유동성 관계를 활용하여 기관 고객에게 서비스를 제공한다.
+
+    #### 토큰 옵션(Token Options)
+
+    마켓 메이커는 구조화된 계약을 통해 토큰이 있는 프로젝트에 유동성을 제공함으로써 상당한 수익을 창출할 수 있다. 이러한 거래의 가장 일반적인 구조는 대출/옵션 모델인데, 여기서 프로토콜은 토큰의 몇 퍼센트를 대출한다. 이것은 경제적으로 대출된 토큰에 대한 콜 옵션(Call Option)으로 기능하며, 종종 여러 트랜치(Tranche), 행사가, 베스팅 클리프(Vesting Cliff), 헤징 허가, 보고 요구 사항으로 구조화된다. 마켓 메이커와 프로토콜은 얼마나 많은 토큰을 어떤 행사가에서 마켓 메이커가 미래에 구매할 수 있는지에 동의한다.
+
+    예를 들어, 프로토콜이 $1 행사가에서 100,000 토큰을 제공하면, 마켓 메이커는 12개월 후 토큰을 반환하거나 $100,000를 지불할 수 있다. 이것은 또한 여러 트랜치로 수행되는 경우가 많은데, 여기서 하나가 아닌 여러 행사가가 있을 수 있다. 마켓 메이커는 자체 현금을 사용하여 유동성을 창출하며, 가격 변동의 리스크를 떠안는다. 토큰 가격이 하락하면, 그들은 더 저렴한 토큰을 반환할 수 있다; 가격이 급등하면, 대신 현금을 지불하도록 선택할 수 있으며, 잠재적으로 상당한 이익을 얻는다.
+
+    중요한 점은, 프로젝트의 토큰만 차입되기 때문에, 마켓 메이커는 또한 견적의 반대편(일반적으로 스테이블코인이지만 BTC 및 SOL도 포함)을 차입해야 하며, 이는 콜 옵션에서 생성된 이익을 초과할 수 있는 차입 비용을 발생시킨다. 이 추가 비용 압력은 치열한 경쟁으로 인해 복잡해진다: 동일한 토큰 거래에 대해 10개 이상의 마켓 메이커가 경쟁할 수 있으며, 이는 조건을 매우 경쟁적으로 만든다. 프로젝트는 일반적으로 강력한 손익 실적을 가진 알려진 마켓 메이커를 선호하지만 여러 제안을 비교하며, 이는 행사가와 전체 수익성을 낮춘다.
+
+    유동성을 추구하는 프로토콜에 유익하지만, 토큰 옵션 계약은 리스크를 도입한다: 행사가가 너무 낮게 설정되거나 마켓 메이커가 큰 토큰 보유자가 되면, 나중에 매도 압력을 행사할 수 있다. 마켓 메이커의 경우, 주요 리스크는 토큰 가격이 급격히 하락하면 자본 손실이다. 인센티브는 일반적으로 정렬되어야 한다(상승하는 토큰은 모두에게 이익이 된다). 마켓 메이커는 종종 특정 스프레드와 깊이에 커밋하고 거래량 수치를 포함하여 거래소에서의 활동을 상세히 설명하는 보고서를 제공한다.
+
+    ### 리스크(Risks)
+
+    마켓 메이킹 활동은 상당한 리스크를 수반한다. 전통적인 도전에는 변동성에 대한 노출과 급격한 가격 변동으로 인한 잠재적 재고 손실, 더 나은 데이터나 더 빠른 실행을 가진 정보에 입각한 트레이더에 의한 역선택(Adverse Selection), 거래소 정지, 시스템 장애 또는 회사의 경쟁 우위를 침식할 수 있는 인프라 문제와 같은 운영 문제가 포함된다.
+
+    암호화폐에서는 추가 문제가 발생한다: 무기한 계약의 펀딩 비율 반전은 수익성 있는 포지션을 손실로 전환할 수 있다; 차입 부족은 숏 거래나 헤지를 스퀴즈할 수 있다; 자동 디레버리징 메커니즘은 포지션 종료를 강제할 수 있다. 거래상대방 및 보관 리스크는 항상 존재한다(Section V에서 상세히 설명).
+
+    마켓 메이커의 주요 경쟁 과제는 기술 실행 능력을 포함한다: 네트워크 지연시간, 거래소 연결 품질, 데이터 피드 신뢰성, 높은 변동성 기간 동안의 시스템 성능. 그러나 더 나은 정보를 가진 트레이더로부터의 역선택과 독성 흐름(Toxic Flow)을 피하는 도전은 중요한 고려사항으로 남아 있다.
+
+    마켓 메이커가 직면하는 리스크(거래상대방 실패, 청산 캐스케이드, 펀딩 반전)는 유동성 제공자에게 고유한 것이 아니다. 모든 시장 참여자는 레버리지를 사용하는 소매 트레이더부터 복잡한 차익거래 전략을 실행하는 헤지 펀드까지 동일한 구조적 취약성을 탐색한다. 이러한 리스크를 체계적으로 관리하는 방법을 이해하는 것은 성공적인 트레이더와 결국 계정을 폭파하는 트레이더를 구분한다.
+
+## Section V: Risk Management
+
+=== "EN"
+
+    ### Understanding Margin Modes
+
+    CEXs offer two primary margining approaches that fundamentally change risk profiles. Isolated margin ring-fences collateral for each position or market, meaning liquidation risk is contained to specific trades. This approach simplifies position-level risk control and prevents one bad trade from affecting other positions.
+
+    Cross margin (or exchange-wide margin) pools all eligible collateral to back all positions, creating capital efficiency at the cost of systemic account risk. A single poorly managed position can endanger the entire account, but skilled traders can better utilize their capital and maintain larger diversified books.
+
+    The choice between isolated and cross margin reflects risk tolerance and trading sophistication. Short-term tactical trades often benefit from isolated margin's risk containment, while systematic traders and arbitrageurs typically prefer cross margin's capital efficiency, combined with strict position limits and risk controls.
+
+    ### Liquidation Mechanics
+
+    Liquidation processes vary by exchange but typically follow a structured approach. When account equity falls below maintenance margin requirements, the exchange begins position reduction through market orders or incremental liquidation steps. If liquidations create losses beyond available account equity, exchanges use insurance funds to absorb shortfalls.
+
+    ### Liquidation Cascades and Systemic Risk
+
+    Liquidation cascades represent systemic risks where forced buying or selling pushes prices through thin order books, triggering additional liquidations and stop-losses in self-reinforcing cycles. These events typically resolve with restored liquidity but feature persistently wider spreads and elevated funding rate dispersion.
+
+    Cascade precursors include concentrated leveraged open interest, thin order book depth, and correlated collateral backing (such as altcoin perpetuals margined in the same underlying tokens).
+
+    ### Counterparty Risk Management
+
+    Margin modes and liquidation mechanics protect traders from market risks, but counterparty risk (the possibility that exchanges, custodians, or trading partners fail to meet their obligations) represents a distinct threat that requires proactive management. The collapse of FTX in November 2022 (discussed in Chapter V's historical custody failures), which wiped out billions in customer assets, crystallized this risk for the crypto industry. Sophisticated traders treat counterparty risk as seriously as market risk itself.
+
+    Exchange diversification forms the first line of defense. Rather than concentrating all capital on a single venue, professional traders spread assets across multiple exchanges, balancing the convenience of unified liquidity against the tail risk of platform failure. The allocation often reflects a risk-adjusted approach: keeping larger balances on regulated venues with proof-of-reserves (like Coinbase or Kraken) while maintaining smaller working capital on offshore exchanges that offer broader product suites and deeper perpetual markets. This strategy accepts slightly higher operational friction in exchange for limiting exposure to any single point of failure.
+
+    Active monitoring and risk assessment extend beyond simple diversification. Traders track exchange financial health through available transparency measures: proof-of-reserves audits, insurance fund balances, and regulatory filings where applicable. Warning signs include deteriorating liquidity (widening spreads, shallow order books), unusual withdrawal restrictions, sudden changes in fee structures, or adverse regulatory news. When red flags appear, sophisticated participants reduce exposure quickly, even if it means temporarily foregoing profitable opportunities on the affected venue.
+
+    Custody and withdrawal discipline (covered in depth in Chapter V) play crucial roles in counterparty risk mitigation. Many traders maintain a practice of regularly sweeping profits to external cold storage or third-party custodians, keeping only the minimum working capital necessary for active strategies on exchange hot wallets. This reduces exposure to exchange hacks, operational failures, and potential solvency issues. For large positions, some institutional participants negotiate direct custody arrangements or use qualified custodians (like Coinbase Custody, Anchorage Digital, or BitGo) that offer segregated storage with institutional insurance coverage and robust operational controls.
+
+    OTC and broker-dealer risk requires distinct consideration. When executing large block trades through OTC desks or trading with broker-dealers, counterparty risk manifests differently than on exchange. Institutional participants typically establish credit limits with each counterparty, use standardized legal agreements to govern trading relationships, and implement collateral posting requirements for positions held beyond intraday settlement. Regular credit reviews and exposure tracking ensure that no single counterparty represents an outsized risk to the overall portfolio.
+
+    The fundamental principle: counterparty risk management is not an afterthought to be implemented after a strategy proves profitable. It must be embedded in the operational framework from the start, balancing convenience and capital efficiency against the irreversible consequences of platform failure.
+
+=== "KO"
+
+    ### 마진 모드 이해(Understanding Margin Modes)
+
+    CEX는 리스크 프로필을 근본적으로 변경하는 두 가지 주요 마진 접근 방식을 제공한다. 격리 마진(Isolated Margin)은 각 포지션이나 시장에 대한 담보를 링펜싱하여, 청산 리스크가 특정 거래에 제한된다는 것을 의미한다. 이 접근 방식은 포지션 수준 리스크 제어를 단순화하고 한 나쁜 거래가 다른 포지션에 영향을 미치는 것을 방지한다.
+
+    교차 마진(Cross Margin)(또는 거래소 전체 마진)은 모든 적격 담보를 풀링하여 모든 포지션을 뒷받침하며, 시스템적 계정 리스크의 비용으로 자본 효율성을 생성한다. 단일 잘못 관리된 포지션이 전체 계정을 위협할 수 있지만, 숙련된 트레이더는 자본을 더 잘 활용하고 더 큰 다양화된 장부를 유지할 수 있다.
+
+    격리 마진과 교차 마진 간의 선택은 리스크 허용도와 거래 정교성을 반영한다. 단기 전술 거래는 종종 격리 마진의 리스크 봉쇄로부터 이익을 얻는 반면, 체계적 트레이더와 차익거래자는 일반적으로 엄격한 포지션 제한 및 리스크 통제와 결합된 교차 마진의 자본 효율성을 선호한다.
+
+    ### 청산 메커니즘(Liquidation Mechanics)
+
+    청산 프로세스는 거래소마다 다르지만 일반적으로 구조화된 접근 방식을 따른다. 계정 자본이 유지 마진(Maintenance Margin) 요구 사항 아래로 떨어지면, 거래소는 시장가 주문 또는 점진적 청산 단계를 통해 포지션 축소를 시작한다. 청산이 사용 가능한 계정 자본을 초과하는 손실을 생성하면, 거래소는 부족분을 흡수하기 위해 보험 기금(Insurance Fund)을 사용한다.
+
+    ### 청산 캐스케이드 및 시스템 리스크(Liquidation Cascades and Systemic Risk)
+
+    청산 캐스케이드는 강제 매수 또는 매도가 얇은 호가창을 통해 가격을 밀어내어, 자기 강화 사이클에서 추가 청산 및 손절을 유발하는 시스템 리스크를 나타낸다. 이러한 이벤트는 일반적으로 복원된 유동성으로 해결되지만 지속적으로 더 넓은 스프레드와 상승된 펀딩 비율 분산을 특징으로 한다.
+
+    캐스케이드 전조에는 집중된 레버리지 미결제약정, 얇은 호가창 깊이, 상관된 담보 뒷받침(동일한 기초 토큰으로 마진된 알트코인 무기한 선물과 같은)이 포함된다.
+
+    ### 거래상대방 리스크 관리(Counterparty Risk Management)
+
+    마진 모드와 청산 메커니즘은 트레이더를 시장 리스크로부터 보호하지만, 거래상대방 리스크(거래소, 수탁자 또는 거래 파트너가 의무를 충족하지 못할 가능성)는 사전 관리가 필요한 뚜렷한 위협을 나타낸다. 수십억의 고객 자산을 쓸어버린 2022년 11월 FTX의 붕괴(Chapter V의 역사적 보관 실패에서 논의)는 암호화폐 산업에 이 리스크를 구체화했다. 정교한 트레이더는 거래상대방 리스크를 시장 리스크 자체만큼 진지하게 취급한다.
+
+    거래소 다각화는 1차 방어선을 형성한다. 단일 거래소에 모든 자본을 집중하는 대신, 전문 트레이더는 통합 유동성의 편의성과 플랫폼 실패의 테일 리스크 간의 균형을 맞추며 여러 거래소에 자산을 분산시킨다. 할당은 종종 리스크 조정 접근 방식을 반영한다: 준비금 증명(Proof-of-Reserves)이 있는 규제된 거래소(코인베이스나 크라켄 같은)에 더 큰 잔액을 유지하는 동시에 더 넓은 상품 스위트와 더 깊은 무기한 선물 시장을 제공하는 오프쇼어 거래소에 더 작은 운용 자본을 유지한다. 이 전략은 단일 실패 지점에 대한 노출을 제한하는 대가로 약간 더 높은 운영 마찰을 받아들인다.
+
+    적극적인 모니터링 및 리스크 평가는 단순 다각화를 넘어 확장된다. 트레이더는 사용 가능한 투명성 조치를 통해 거래소 재무 건전성을 추적한다: 준비금 증명 감사, 보험 기금 잔액, 해당되는 경우 규제 신고. 경고 신호에는 악화되는 유동성(확대되는 스프레드, 얇은 호가창), 비정상적인 출금 제한, 수수료 구조의 갑작스러운 변경, 불리한 규제 뉴스가 포함된다. 위험 신호가 나타나면, 정교한 참가자는 영향을 받는 거래소에서 수익성 있는 기회를 일시적으로 포기하더라도 노출을 빠르게 줄인다.
+
+    보관 및 출금 규율(Chapter V에서 심층 다룸)은 거래상대방 리스크 완화에서 중요한 역할을 한다. 많은 트레이더는 정기적으로 이익을 외부 콜드 스토리지 또는 제3자 수탁자에게 쓸어내는 관행을 유지하며, 거래소 핫 월렛에 활성 전략에 필요한 최소 운용 자본만 유지한다. 이는 거래소 해킹, 운영 실패, 잠재적 지급 능력 문제에 대한 노출을 줄인다. 큰 포지션의 경우, 일부 기관 참가자는 직접 보관 약정을 협상하거나 분리된 스토리지를 기관 보험 커버리지 및 강력한 운영 통제와 함께 제공하는 적격 수탁자(코인베이스 커스터디(Coinbase Custody), Anchorage Digital, BitGo 같은)를 사용한다.
+
+    OTC 및 브로커-딜러 리스크는 뚜렷한 고려를 요구한다. OTC 데스크를 통해 큰 블록 거래를 실행하거나 브로커-딜러와 거래할 때, 거래상대방 리스크는 거래소에서와 다르게 나타난다. 기관 참가자는 일반적으로 각 거래상대방과 신용 한도를 설정하고, 거래 관계를 관리하기 위해 표준화된 법적 계약을 사용하며, 일중 결제를 넘어 보유된 포지션에 대한 담보 게시 요구 사항을 구현한다. 정기적인 신용 검토 및 노출 추적은 단일 거래상대방이 전체 포트폴리오에 과도한 리스크를 나타내지 않도록 보장한다.
+
+    근본 원칙: 거래상대방 리스크 관리는 전략이 수익성 있음이 입증된 후 구현할 사후 고려사항이 아니다. 편의성과 자본 효율성을 플랫폼 실패의 되돌릴 수 없는 결과와 균형을 맞추며 처음부터 운영 프레임워크에 내장되어야 한다.
+
+## Section VI: Price Discovery and Volatility Analysis
+
+=== "EN"
+
+    The risk management frameworks above help traders protect themselves from catastrophic losses, but they work best when combined with tools that identify danger before it arrives. Effective risk management depends on reading market signals before they become crises. Open interest shifts, volatility anomalies, and funding rate divergences telegraph market stress hours or days before liquidation cascades begin. Professional traders monitor these indicators continuously, adjusting position sizes, hedge ratios, and venue exposure based on what the data reveals about leverage buildup, positioning imbalances, and potential unwind scenarios. These tools help traders gauge market sentiment, identify potential inflection points, and assess whether current hedging costs are justified.
+
+    ### Open Interest: Measuring Market Engagement
+
+    Open interest (OI) measures the total number of outstanding derivative contracts, often expressed in notional terms (e.g., USD value). Since every contract requires both a long and a short side, OI represents gross exposure, not net directional positioning.
+
+    Interpreting OI changes alongside price movements reveals important market dynamics.
+
+    * **Price ↑ & OI ↑**: New positions entering, suggesting building leverage and engagement (either longs chasing the move or shorts fading it).  
+
+    * **Price ↑ & OI ↓**: Shorts covering into rallies (and/or longs taking profit), indicating potential short-squeeze or late-trend dynamics.  
+
+    * **Price ↓ & OI ↑**: New shorts/hedges piling in or longs adding into weakness. The move is being actively traded with leverage; can signal trend continuation if funding/positioning stay one-sided, but crowded late hedging can also fuel sharp bear-market squeezes.  
+
+    * **Price ↓ & OI ↓**: Deleveraging and capitulation. Longs are being stopped out or liquidated, and shorts are taking profit; often associated with “flush” events that clear positioning.  
+
+    * **Price flat & OI ↑**: Leverage quietly building in a range. This can reflect stealth accumulation, but also crowding in mean-reversion strategies or carry trades (positions that earn steady yield from funding rate differentials rather than betting on price direction). When a catalyst eventually arrives, these periods often resolve in sharp “leverage flushes” as clustered stops and liquidations are triggered.  
+
+    * **Price flat & OI ↓**: Deleveraging in a range. Participants are reducing risk, closing carry trades, or waiting for clarity, often leaving a cleaner positioning backdrop for the next directional move.
+
+    While tracking the direction of OI changes reveals market dynamics, the absolute level and scale of OI provides equally critical context. An asset with $500 million in OI and a $2 billion market capitalization is structurally very different from one with the same OI but only a few hundred million in market cap. A high OI-to-market-cap ratio signals that a large share of the asset's traded economic exposure is expressed through leverage rather than spot ownership. In extreme cases, notional OI can approach or even exceed the asset's market cap, creating a fragile setup where forced deleveraging is difficult to unwind without significant price impact.
+
+    Beyond the total amount of leverage, where that leverage is concentrated across exchanges introduces another layer of risk. Cross-venue OI shifts occur when traders move their positions from one exchange to another without actually closing them. This matters because the same amount of Bitcoin futures, whether spread across Binance, Bybit, smaller exchanges, or regulated platforms like CME, carries very different systemic risk. Leverage concentrated on a smaller, less stable exchange is far more dangerous than the same amount distributed across well-capitalized, well-managed platforms.
+
+    These shifts happen for several reasons: exchanges change margin requirements (forcing migrations), funding rate differentials create arbitrage opportunities, traders grow concerned about a specific platform's stability or regulatory status, or promotional campaigns temporarily attract volume. The key insight is that total OI might appear unchanged, but the underlying risk profile of the market can shift dramatically when positions migrate between venues. Two markets with identical total leverage can behave very differently depending on which exchanges are holding that risk.
+
+    ### Funding Rate Signals
+
+    While Section I covered the mechanics of funding payments, interpreting funding rates as market signals requires careful nuance. High positive funding rates indicate longs are paying significant premiums to hold positions, suggesting the market is positioned long or that the capacity or willingness to take the short side is constrained. High negative funding shows shorts paying premiums, often reflecting defensive positioning or strong demand for hedging instruments.
+
+    However, funding is no longer a clean sentiment indicator, especially for major assets like BTC and ETH. The rise of systematic basis trades and market-neutral yield products (such as Ethena-style strategies and structured products) means a meaningful share of open interest now comes from arbitrageurs who are indifferent to direction. These players are willing to pay or receive funding as part of a broader carry trade, so funding can remain elevated or depressed for structural reasons that have more to do with balance-sheet optimization than outright bullishness or bearishness. For smaller, less liquid tokens where such structural flows are weaker, funding still behaves more like a direct gauge of speculative positioning.
+
+    Funding rates are therefore context, not prediction. Elevated funding can persist during strong trends: Bitcoin can rally for weeks while longs continuously pay 0.1–0.2% daily funding (tens of percent annualized) without an immediate reversal. The key insight is that funding shows what traders are willing to pay for their positioning, directional or arbitrage, not where prices are headed. It is most informative when viewed relative to its recent “equilibrium” level and combined with other signals: for example, extreme funding above its usual range, rising open interest, thinning order book depth, and skewed liquidations together create conditions that are ripe for a positioning unwind.
+
+    ### Volatility Dynamics: Realized vs. Implied
+
+    Realized volatility (RV) measures historical price variability over specific windows (such as 30-day rolling volatility), calculated from past price movements. Implied volatility (IV) represents the volatility level embedded in current option prices, reflecting market expectations of future price movements.
+
+    The volatility risk premium (IV minus RV) captures whether option sellers demand compensation for volatility exposure. This premium is typically positive as sellers require compensation for tail risks, but can turn negative during stress periods when hedging demand overwhelms supply.
+
+=== "KO"
+
+    위의 리스크 관리 프레임워크는 트레이더가 치명적인 손실로부터 자신을 보호하는 데 도움이 되지만, 위험이 도착하기 전에 식별하는 도구와 결합될 때 가장 잘 작동한다. 효과적인 리스크 관리는 시장 신호를 위기가 되기 전에 읽는 것에 달려 있다. 미결제약정 변화, 변동성 이상, 펀딩 비율 발산은 청산 캐스케이드가 시작되기 몇 시간 또는 며칠 전에 시장 스트레스를 알린다. 전문 트레이더는 이러한 지표를 지속적으로 모니터링하며, 데이터가 레버리지 축적, 포지셔닝 불균형, 잠재적 풀기 시나리오에 대해 드러내는 것에 기반하여 포지션 크기, 헤지 비율, 거래소 노출을 조정한다. 이러한 도구는 트레이더가 시장 심리를 측정하고, 잠재적 변곡점을 식별하며, 현재 헤징 비용이 정당화되는지 평가하는 데 도움이 된다.
+
+    ### 미결제약정: 시장 참여 측정(Open Interest: Measuring Market Engagement)
+
+    미결제약정(Open Interest, OI)은 미결제 파생상품 계약의 총 수를 측정하며, 종종 명목 조건(예: USD 가치)으로 표현된다. 모든 계약은 롱과 숏 측면 모두를 요구하므로, OI는 순 방향성 포지셔닝이 아닌 총 노출을 나타낸다.
+
+    가격 변동과 함께 OI 변화를 해석하는 것은 중요한 시장 역학을 드러낸다.
+
+    * **가격 ↑ & OI ↑**: 새로운 포지션 진입, 레버리지 및 참여 축적 시사(변동을 추격하는 롱이거나 페이딩하는 숏).
+    * **가격 ↑ & OI ↓**: 랠리로 숏 커버링(및/또는 롱 이익 실현), 잠재적 숏 스퀴즈 또는 후기 추세 역학 나타냄.
+    * **가격 ↓ & OI ↑**: 새로운 숏/헤지 쌓임 또는 약세에 롱 추가. 변동은 레버리지로 적극적으로 거래되고 있다; 펀딩/포지셔닝이 일방적으로 유지되면 추세 지속을 신호할 수 있지만, 혼잡한 후기 헤징은 또한 급격한 약세 시장 스퀴즈를 부양할 수 있다.
+    * **가격 ↓ & OI ↓**: 디레버리징 및 항복. 롱이 중단되거나 청산되고, 숏이 이익을 실현하고 있다; 종종 포지셔닝을 정리하는 "플러시(Flush)" 이벤트와 관련된다.
+    * **가격 평평 & OI ↑**: 범위에서 레버리지가 조용히 축적. 이것은 은밀한 축적을 반영할 수 있지만, 평균 회귀 전략이나 캐리 거래(방향성 베팅이 아닌 펀딩 비율 차이로부터 꾸준한 수익률을 얻는 포지션)의 혼잡도 반영할 수 있다. 촉매제가 결국 도착하면, 이러한 기간은 종종 클러스터된 손절 및 청산이 유발되면서 급격한 "레버리지 플러시"로 해결된다.
+    * **가격 평평 & OI ↓**: 범위에서 디레버리징. 참가자는 리스크를 줄이고, 캐리 거래를 종료하거나, 명확성을 기다리고 있으며, 종종 다음 방향성 변동을 위한 더 깨끗한 포지셔닝 배경을 남긴다.
+
+    OI 변화의 방향을 추적하는 것이 시장 역학을 드러내는 동안, OI의 절대 수준과 규모는 동등하게 중요한 맥락을 제공한다. $5억의 OI와 $20억의 시가총액을 가진 자산은 동일한 OI를 가지지만 몇 억의 시가총액만 가진 자산과 구조적으로 매우 다르다. 높은 OI 대 시가총액 비율은 자산의 거래된 경제적 노출의 큰 비중이 현물 소유권이 아닌 레버리지를 통해 표현된다는 것을 신호한다. 극단적인 경우, 명목 OI는 자산의 시가총액에 접근하거나 심지어 초과할 수 있으며, 강제 디레버리징이 상당한 가격 영향 없이 풀기 어려운 취약한 설정을 만든다.
+
+    총 레버리지 양을 넘어, 그 레버리지가 거래소에 어떻게 집중되어 있는지는 또 다른 리스크 계층을 도입한다. 거래소 간 OI 변화는 트레이더가 실제로 포지션을 종료하지 않고 한 거래소에서 다른 거래소로 포지션을 이동할 때 발생한다. 이것이 중요한 이유는 동일한 양의 비트코인 선물이 바이낸스, 바이비트, 소규모 거래소 또는 CME와 같은 규제된 플랫폼에 분산되어 있든, 매우 다른 시스템 리스크를 수반하기 때문이다. 소규모, 덜 안정적인 거래소에 집중된 레버리지는 잘 자본화되고 잘 관리되는 플랫폼에 분산된 동일한 양보다 훨씬 더 위험하다.
+
+    이러한 변화는 여러 이유로 발생한다: 거래소가 마진 요구 사항을 변경(마이그레이션 강제), 펀딩 비율 차이가 차익거래 기회를 만들고, 트레이더가 특정 플랫폼의 안정성이나 규제 상태에 대해 우려를 키우거나, 프로모션 캠페인이 일시적으로 거래량을 유치한다. 핵심 통찰력은 총 OI가 변하지 않은 것처럼 보일 수 있지만, 포지션이 거래소 간에 이동할 때 시장의 기저 리스크 프로필이 극적으로 변할 수 있다는 것이다. 동일한 총 레버리지를 가진 두 시장은 어떤 거래소가 그 리스크를 보유하고 있는지에 따라 매우 다르게 행동할 수 있다.
+
+    ### 펀딩 비율 신호(Funding Rate Signals)
+
+    Section I이 펀딩 지불의 메커니즘을 다루었지만, 펀딩 비율을 시장 신호로 해석하는 것은 신중한 뉘앙스를 요구한다. 높은 양의 펀딩 비율은 롱이 포지션을 보유하기 위해 상당한 프리미엄을 지불하고 있음을 나타내며, 시장이 롱으로 포지셔닝되어 있거나 숏 측면을 취할 능력이나 의지가 제약되어 있음을 시사한다. 높은 음의 펀딩은 숏이 프리미엄을 지불하고 있음을 보여주며, 종종 방어적 포지셔닝이나 헤징 도구에 대한 강한 수요를 반영한다.
+
+    그러나 펀딩은 더 이상 깨끗한 심리 지표가 아니며, 특히 BTC와 ETH와 같은 주요 자산의 경우 그렇다. 체계적 베이시스 거래 및 시장 중립 수익률 상품(Ethena 스타일 전략 및 구조화된 상품과 같은)의 부상은 미결제약정의 의미 있는 비중이 이제 방향에 무관심한 차익거래자로부터 온다는 것을 의미한다. 이러한 플레이어는 더 넓은 캐리 거래의 일부로 펀딩을 지불하거나 받을 의향이 있으므로, 펀딩은 노골적인 강세나 약세보다는 대차대조표 최적화와 더 관련이 있는 구조적 이유로 상승되거나 억제될 수 있다. 이러한 구조적 흐름이 더 약한 소규모, 유동성이 낮은 토큰의 경우, 펀딩은 여전히 투기적 포지셔닝의 직접적인 게이지처럼 더 행동한다.
+
+    따라서 펀딩 비율은 맥락이지 예측이 아니다. 상승된 펀딩은 강한 추세 동안 지속될 수 있다: 비트코인은 롱이 즉각적인 반전 없이 지속적으로 0.1-0.2% 일일 펀딩(수십 퍼센트 연간)을 지불하면서 몇 주 동안 랠리할 수 있다. 핵심 통찰력은 펀딩이 트레이더가 방향성 또는 차익거래인 포지셔닝에 대해 기꺼이 지불하는 것을 보여주지, 가격이 어디로 향하는지는 아니라는 것이다. 최근 "균형" 수준에 비해 상대적으로 볼 때 가장 유익하며 다른 신호와 결합될 때 그렇다: 예를 들어, 일반적인 범위를 초과하는 극단적 펀딩, 상승하는 미결제약정, 얇아지는 호가창 깊이, 왜곡된 청산은 함께 포지셔닝 풀기에 익은 조건을 만든다.
+
+    ### 변동성 역학: 실현 대 내재(Volatility Dynamics: Realized vs. Implied)
+
+    실현 변동성(Realized Volatility, RV)은 특정 윈도우(30일 롤링 변동성과 같은)에 걸친 역사적 가격 변동성을 측정하며, 과거 가격 변동에서 계산된다. 내재 변동성(Implied Volatility, IV)은 현재 옵션 가격에 내장된 변동성 수준을 나타내며, 미래 가격 변동에 대한 시장 기대를 반영한다.
+
+    변동성 리스크 프리미엄(Volatility Risk Premium, IV 빼기 RV)은 옵션 셀러가 변동성 노출에 대한 보상을 요구하는지 포착한다. 이 프리미엄은 셀러가 테일 리스크에 대한 보상을 요구하므로 일반적으로 양수이지만, 헤징 수요가 공급을 압도하는 스트레스 기간 동안 음수로 전환될 수 있다.
+
+    두 가지 추가 변동성 지표가 트레이더가 시장 기대를 해석하는 데 도움이 된다. 변동성 스큐(Volatility Skew)는 풋 옵션의 내재 변동성을 현재 가격에서 유사한 거리에 있는 콜 옵션과 비교한다. 풋이 콜보다 높은 내재 변동성으로 거래될 때, 시장이 더 큰 하방 리스크를 가격하고 있음을 시사하며, 종종 헤징 수요나 약세 심리의 신호다. 기간 구조(Term Structure)는 서로 다른 만기 날짜에 걸쳐 내재 변동성을 비교한다. 단기 옵션이 장기 옵션보다 높은 변동성으로 거래될 때(역전된 기간 구조), 일반적으로 시장이 임박한 촉매제나 불확실성 기간을 예상한다는 것을 신호한다. 반대로, 장기 옵션이 더 비쌀 때, 시장은 더 먼 곳에서 불확실성이 쌓이면서 더 차분한 단기 환경을 가격하고 있다. 미결제약정 및 펀딩 비율 분석과 함께, 이러한 변동성 신호는 트레이더가 시장 포지셔닝과 심리의 더 완전한 그림을 형성하는 데 도움이 된다.

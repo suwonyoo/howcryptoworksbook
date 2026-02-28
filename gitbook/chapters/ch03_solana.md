@@ -1,0 +1,616 @@
+# Chapter III: The Solana Ecosystem
+
+=== "EN"
+
+    ## Section I: Architecture and Execution
+
+    Solana represents a fundamentally different approach to blockchain scaling. While Ethereum (Chapter II) and Bitcoin (Chapter I) are also Layer 1 (L1) blockchains, meaning they are base-layer networks that operate independently and settle their own transactions, Solana makes radically different engineering tradeoffs. It prioritizes raw speed and throughput over keeping hardware requirements low, betting that powerful computers will become cheaper faster than blockchain demand will grow.
+
+    Most blockchains execute transactions one at a time within blocks. When you send a transaction on Ethereum, it waits in line behind every other transaction, processed sequentially to avoid conflicts. Scaling typically happens by adding Layer 2 networks on top, as described in Chapter II. This approach keeps validator requirements modest and maximizes decentralization, but it introduces fragmentation. Users must navigate between different networks with different fee tokens, bridging experiences, and compatibility layers.
+
+    Solana takes a different path. The critical innovation is that every transaction must declare upfront which accounts it will read from or write to. This simple requirement unlocks something powerful: the network can identify transactions that don't overlap and run them simultaneously across multiple CPU cores. While Ethereum processes transactions one after another like a single checkout lane, Solana operates more like a supermarket with dozens of lanes open at once. This creates a direct relationship between hardware resources and network capacity. More CPU cores translate to higher transaction throughput.
+
+    This parallel execution model shapes Solana's data architecture. State is organized around an account model that cleanly separates program code from user data. Programs live in executable accounts whose code is effectively immutable. User-level state lives in separate data accounts owned by those programs. Composability, the ability for programs to interact with each other, is straightforward. Programs call into one another via **cross-program invocations (CPIs)**, essentially one program asking another to perform an operation, passing accounts as inputs. The runtime can verify that all necessary accounts are included before execution begins.
+
+    ### Address Types and Account Management
+
+    Within this account architecture, Solana introduces a novel address type that solves a fundamental problem in decentralized systems. The network uses two distinct types of addresses that serve different purposes in the ecosystem.
+
+    Regular addresses function like traditional crypto wallets. Users control these addresses with private keys, just like Bitcoin or Ethereum wallets.
+
+    **Program Derived Addresses (PDAs)** represent a departure from this model. These addresses have no private keys at all. Instead, programs generate them mathematically using a combination of inputs that produce an address no one can control directly. The result is an address that only the program itself can authorize transactions from.
+
+    PDAs solve the fundamental custody problem that plagues traditional escrow systems. Traditional escrow requires someone to hold private keys, introducing inherent trust issues and potential points of failure. With PDAs, the escrow program itself controls the funds directly. No human can steal them because there is no private key to compromise.
+
+    Accounts must hold a minimum balance of **lamports** (Solana's smallest unit, similar to satoshis for Bitcoin) to remain rent-exempt, which prevents state bloat by requiring an economic commitment for persistent storage. In practice, this works like an upfront security deposit for using storage space rather than an ongoing subscription fee.
+
+    These execution constraints and the account model shape how users actually transact on Solana. The following section examines the transaction structure, fee mechanics, and the user experience they enable.
+
+=== "KO"
+
+    ## Section I: 아키텍처와 실행
+
+    솔라나는 블록체인 확장에 대한 근본적으로 다른 접근 방식을 대표한다. 이더리움(Ethereum, Chapter II)과 비트코인(Bitcoin, Chapter I)도 레이어 1(Layer 1, L1) 블록체인, 즉 독립적으로 운영되고 자체 거래를 정산하는 기반 계층 네트워크이지만, 솔라나는 근본적으로 다른 엔지니어링 트레이드오프를 선택한다. 솔라나는 하드웨어 요구 사항을 낮게 유지하는 것보다 원시적인 속도와 처리량을 우선시하며, 강력한 컴퓨터가 블록체인 수요 증가보다 더 빨리 저렴해질 것이라는 데 베팅한다.
+
+    대부분의 블록체인은 블록 내에서 거래를 한 번에 하나씩 실행한다. 이더리움에서 거래를 보내면, 다른 모든 거래 뒤에서 순차적으로 처리되기를 기다린다. 충돌을 피하기 위해서다. 확장은 일반적으로 Chapter II에서 설명한 것처럼 L2 네트워크를 추가하는 방식으로 이루어진다. 이 접근 방식은 검증자 요구 사항을 적당하게 유지하고 탈중앙화를 극대화하지만, 파편화를 초래한다. 사용자는 서로 다른 수수료 토큰, 브릿징 경험, 호환성 계층을 가진 여러 네트워크 사이를 탐색해야 한다.
+
+    솔라나는 다른 길을 간다. 핵심 혁신은 모든 거래가 어떤 계정에서 읽고 쓸 것인지를 사전에 선언해야 한다는 것이다. 이 단순한 요구 사항은 강력한 것을 가능하게 한다: 네트워크가 겹치지 않는 거래들을 식별하고 여러 CPU 코어에서 동시에 실행할 수 있다. 이더리움이 단일 계산대처럼 거래를 하나씩 처리하는 반면, 솔라나는 수십 개의 계산대가 동시에 열린 슈퍼마켓처럼 운영된다. 이는 하드웨어 리소스와 네트워크 용량 사이에 직접적인 관계를 만든다. 더 많은 CPU 코어는 더 높은 거래 처리량으로 이어진다.
+
+    이 **병렬 실행(Parallel Execution)** 모델은 솔라나의 데이터 아키텍처를 형성한다. 상태는 프로그램 코드와 사용자 데이터를 깔끔하게 분리하는 **계정 모델(Account Model)** 중심으로 구성된다. 프로그램은 코드가 사실상 불변인 실행 가능한 계정에 존재한다. 사용자 수준의 상태는 해당 프로그램이 소유하는 별도의 데이터 계정에 존재한다. 프로그램들이 서로 상호작용하는 능력인 조합성(Composability)은 간단하다. 프로그램들은 **교차 프로그램 호출(Cross-Program Invocations, CPIs)**을 통해 서로를 호출하는데, 본질적으로 한 프로그램이 다른 프로그램에게 작업을 수행하도록 요청하면서 계정을 입력으로 전달한다. 런타임은 실행이 시작되기 전에 필요한 모든 계정이 포함되어 있는지 확인할 수 있다.
+
+    ### 주소 유형과 계정 관리
+
+    이 계정 아키텍처 내에서 솔라나는 탈중앙화 시스템의 근본적인 문제를 해결하는 새로운 주소 유형을 도입한다. 네트워크는 생태계에서 서로 다른 목적을 수행하는 두 가지 구별되는 주소 유형을 사용한다.
+
+    일반 주소는 전통적인 암호화폐 지갑처럼 기능한다. 사용자는 비트코인이나 이더리움 지갑처럼 Private Key로 이 주소들을 제어한다.
+
+    **프로그램 파생 주소(Program Derived Addresses, PDAs)**는 이 모델에서의 탈피를 나타낸다. 이 주소들은 Private Key가 전혀 없다. 대신, 프로그램이 아무도 직접 제어할 수 없는 주소를 생성하는 입력 조합을 사용하여 수학적으로 이들을 생성한다. 결과는 프로그램 자체만이 거래를 승인할 수 있는 주소이다.
+
+    PDA는 전통적인 에스크로 시스템을 괴롭히는 근본적인 수탁 문제를 해결한다. 전통적인 에스크로는 누군가 Private Key를 보유해야 하며, 이는 고유한 신뢰 문제와 잠재적 실패 지점을 도입한다. PDA를 사용하면 에스크로 프로그램 자체가 자금을 직접 제어한다. 손상시킬 Private Key가 없기 때문에 어떤 인간도 그것들을 훔칠 수 없다.
+
+    계정은 임대 면제(rent-exempt) 상태를 유지하기 위해 최소한의 **램포트(Lamports, 비트코인의 사토시와 유사한 솔라나의 가장 작은 단위)** 잔액을 보유해야 하며, 이는 영구 저장소를 사용하기 위한 경제적 약정을 요구함으로써 상태 비대화를 방지한다. 실제로 이것은 지속적인 구독료보다는 저장 공간 사용을 위한 선불 보증금처럼 작동한다.
+
+    이러한 실행 제약과 계정 모델은 사용자가 실제로 솔라나에서 거래하는 방식을 형성한다. 다음 섹션에서는 거래 구조, 수수료 메커니즘, 그리고 이들이 가능하게 하는 사용자 경험을 살펴본다.
+
+=== "EN"
+
+    ## Section II: Transactions, Fees, and UX
+
+    ### The Transaction Model
+
+    Each transaction includes a message (which contains the account list, instructions, and recent blockhash) along with the required Ed25519 signatures (Ed25519 is a modern digital signature algorithm known for its speed and security). Every transaction pays a base fee of 5,000 lamports, roughly one tenth of a cent per signature. Users can also attach a compute budget and pay priority fees per compute unit, essentially trading cost for faster processing. These compute unit caps serve two purposes: they enforce fairness across users and help the scheduler predict execution time for optimal parallelization.
+
+    Fee policy has evolved significantly. Priority fees go entirely to the current leader (the validator producing the current block), while base fees are split between burning and validator rewards (detailed in Section IV). The critical innovation here is **local fee markets**, which price congestion at the account level rather than across the entire network. Ethereum's global fee market (Chapter II) works differently: all transactions compete for the same block space regardless of which contracts they interact with. Ideally, local fee markets mean heavily congested accounts pay more without degrading performance for the rest of the network. In practice, the current implementation is imperfect. During extreme spam events in 2024 and 2025, congested traffic still degraded global performance and caused elevated dropped-transaction rates.
+
+    Solana also offers preflight simulation, which lets developers and users preview what a transaction will do before actually submitting it. Combined with detailed program logs, this allows wallets to show users the expected outcome of a transaction before they commit to it, improving both safety and user experience.
+
+    It's important to distinguish "dropped" transactions from "failed" ones. Dropped transactions never reach a block due to network overload, insufficient priority fees, or expired blockhashes, and they leave no on-chain record. Failed transactions are actually processed and included in a block but revert due to program logic errors or unmet conditions (like excessive slippage). In practice, users and applications mitigate dropped transactions by retrying with higher priority fees or using services that forward transactions to multiple leaders.
+
+    ### The User Experience Advantage
+
+    These technical mechanics create a distinctively different user experience: users interact with one global state, a cohesive ecosystem of explorers and wallets, and **atomic composability** across the whole network. Users can compose multiple protocol interactions within a single transaction that either succeeds completely or fails completely, with no partial executions and no stuck funds. The result is fewer context switches and less UX friction compared to navigating fragmented multi-chain ecosystems.
+
+    The economic impact matters most. Sub-cent transaction costs allow entirely different user behaviors than networks with dollar-plus fees. Users can execute rapid position changes, experiment with small-ticket speculation, and interact with applications multiple times per session without fee anxiety. This economic accessibility, combined with near-instant transaction processing, has enabled particular use cases to flourish on Solana, most notably memecoin trading and high-frequency DeFi applications.
+
+    The network has evolved considerably through operational challenges. Early Solana suffered from congestion-related outages that critics frequently highlighted. Notably, in February 2024, Solana experienced an outage lasting roughly five hours, caused by a bug in the program loader's cache. However, systematic upgrades to networking, block propagation, and runtime performance have significantly reduced both the frequency and severity of these issues, delivering increased inclusion rates and overall reliability.
+
+    The fast confirmations users experience, along with the inclusion behavior described above, are direct consequences of the consensus, scheduling, and networking stack operating beneath the surface.
+
+=== "KO"
+
+    ## Section II: 거래, 수수료, 그리고 UX
+
+    ### 거래 모델
+
+    각 거래에는 메시지(계정 목록, 명령어, 최근 블록해시 포함)와 필수 Ed25519 서명이 포함된다(Ed25519는 속도와 보안으로 알려진 현대적인 디지털 서명 알고리즘이다). 모든 거래는 서명당 5,000 램포트, 대략 1센트의 10분의 1의 기본 수수료를 지불한다. 사용자는 또한 연산 예산을 첨부하고 연산 단위당 우선 수수료를 지불할 수 있으며, 본질적으로 비용과 더 빠른 처리를 교환한다. 이러한 연산 단위 한도는 두 가지 목적을 수행한다: 사용자 간의 공정성을 강제하고 스케줄러가 최적의 병렬화를 위해 실행 시간을 예측하는 데 도움을 준다.
+
+    수수료 정책은 상당히 발전해왔다. 우선 수수료는 전적으로 현재 리더(현재 블록을 생성하는 검증자)에게 가고, 기본 수수료는 소각과 검증자 보상 사이에 분배된다(Section IV에서 자세히 설명). 여기서 핵심 혁신은 **로컬 수수료 시장(Local Fee Markets)**으로, 이는 전체 네트워크가 아닌 계정 수준에서 혼잡도를 가격에 반영한다. 이더리움의 글로벌 수수료 시장(Chapter II)은 다르게 작동한다: 어떤 컨트랙트와 상호작용하는지와 관계없이 모든 거래가 같은 블록 공간을 두고 경쟁한다. 이상적으로 로컬 수수료 시장은 심하게 혼잡한 계정이 나머지 네트워크의 성능을 저하시키지 않으면서 더 많이 지불하는 것을 의미한다. 실제로 현재 구현은 불완전하다. 2024년과 2025년의 극심한 스팸 이벤트 동안, 혼잡한 트래픽은 여전히 글로벌 성능을 저하시키고 거래 누락률을 높였다.
+
+    솔라나는 또한 **사전 비행 시뮬레이션(Preflight Simulation)**을 제공하는데, 이를 통해 개발자와 사용자가 실제로 제출하기 전에 거래가 무엇을 할 것인지 미리 볼 수 있다. 상세한 프로그램 로그와 결합하여, 이를 통해 지갑이 사용자에게 거래를 확정하기 전에 예상 결과를 보여줄 수 있어 안전성과 사용자 경험 모두를 개선한다.
+
+    "누락된(Dropped)" 거래와 "실패한(Failed)" 거래를 구별하는 것이 중요하다. 누락된 거래는 네트워크 과부하, 불충분한 우선 수수료, 또는 만료된 블록해시로 인해 블록에 도달하지 못하며 온체인 기록을 남기지 않는다. 실패한 거래는 실제로 처리되어 블록에 포함되지만 프로그램 로직 오류나 충족되지 않은 조건(예: 과도한 슬리피지)으로 인해 되돌려진다. 실제로 사용자와 애플리케이션은 더 높은 우선 수수료로 재시도하거나 여러 리더에게 거래를 전달하는 서비스를 사용하여 누락된 거래를 완화한다.
+
+    ### 사용자 경험 우위
+
+    이러한 기술적 메커니즘은 독특하게 다른 사용자 경험을 만든다: 사용자는 하나의 글로벌 상태, 탐색기와 지갑의 응집력 있는 생태계, 그리고 전체 네트워크에 걸친 **원자적 조합성(Atomic Composability)**과 상호작용한다. 사용자는 완전히 성공하거나 완전히 실패하는 단일 거래 내에서 여러 프로토콜 상호작용을 조합할 수 있으며, 부분 실행이나 갇힌 자금이 없다. 결과적으로 파편화된 멀티체인 생태계를 탐색하는 것에 비해 컨텍스트 전환과 UX 마찰이 줄어든다.
+
+    경제적 영향이 가장 중요하다. 1센트 미만의 거래 비용은 1달러 이상의 수수료를 가진 네트워크와는 완전히 다른 사용자 행동을 가능하게 한다. 사용자는 수수료 불안 없이 빠른 포지션 변경을 실행하고, 소액 투기를 실험하고, 세션당 여러 번 애플리케이션과 상호작용할 수 있다. 이러한 경제적 접근성과 거의 즉각적인 거래 처리의 결합은 특정 사용 사례가 솔라나에서 번성할 수 있게 했는데, 가장 주목할 만한 것은 밈코인 거래와 고빈도 DeFi 애플리케이션이다.
+
+    네트워크는 운영상의 도전을 통해 상당히 발전해왔다. 초기 솔라나는 비평가들이 자주 강조한 혼잡 관련 중단을 겪었다. 특히 2024년 2월에 솔라나는 프로그램 로더 캐시의 버그로 인해 약 5시간 동안 중단을 경험했다. 그러나 네트워킹, 블록 전파, 런타임 성능에 대한 체계적인 업그레이드로 이러한 문제의 빈도와 심각도가 크게 줄어들어 포함률과 전반적인 신뢰성이 향상되었다.
+
+    사용자가 경험하는 빠른 확인과 위에서 설명한 포함 동작은 표면 아래에서 작동하는 합의, 스케줄링, 네트워킹 스택의 직접적인 결과이다.
+
+=== "EN"
+
+    ## Section III: Consensus, Scheduling, and Networking
+
+    Solana achieves its rapid confirmations through an integrated stack of systems, each building on the others. Understanding this architecture requires seeing how the pieces connect rather than viewing them in isolation.
+
+    ### The Foundation: Proof of History
+
+    At the base layer sits Proof of History (PoH), Solana's cryptographic timekeeping mechanism. Think of it as a verifiable clock that produces a continuous sequence of hashes, so everyone can agree on the relative order of events before they are added to the blockchain. PoH creates a historical record that proves events occurred in a specific sequence, enabling validators to agree on transaction order without extensive back and forth communication. This ordering system becomes the foundation for everything else.
+
+    ### Consensus Built on Time: Tower BFT
+
+    Tower BFT leverages these PoH timestamps to handle finality. Rather than requiring validators to constantly communicate about block order, Tower BFT uses the timestamp record as a shared reference point. Validators cast stake-weighted votes on blocks, and the PoH timestamps help prevent equivocation (voting for conflicting blocks). This produces guaranteed finality currently around 12.8 seconds, though users typically experience faster economic finality in practice as transactions become increasingly unlikely to reverse after just a few confirmations.
+
+    ### Leader Scheduling and Transaction Routing
+
+    The PoH timekeeping mechanism makes predictable leader scheduling possible. Leaders are pre-scheduled in short slots (roughly 400 milliseconds each). These slots are organized into epochs, periods of roughly two days during which the validator schedule remains fixed. At the start of each epoch, the network determines which validators will lead which slots based on their stake. Your stake determines your chances of being selected as a leader, subject to warmup and cooldown periods and some randomness in the schedule.
+
+    This predictable scheduling enables **Gulf Stream**, Solana's transaction forwarding protocol. Unlike blockchains that broadcast transactions to a public mempool (as Bitcoin and Ethereum do, described in Chapters I and II), Solana sends them directly to the current and upcoming leaders. This direct routing reduces delays by eliminating the broadcast phase where transactions would otherwise wait in a public pool. Transactions can even be forwarded to future leaders before their slot begins, enabling rapid confirmations once the leader's slot starts.
+
+    ### Data Propagation: Turbine
+
+    Once leaders produce blocks, they need to propagate them efficiently across thousands of validators. Turbine solves this by breaking blocks into small chunks called "shreds." Rather than sending entire blocks point-to-point, Turbine organizes validators into a tree structure where each validator receives shreds and forwards them to a small set of other validators. The system includes redundancy built into how data is encoded, so even if some shreds are lost in transit, validators can reconstruct the full block from the pieces they do receive. This prevents bandwidth spikes and makes the network resistant to targeted spam against individual validators.
+
+    ### Networking Infrastructure: QUIC
+
+    The underlying transport layer uses QUIC, a modern internet protocol designed for faster, more reliable connections than traditional networking. QUIC can handle multiple data streams over a single connection, recovers more gracefully when data packets are lost, and establishes connections faster. Solana implements stake-weighted Quality of Service on top of QUIC, meaning validators with more stake get priority bandwidth treatment. This makes the network more resistant to spam from actors who have little stake in the system.
+
+    ### DoubleZero: Dedicated Fiber Infrastructure
+
+    While QUIC optimizes individual connections, DoubleZero addresses a more fundamental constraint: the public internet itself. DoubleZero is a private network overlay that connects validators through dedicated fiber optic links, the same infrastructure that traditional exchanges like Nasdaq and CME rely on for microsecond-level transmission.
+
+    As validator sets grow, propagation becomes harder. More nodes means more destinations, which introduces timing inconsistencies across the network. Messages bouncing through the public internet encounter variable latency depending on routing paths, congestion, and geographic distance. DoubleZero removes this variance by routing messages through optimal, dedicated paths rather than competing with general internet traffic.
+
+    This matters particularly for the consensus upgrades discussed below. Alpenglow's finality model depends on validators receiving and responding to messages within tight windows. If propagation is inconsistent, votes arrive late, quorum formation slows, and finality takes longer. By narrowing the latency gap across validators, DoubleZero enables faster finalization and more even block propagation. The infrastructure also supports multicast, replicating data inside the network and delivering it to validators simultaneously rather than through sequential point-to-point connections.
+
+    ### Alpenglow: Upgrading the Entire Stack
+
+    The integrated system of PoH, Tower BFT, Gulf Stream, Turbine, and QUIC described above represents Solana's current production infrastructure, evolved through years of mainnet operation. Understanding this foundation matters because Alpenglow, the planned upgrade, represents such a fundamental departure. Rather than incrementally improving individual components, Alpenglow reworks core consensus and voting communication entirely, with planned improvements to block dissemination in later phases.
+
+    Alpenglow replaces the core consensus mechanisms with redesigned alternatives. **Votor**, a new voting method, has validators exchange votes directly with each other and form certificates proving that enough stake has agreed on a decision. This replaces Tower BFT as the primary finality mechanism. Rather than chaining multiple voting rounds together as Tower BFT does, validators aggregate votes off-chain and commit to finality in one or two rounds.
+
+    Votor runs two finalization paths in parallel, adapting to network conditions. If a block receives overwhelming support (80% or more of stake) in the first round, it finalizes immediately. If support lands between 60% and 80%, a second round begins. If that second round also exceeds 60%, the block is finalized. This design ensures finality even when parts of the network are unresponsive, allowing the system to proceed gracefully rather than stalling.
+
+    **Rotor**, a planned follow-on, refines how block data spreads through the network. It routes messages directly through high-stake validators with reliable bandwidth, using fewer relay steps for more efficient propagation. Combined with dedicated infrastructure like DoubleZero, Rotor enables the tight timing windows that fast finality requires.
+
+    Alpenglow also introduces the "20+20" resilience model: safety is preserved so long as no more than 20% of total stake behaves maliciously, and liveness is preserved even if an additional 20% is offline. This means Alpenglow can tolerate up to 40% of the network being either malicious or inactive while still maintaining finality, a significant improvement over current tolerance thresholds.
+
+    Under Alpenglow, Proof of History is effectively deprecated. The system replaces PoH with fixed slot scheduling and local timers, removing a core architectural element that has defined Solana since its inception. This represents the most significant protocol-level change in Solana's history.
+
+    In simulations, Alpenglow achieves roughly 100 to 150 milliseconds median finality, compared to the current 12.8 seconds. These are simulation-based numbers that don't yet account for full computation overhead. Beyond raw performance, faster finality has security benefits. It shrinks the window during which an attacker could attempt to reorganize recent blocks and limits opportunities for certain types of arbitrage that exploit the uncertainty period before transactions become final.
+
+    The rollout plan targets extensive testing on dedicated testnets, with mainnet activation aimed for early to mid 2026 if testing and security audits go well. That said, blockchain upgrade timelines frequently slip, and the scope of changes involved makes delays plausible.
+
+    ### MEV and Block Building
+
+    With leader routing via Gulf Stream and the potential for dramatically faster finality through Alpenglow, the dynamics of how value is extracted and transactions are ordered within blocks become particularly important.
+
+    The leader-centric architecture we've described, with Gulf Stream routing transactions directly to scheduled leaders, creates important implications beyond latency. On most blockchains, pending transactions sit in a public waiting area called the mempool, where anyone can see them before they're included in a block. This visibility enables MEV (maximal extractable value, explored in depth in Chapter VIII), the profit that can be captured by reordering, inserting, or censoring transactions. Traders might see your pending swap and place their own trade first, profiting at your expense. Because Solana routes transactions directly to leaders rather than broadcasting them publicly, its MEV landscape operates quite differently.
+
+    Many validators now run Jito-Solana, a modified client that enables bundle auctions. This is optional infrastructure (not built into the protocol) that has achieved significant adoption. Searchers can package transactions into "bundles," simulate them off-chain, and pay tips for inclusion. Validators running Jito then build blocks combining both regular transactions (ordered by priority fees) and profitable bundles (ordered by tips). This system emerged organically from the direct-to-leader transaction flow, creating a MEV market that's integrated at the validator level rather than through separate relay infrastructure.
+
+    Two complementary trends are reshaping this block building layer further. BAM (Block Assembly Marketplace) is Jito's reimagining of Solana's transaction pipeline. Rather than letting the slot leader unilaterally determine ordering, BAM inserts a marketplace and privacy layer that separates ordering from execution. Transactions are ingested into Trusted Execution Environments (TEEs), meaning neither validators nor builders can see raw transaction content before ordering takes effect. This prevents opportunistic pre-execution behavior like frontrunning, addressing one of the most persistent concerns in MEV dynamics.
+
+    Harmonic addresses a different part of the pipeline: who builds the blocks. It introduces an open block-builder aggregation layer so validators can accept block proposals from multiple competing builders in real time. Think of Harmonic as a meta-market for block construction and BAM as the micro-market for transaction ordering within those blocks. Together, they create a more competitive and transparent block building ecosystem.
+
+    ### Raiku: Deterministic Execution Guarantees
+
+    Even with faster consensus and improved block building, Solana does not natively offer guaranteed latency or programmable execution guarantees to specific applications. High-frequency trading and on-chain CLOBs (central limit order books, where buyers and sellers post specific prices rather than trading against liquidity pools) require more granular control than a general-purpose L1 can reasonably provide at the protocol level.
+
+    Raiku fills this gap. It provides a scheduling and auction layer that runs adjacent to Solana's validator set, giving applications a programmable, deterministic pre-execution environment without modifying L1 consensus. Raiku achieves guaranteed execution through two transaction types: Ahead-of-Time (AOT) transactions for pre-committed workflows where execution timing can be scheduled in advance, and Just-in-Time (JIT) transactions for real-time execution needs that require immediate response. This infrastructure layer enables applications to offer execution guarantees approaching those of centralized systems while retaining the settlement benefits of an on-chain environment.
+
+    The technical infrastructure described throughout this section, from consensus mechanics to MEV dynamics to emerging execution layers, creates costs and revenue streams that shape who participates in the network and how.
+
+=== "KO"
+
+    ## Section III: 합의, 스케줄링, 그리고 네트워킹
+
+    솔라나는 각각이 다른 것 위에 구축되는 통합된 시스템 스택을 통해 빠른 확인을 달성한다. 이 아키텍처를 이해하려면 조각들을 개별적으로 보기보다 어떻게 연결되는지를 봐야 한다.
+
+    ### 기반: 역사 증명
+
+    기반 계층에는 **역사 증명(Proof of History, PoH)**이 있는데, 이는 솔라나의 암호학적 시간 기록 메커니즘이다. 연속적인 해시 시퀀스를 생성하는 검증 가능한 시계로 생각하면 되며, 모든 사람이 이벤트가 블록체인에 추가되기 전에 상대적 순서에 동의할 수 있다. PoH는 이벤트가 특정 순서로 발생했음을 증명하는 역사적 기록을 생성하여, 검증자들이 광범위한 왕복 통신 없이 거래 순서에 동의할 수 있게 한다. 이 순서 시스템은 다른 모든 것의 기반이 된다.
+
+    ### 시간 위에 구축된 합의: Tower BFT
+
+    **Tower BFT**는 이러한 PoH 타임스탬프를 활용하여 최종성을 처리한다. 검증자들이 블록 순서에 대해 지속적으로 통신하도록 요구하는 대신, Tower BFT는 타임스탬프 기록을 공유 참조점으로 사용한다. 검증자들은 블록에 대해 지분 가중치 투표를 하고, PoH 타임스탬프는 이중투표(conflicting blocks에 대한 투표)를 방지하는 데 도움을 준다. 이는 현재 약 12.8초의 보장된 최종성을 생성하지만, 사용자는 일반적으로 실제로 몇 번의 확인 후 거래가 되돌려질 가능성이 점점 줄어들면서 더 빠른 경제적 최종성을 경험한다.
+
+    ### 리더 스케줄링과 거래 라우팅
+
+    PoH 시간 기록 메커니즘은 예측 가능한 리더 스케줄링을 가능하게 한다. 리더는 짧은 슬롯(각각 약 400밀리초)에 미리 예약된다. 이 슬롯들은 검증자 스케줄이 고정되어 있는 대략 이틀 기간인 에포크(Epoch)로 구성된다. 각 에포크 시작 시, 네트워크는 지분에 기반하여 어떤 검증자가 어떤 슬롯을 이끌 것인지 결정한다. 지분은 리더로 선정될 확률을 결정하며, 워밍업 및 쿨다운 기간과 스케줄의 일부 무작위성의 영향을 받는다.
+
+    이 예측 가능한 스케줄링은 솔라나의 거래 전달 프로토콜인 **Gulf Stream**을 가능하게 한다. 비트코인과 이더리움이 하는 것처럼(Chapter I과 II에서 설명) 거래를 공개 멤풀에 브로드캐스트하는 블록체인과 달리, 솔라나는 현재와 다가오는 리더에게 직접 보낸다. 이 직접 라우팅은 거래가 공개 풀에서 대기하는 브로드캐스트 단계를 제거하여 지연을 줄인다. 거래는 심지어 슬롯이 시작되기 전에 미래 리더에게 전달될 수 있어, 리더의 슬롯이 시작되면 빠른 확인이 가능하다.
+
+    ### 데이터 전파: Turbine
+
+    리더가 블록을 생성하면, 수천 명의 검증자에게 효율적으로 전파해야 한다. **Turbine**은 블록을 "슈레드(Shreds)"라는 작은 조각으로 나누어 이를 해결한다. 전체 블록을 점대점으로 보내는 대신, Turbine은 검증자들을 트리 구조로 구성하여 각 검증자가 슈레드를 받고 다른 검증자 소그룹에게 전달한다. 시스템은 데이터 인코딩 방식에 중복성이 내장되어 있어, 일부 슈레드가 전송 중에 손실되더라도 검증자가 받은 조각에서 전체 블록을 재구성할 수 있다. 이는 대역폭 급증을 방지하고 개별 검증자에 대한 표적 스팸에 대한 네트워크 저항성을 높인다.
+
+    ### 네트워킹 인프라: QUIC
+
+    기반 전송 계층은 전통적인 네트워킹보다 더 빠르고 안정적인 연결을 위해 설계된 현대적인 인터넷 프로토콜인 **QUIC**을 사용한다. QUIC은 단일 연결을 통해 여러 데이터 스트림을 처리할 수 있고, 데이터 패킷 손실 시 더 우아하게 복구하며, 연결을 더 빠르게 설정한다. 솔라나는 QUIC 위에 지분 가중치 서비스 품질(Quality of Service)을 구현하여, 더 많은 지분을 가진 검증자가 우선 대역폭 처리를 받는다. 이는 시스템에 거의 지분이 없는 행위자의 스팸에 대한 네트워크 저항성을 높인다.
+
+    ### DoubleZero: 전용 광섬유 인프라
+
+    QUIC이 개별 연결을 최적화하는 반면, **DoubleZero**는 더 근본적인 제약인 공용 인터넷 자체를 다룬다. DoubleZero는 전용 광섬유 링크를 통해 검증자를 연결하는 사설 네트워크 오버레이로, 나스닥(Nasdaq)과 CME 같은 전통 거래소가 마이크로초 수준의 전송을 위해 의존하는 것과 동일한 인프라이다.
+
+    검증자 세트가 커질수록 전파가 더 어려워진다. 더 많은 노드는 더 많은 목적지를 의미하며, 이는 네트워크 전반에 걸쳐 타이밍 불일치를 도입한다. 공용 인터넷을 통해 튀어다니는 메시지는 라우팅 경로, 혼잡, 지리적 거리에 따라 가변적인 지연을 경험한다. DoubleZero는 일반 인터넷 트래픽과 경쟁하는 대신 최적의 전용 경로를 통해 메시지를 라우팅하여 이 변동성을 제거한다.
+
+    이것은 아래에서 논의하는 합의 업그레이드에 특히 중요하다. Alpenglow의 최종성 모델은 검증자들이 좁은 창 내에서 메시지를 수신하고 응답하는 것에 의존한다. 전파가 일관되지 않으면 투표가 늦게 도착하고, 정족수 형성이 느려지며, 최종성이 더 오래 걸린다. 검증자 간 지연 격차를 좁힘으로써 DoubleZero는 더 빠른 최종화와 더 균일한 블록 전파를 가능하게 한다. 인프라는 또한 멀티캐스트를 지원하여 순차적 점대점 연결 대신 네트워크 내에서 데이터를 복제하고 검증자에게 동시에 전달한다.
+
+    ### Alpenglow: 전체 스택 업그레이드
+
+    위에서 설명한 PoH, Tower BFT, Gulf Stream, Turbine, QUIC의 통합 시스템은 수년간의 메인넷 운영을 통해 발전한 솔라나의 현재 프로덕션 인프라를 나타낸다. 이 기반을 이해하는 것이 중요한 이유는 계획된 업그레이드인 **Alpenglow**가 그러한 근본적인 변화를 대표하기 때문이다. 개별 구성 요소를 점진적으로 개선하는 대신, Alpenglow는 핵심 합의와 투표 통신을 완전히 재작업하며, 후속 단계에서 블록 배포 개선을 계획하고 있다.
+
+    Alpenglow는 핵심 합의 메커니즘을 재설계된 대안으로 대체한다. 새로운 투표 방법인 **Votor**는 검증자들이 서로 직접 투표를 교환하고 충분한 지분이 결정에 동의했음을 증명하는 인증서를 형성한다. 이것은 Tower BFT를 주요 최종성 메커니즘으로 대체한다. Tower BFT가 하는 것처럼 여러 투표 라운드를 연결하는 대신, 검증자들은 오프체인에서 투표를 집계하고 한두 라운드 내에 최종성을 확정한다.
+
+    Votor는 두 개의 최종화 경로를 병렬로 실행하여 네트워크 상태에 적응한다. 블록이 첫 번째 라운드에서 압도적인 지지(지분의 80% 이상)를 받으면 즉시 최종화된다. 지지가 60%에서 80% 사이라면 두 번째 라운드가 시작된다. 그 두 번째 라운드도 60%를 초과하면 블록이 최종화된다. 이 설계는 네트워크의 일부가 응답하지 않을 때도 최종성을 보장하여, 시스템이 정지하지 않고 우아하게 진행할 수 있게 한다.
+
+    계획된 후속 기능인 **Rotor**는 블록 데이터가 네트워크를 통해 확산되는 방식을 개선한다. 신뢰할 수 있는 대역폭을 가진 높은 지분 검증자를 통해 메시지를 직접 라우팅하며, 더 효율적인 전파를 위해 더 적은 릴레이 단계를 사용한다. DoubleZero와 같은 전용 인프라와 결합하여, Rotor는 빠른 최종성이 요구하는 좁은 타이밍 창을 가능하게 한다.
+
+    Alpenglow는 또한 "20+20" 회복 모델을 도입한다: 총 지분의 20% 이하가 악의적으로 행동하는 한 안전성이 유지되고, 추가로 20%가 오프라인이더라도 활성이 유지된다. 이는 Alpenglow가 최종성을 유지하면서 네트워크의 최대 40%가 악의적이거나 비활성일 수 있음을 허용한다는 것을 의미하며, 현재 허용 임계값보다 상당히 개선된 것이다.
+
+    Alpenglow 하에서 역사 증명(Proof of History)은 사실상 폐기된다. 시스템은 PoH를 고정된 슬롯 스케줄링과 로컬 타이머로 대체하여 솔라나 출시 이후 핵심 아키텍처 요소였던 것을 제거한다. 이것은 솔라나 역사상 가장 중요한 프로토콜 수준 변경을 나타낸다.
+
+    시뮬레이션에서 Alpenglow는 현재 12.8초와 비교하여 대략 100~150밀리초의 중앙값 최종성을 달성한다. 이들은 아직 전체 연산 오버헤드를 고려하지 않은 시뮬레이션 기반 수치이다. 원시 성능 외에도 더 빠른 최종성은 보안 이점이 있다. 공격자가 최근 블록을 재구성하려 시도할 수 있는 창을 줄이고 거래가 최종화되기 전 불확실 기간을 악용하는 특정 유형의 차익거래 기회를 제한한다.
+
+    출시 계획은 전용 테스트넷에서 광범위한 테스트를 목표로 하며, 테스트와 보안 감사가 잘 진행되면 2026년 초중반 메인넷 활성화를 목표로 한다. 그렇지만 블록체인 업그레이드 일정은 자주 미끄러지며, 관련된 변경의 범위를 고려하면 지연이 발생할 수 있다.
+
+    ### MEV와 블록 빌딩
+
+    Gulf Stream을 통한 리더 라우팅과 Alpenglow를 통한 극적으로 더 빠른 최종성의 가능성이 있는 상황에서, 블록 내에서 가치가 어떻게 추출되고 거래가 어떻게 정렬되는지의 역학이 특히 중요해진다.
+
+    우리가 설명한 리더 중심 아키텍처, Gulf Stream이 예정된 리더에게 직접 거래를 라우팅하는 것은 지연 시간 외에 중요한 함의를 만든다. 대부분의 블록체인에서 대기 중인 거래는 블록에 포함되기 전에 누구나 볼 수 있는 멤풀이라는 공개 대기 영역에 머문다. 이 가시성은 **MEV(최대 추출 가능 가치, Maximal Extractable Value, Chapter VIII에서 깊이 탐구됨)**, 즉 거래를 재정렬하거나 삽입하거나 검열하여 포착할 수 있는 이익을 가능하게 한다. 트레이더들이 당신의 대기 중인 스왑을 보고 먼저 자신의 거래를 배치하여 당신의 비용으로 이익을 취할 수 있다. 솔라나는 거래를 공개적으로 브로드캐스트하는 대신 리더에게 직접 라우팅하기 때문에, MEV 환경이 상당히 다르게 작동한다.
+
+    많은 검증자들이 이제 번들 경매를 가능하게 하는 수정된 클라이언트인 **Jito-Solana**를 실행한다. 이것은 프로토콜에 내장되지 않은 선택적 인프라로, 상당한 채택을 달성했다. 검색자(Searchers)는 거래를 "번들"로 패키징하고, 오프체인에서 시뮬레이션하고, 포함을 위해 팁을 지불할 수 있다. 그러면 Jito를 실행하는 검증자가 일반 거래(우선 수수료로 정렬)와 수익성 있는 번들(팁으로 정렬)을 결합하여 블록을 구축한다. 이 시스템은 리더에게 직접 전달되는 거래 흐름에서 유기적으로 등장하여, 별도의 릴레이 인프라를 통하지 않고 검증자 수준에서 통합된 MEV 시장을 만들었다.
+
+    두 가지 상호보완적인 추세가 이 블록 빌딩 계층을 더욱 재형성하고 있다. **BAM(Block Assembly Marketplace)**은 Jito의 솔라나 거래 파이프라인 재구상이다. 슬롯 리더가 일방적으로 정렬을 결정하게 하는 대신, BAM은 정렬과 실행을 분리하는 마켓플레이스와 프라이버시 계층을 삽입한다. 거래는 **신뢰 실행 환경(Trusted Execution Environments, TEEs)**에 수집되어, 검증자도 빌더도 정렬이 적용되기 전에 원시 거래 내용을 볼 수 없다. 이것은 프론트러닝과 같은 기회주의적 사전 실행 행동을 방지하여 MEV 역학에서 가장 지속적인 우려 중 하나를 해결한다.
+
+    **Harmonic**은 파이프라인의 다른 부분, 즉 누가 블록을 구축하는지를 다룬다. 검증자가 실시간으로 여러 경쟁 빌더로부터 블록 제안을 수락할 수 있도록 개방형 블록 빌더 집계 계층을 도입한다. Harmonic을 블록 구축을 위한 메타 시장으로, BAM을 해당 블록 내 거래 정렬을 위한 마이크로 시장으로 생각하면 된다. 함께, 그들은 더 경쟁적이고 투명한 블록 빌딩 생태계를 만든다.
+
+    ### Raiku: 결정론적 실행 보장
+
+    더 빠른 합의와 개선된 블록 빌딩에도 불구하고, 솔라나는 특정 애플리케이션에 보장된 지연 시간이나 프로그래밍 가능한 실행 보장을 기본적으로 제공하지 않는다. 고빈도 거래와 온체인 **CLOB(중앙 지정가 주문서, Central Limit Order Books, 여기서 구매자와 판매자가 유동성 풀에 대해 거래하는 대신 특정 가격을 게시한다)**는 범용 L1이 프로토콜 수준에서 합리적으로 제공할 수 있는 것보다 더 세밀한 제어를 필요로 한다.
+
+    **Raiku**가 이 격차를 메운다. 솔라나의 검증자 세트와 인접하여 실행되는 스케줄링 및 경매 계층을 제공하여, L1 합의를 수정하지 않고 애플리케이션에 프로그래밍 가능하고 결정론적인 사전 실행 환경을 제공한다. Raiku는 두 가지 거래 유형을 통해 보장된 실행을 달성한다: 실행 타이밍이 사전에 예약될 수 있는 사전 커밋된 워크플로우를 위한 **사전 예약(Ahead-of-Time, AOT)** 거래와 즉각적인 응답이 필요한 실시간 실행 요구를 위한 **즉시 실행(Just-in-Time, JIT)** 거래. 이 인프라 계층은 애플리케이션이 온체인 환경의 정산 이점을 유지하면서 중앙화 시스템에 접근하는 실행 보장을 제공할 수 있게 한다.
+
+    이 섹션 전반에 걸쳐 설명된 기술 인프라, 합의 메커니즘에서 MEV 역학, 새로운 실행 계층에 이르기까지는 누가 네트워크에 참여하고 어떻게 참여하는지를 형성하는 비용과 수익 흐름을 만든다.
+=== "EN"
+
+    ## Section IV: Economics, Staking, and Governance
+
+    The technical architecture tells only part of the story. Economic design, staking mechanics, and governance processes determine who can profitably participate and how the network evolves over time.
+
+    ### Token Economics and Monetary Policy
+
+    SOL serves as Solana's native token with multifaceted roles: transaction fees, staking collateral, and governance weight. The initial supply launched at approximately 500 million tokens, with a disinflationary schedule designed to balance network security incentives against long-term supply predictability.
+
+    The inflation schedule began at 8% annually and decreases by 15% per year (the disinflationary rate) until reaching a terminal 1.5% annual inflation rate. This terminal rate should be reached around 2031, after which inflation stabilizes permanently. This design aims to ensure sufficient staking rewards to incentivize validator participation even as the network matures, while avoiding the runaway inflation that would erode token value over decades.
+
+    However, inflation represents only one side of the supply equation. Fee burning introduces deflationary pressure. Solana burns 50% of the base transaction fee permanently, removing SOL from circulation; the other 50% goes to the block leader. Priority fees (compute-price tips) go entirely to the leader and are not part of the burn mechanism.
+
+    During periods of extreme network activity, burn rates can theoretically exceed inflation, making SOL temporarily deflationary. In practice, current transaction volume doesn't consistently achieve this threshold, but the mechanism creates a direct relationship between network usage and token supply dynamics.
+
+    The practical impact: staking yields on Solana are roughly 7% APY (varying with inflation rate and total staked percentage), reflecting the need to compensate validators for substantial hardware costs and operational complexity.
+
+    ### Staking Mechanics and Validator Economics
+
+    Staking on Solana works through a delegation model where SOL holders can delegate tokens to validators without surrendering custody. Unlike Ethereum's staking model (Chapter II), which requires 32 ETH minimums for solo validators and uses liquid staking derivatives like stETH for smaller holders, Solana allows native delegation of any amount directly to validators. Delegators earn rewards proportional to their stake minus the validator's commission rate, typically ranging from 0% to 10%, though validators can set any rate. This establishes a competitive marketplace where validators must balance commission revenue against attracting sufficient delegation to maintain profitability.
+
+    The mechanics involve several time-based constraints. Stake activation and deactivation occur at epoch boundaries (approximately 2-3 days) and often complete in one epoch, but can take multiple epochs due to network-wide cooldown limits that throttle large stake movements. These delays prevent rapid stake movement that could destabilize consensus but introduce liquidity constraints for delegators who may need quick access to funds.
+
+    #### The Economics of Running a Validator
+
+    Validator economics are complex and demanding: high-end hardware, terabytes of monthly bandwidth, enterprise networking, data center infrastructure, and vote transaction fees (approximately $4,000 monthly) typically total around $5,000 in monthly operational costs. Validators also require skilled personnel to maintain these systems reliably.
+
+    Revenue sources include multiple streams. Inflation rewards form the base layer, distributed proportionally to stake weight. Transaction fees add performance-based compensation, with both base fees (50% share) and priority fees flowing to block leaders. For validators running Jito-Solana, MEV tips from bundle auctions provide additional revenue that can substantially exceed standard transaction fees during high-value arbitrage opportunities.
+
+    The viability calculation is straightforward but unforgiving: validators need sufficient delegated stake to earn enough inflation rewards and fee revenue to cover operational costs plus commission margins. Absent external support, small validators with minimal delegation would struggle to break even. Foundation programs exist to help bootstrap new validators (discussed below), but these are explicitly time-limited, so structural pressure toward concentration among operators with durable external delegation never fully disappears.
+
+    #### Centralization Pressures and Network Security
+
+    The validator count has declined significantly, from a peak of around 2,000 validators to roughly 800 active validators as of January 2026. This raises obvious questions about network security and decentralization.
+
+    However, raw validator count tells only part of the story. A network could have thousands of validators but still be centralized if a handful control most of the stake. What matters more is how stake is distributed among validators, how concentrated the infrastructure is geographically, whether multiple independent software clients exist, and whether validators can actually operate profitably without subsidies.
+
+    Part of the recent validator churn reflects the economics of running a node. The Solana Foundation Delegation Program (SFDP) was designed as a temporary bootstrap mechanism. It subsidizes vote costs for new validators and delegates stake to help them get started, but this support tapers over 12 months and then ends. The program explicitly pushes participants to attract delegation from regular token holders rather than rely on foundation support indefinitely. When validators can't attract enough organic delegation to cover their costs, they shut down. This is working as intended, not a system failure.
+
+    But even accounting for SFDP transitions, the concentration of power remains concerning. Just 19 to 22 large validators control enough stake to reach the "**superminority threshold**," roughly one-third of total stake, which is the amount needed to halt network consensus. If these operators coordinated (or were somehow forced to coordinate), they could stop the network from producing blocks.
+
+    Geographic and infrastructure concentration makes this worse. Large portions of stake run through a small number of data centers and hosting providers, mostly concentrated in a handful of countries. This creates correlated risks. A problem at a major hosting provider, or coordinated government action in a key jurisdiction, could knock out enough validators to disrupt the network.
+
+    Future protocol changes may help, but they won't eliminate costs entirely. The planned Alpenglow consensus upgrade (detailed in Section III) is expected to reduce validator operating costs compared to the current system, but validators will still need meaningful stake and revenue to operate sustainably. Separately, lightweight verification clients could let more people verify the chain on modest hardware, though these verification nodes are fundamentally different from full consensus validators that vote on blocks and earn rewards.
+
+    Solana's security model adds another wrinkle. Unlike most proof of stake chains, Solana does not currently enforce slashing on mainnet. Validators do not automatically lose staked SOL for misbehavior like voting for conflicting blocks or staying offline for extended periods, though such mechanisms are being designed and tested. The Solana community has chosen to prioritize avoiding accidental stake loss from honest mistakes, and questions whether slashing would actually deter sophisticated attackers willing to absorb losses as a cost of doing business.
+
+    Without automatic penalties, the network relies more on reputation and economic opportunity cost. A validator that attacks the network risks losing future delegation and transaction fee revenue, along with the value of their hardware infrastructure and business relationships. Whether these incentives prove sufficient remains an open question. Most other major chains consider strong slashing fundamental to crypto-economic security. Meanwhile, ongoing work to reduce validator operating costs aims to make running a node more economically viable for smaller operators, which could improve decentralization over time regardless of slashing policy.
+
+    ### Governance and Upgrade Mechanisms
+
+    Solana's governance model lacks binding on-chain voting, instead operating through off-chain coordination, validator consensus, and Solana Foundation influence. This prioritizes velocity and pragmatism over formalized democratic processes, enabling rapid iteration when core developers and major validators align, though critics argue this concentrates power among fewer actors and reduces decision-making transparency.
+
+    Protocol changes follow a **Solana Improvement Document (SIMD)** process resembling Ethereum's EIP system. Anyone can propose a SIMD for community discussion through GitHub, Discord, and forums, with substantial changes requiring broad validator and developer buy-in. The Solana Foundation, alongside major ecosystem stakeholders like Solana Labs, Anza (which maintains the main Agave validator client), Jump Crypto, and Jito Labs, wield significant informal influence through technical expertise, resource control, and stake weight. The existence of multiple validator client implementations, discussed in Section VI, reduces the risk of a bug in one codebase bringing down the entire network.
+
+    Validators make ultimate decisions through social consensus by choosing whether to upgrade their client software. New releases use **feature gates**, which are disabled-by-default protocol changes the client understands but doesn't enforce. Once a supermajority of stake-weighted validators has upgraded and there is clear support, core contributors activate the relevant feature gates via an on-chain instruction, scheduling them to become active at a specific slot or epoch. From that point, upgraded clients enforce the new rules as part of consensus. Significant validator splits on upgrades or feature activation could theoretically fork the network, though strong coordination and communication have prevented this.
+
+    The Foundation maintains a substantial SOL treasury from initial token allocation, funding ecosystem development, grants, security audits, and infrastructure. This financial influence extends to governance, allowing the Foundation to credibly advocate for changes it can resource. However, the Foundation has progressively decentralized control, aiming to eventually reduce its role as the ecosystem matures.
+
+    These economic and operational realities directly inform how developers build on Solana.
+
+=== "KO"
+
+    ## Section IV: 경제학, 스테이킹, 그리고 거버넌스
+
+    기술 아키텍처는 이야기의 일부만 말해준다. 경제적 설계, 스테이킹 메커니즘, 거버넌스 프로세스가 누가 수익성 있게 참여할 수 있고 네트워크가 시간이 지남에 따라 어떻게 진화하는지를 결정한다.
+
+    ### 토큰 경제학과 통화 정책
+
+    SOL은 다면적 역할을 하는 솔라나의 네이티브 토큰으로 기능한다: 거래 수수료, 스테이킹 담보, 거버넌스 가중치. 초기 공급량은 대략 5억 토큰으로 출시되었으며, 네트워크 보안 인센티브와 장기 공급 예측 가능성 사이의 균형을 맞추도록 설계된 디스인플레이션 일정을 가진다.
+
+    인플레이션 일정은 연간 8%로 시작하여 최종 1.5% 연간 인플레이션율에 도달할 때까지 매년 15%씩 감소한다(디스인플레이션율). 이 최종 비율은 2031년경에 도달해야 하며, 그 후 인플레이션은 영구적으로 안정화된다. 이 설계는 네트워크가 성숙해도 검증자 참여를 인센티브화하기에 충분한 스테이킹 보상을 보장하면서, 수십 년에 걸쳐 토큰 가치를 잠식할 폭주하는 인플레이션을 피하는 것을 목표로 한다.
+
+    그러나 인플레이션은 공급 방정식의 한 면만 나타낸다. 수수료 소각은 디플레이션 압력을 도입한다. 솔라나는 기본 거래 수수료의 50%를 영구적으로 소각하여 SOL을 유통에서 제거한다; 나머지 50%는 블록 리더에게 간다. 우선 수수료(연산 가격 팁)는 전적으로 리더에게 가며 소각 메커니즘의 일부가 아니다.
+
+    극심한 네트워크 활동 기간 동안, 소각률은 이론적으로 인플레이션을 초과하여 SOL을 일시적으로 디플레이션 상태로 만들 수 있다. 실제로 현재 거래량은 이 임계값을 일관되게 달성하지 못하지만, 이 메커니즘은 네트워크 사용과 토큰 공급 역학 사이에 직접적인 관계를 만든다.
+
+    실질적 영향: 솔라나의 스테이킹 수익률은 대략 연 7% APY(인플레이션율과 총 스테이킹 비율에 따라 변동)로, 상당한 하드웨어 비용과 운영 복잡성에 대해 검증자에게 보상해야 할 필요성을 반영한다.
+
+    ### 스테이킹 메커니즘과 검증자 경제학
+
+    솔라나의 스테이킹은 SOL 보유자가 수탁권을 포기하지 않고 검증자에게 토큰을 위임할 수 있는 위임 모델을 통해 작동한다. 단독 검증자에게 32 ETH 최소를 요구하고 소액 보유자를 위해 stETH와 같은 유동 스테이킹 파생상품을 사용하는 이더리움의 스테이킹 모델(Chapter II)과 달리, 솔라나는 검증자에게 직접 어떤 금액이든 네이티브 위임을 허용한다. 위임자는 검증자의 수수료율(일반적으로 0%에서 10% 사이, 검증자가 어떤 비율이든 설정할 수 있음)을 뺀 지분에 비례하여 보상을 얻는다. 이는 검증자가 수수료 수익과 수익성을 유지하기에 충분한 위임을 유치하는 것 사이의 균형을 맞춰야 하는 경쟁적 시장을 형성한다.
+
+    메커니즘에는 여러 시간 기반 제약이 포함된다. 지분 활성화와 비활성화는 에포크 경계(약 2-3일)에서 발생하며 종종 한 에포크 내에 완료되지만, 대규모 지분 이동을 제한하는 네트워크 전체 쿨다운 제한으로 인해 여러 에포크가 걸릴 수 있다. 이러한 지연은 합의를 불안정하게 할 수 있는 빠른 지분 이동을 방지하지만, 빠른 자금 접근이 필요할 수 있는 위임자에게 유동성 제약을 도입한다.
+
+    #### 검증자 운영의 경제학
+
+    검증자 경제학은 복잡하고 까다롭다: 고급 하드웨어, 월간 테라바이트의 대역폭, 엔터프라이즈 네트워킹, 데이터 센터 인프라, 투표 거래 수수료(월간 약 4,000달러)가 일반적으로 월간 운영 비용 약 5,000달러를 합산한다. 검증자는 또한 이러한 시스템을 안정적으로 유지하기 위한 숙련된 인력이 필요하다.
+
+    수익원은 여러 흐름을 포함한다. 인플레이션 보상이 기본 계층을 형성하며 지분 가중치에 비례하여 분배된다. 거래 수수료는 성과 기반 보상을 추가하며, 기본 수수료(50% 지분)와 우선 수수료가 블록 리더에게 흘러간다. Jito-Solana를 실행하는 검증자의 경우, 번들 경매에서 얻는 MEV 팁은 고가치 차익거래 기회 동안 표준 거래 수수료를 상당히 초과할 수 있는 추가 수익을 제공한다.
+
+    수익성 계산은 간단하지만 가혹하다: 검증자는 운영 비용과 수수료 마진을 충당할 수 있을 만큼의 인플레이션 보상과 수수료 수익을 얻기 위해 충분한 위임 지분이 필요하다. 외부 지원 없이, 최소한의 위임을 가진 소규모 검증자는 손익분기점에 도달하기 어려울 것이다. 파운데이션 프로그램이 새로운 검증자를 부트스트랩하는 데 도움이 되지만(아래에서 논의), 이들은 명시적으로 시간 제한이 있어 지속 가능한 외부 위임을 가진 운영자들 사이의 집중을 향한 구조적 압력이 완전히 사라지지 않는다.
+
+    #### 중앙화 압력과 네트워크 보안
+
+    검증자 수는 상당히 감소했으며, 2026년 1월 기준 약 2,000명의 검증자 정점에서 약 800명의 활성 검증자로 줄었다. 이는 네트워크 보안과 탈중앙화에 대한 명백한 질문을 제기한다.
+
+    그러나 원시 검증자 수는 이야기의 일부만 말해준다. 네트워크가 수천 명의 검증자를 가질 수 있지만 소수가 대부분의 지분을 통제한다면 여전히 중앙화될 수 있다. 더 중요한 것은 지분이 검증자들 사이에 어떻게 분배되는지, 인프라가 지리적으로 얼마나 집중되어 있는지, 여러 독립적인 소프트웨어 클라이언트가 존재하는지, 검증자가 실제로 보조금 없이 수익성 있게 운영할 수 있는지이다.
+
+    최근 검증자 이탈의 일부는 노드 운영 경제학을 반영한다. **솔라나 파운데이션 위임 프로그램(Solana Foundation Delegation Program, SFDP)**은 임시 부트스트랩 메커니즘으로 설계되었다. 새로운 검증자에게 투표 비용을 보조하고 시작을 돕기 위해 지분을 위임하지만, 이 지원은 12개월에 걸쳐 점차 감소하고 종료된다. 프로그램은 참가자들이 파운데이션 지원에 무기한 의존하기보다 일반 토큰 보유자로부터 위임을 유치하도록 명시적으로 밀어붙인다. 검증자가 비용을 충당할 만큼의 유기적 위임을 유치할 수 없으면 그들은 종료한다. 이것은 의도한 대로 작동하는 것이며, 시스템 실패가 아니다.
+
+    그러나 SFDP 전환을 고려하더라도, 권력 집중은 여전히 우려된다. 단 19~22개의 대형 검증자가 네트워크 합의를 중단하는 데 필요한 양인 총 지분의 대략 1/3인 "**슈퍼마이너리티 임계값(Superminority Threshold)**"에 도달할 만큼의 지분을 통제한다. 이러한 운영자들이 조정했다면(또는 어떻게든 조정하도록 강요받았다면), 그들은 네트워크가 블록을 생성하는 것을 중단시킬 수 있다.
+
+    지리적 및 인프라 집중이 이를 악화시킨다. 지분의 상당 부분이 소수의 데이터 센터와 호스팅 제공업체를 통해 운영되며, 대부분 소수의 국가에 집중되어 있다. 이는 상관된 위험을 만든다. 주요 호스팅 제공업체의 문제나 주요 관할권에서의 조율된 정부 조치가 네트워크를 혼란에 빠뜨릴 만큼의 검증자를 쓰러뜨릴 수 있다.
+
+    미래의 프로토콜 변경이 도움이 될 수 있지만, 비용을 완전히 제거하지는 못할 것이다. Section III에서 자세히 설명한 계획된 Alpenglow 합의 업그레이드는 현재 시스템에 비해 검증자 운영 비용을 줄일 것으로 예상되지만, 검증자는 여전히 지속 가능하게 운영하기 위해 의미 있는 지분과 수익이 필요할 것이다. 별도로, 경량 검증 클라이언트는 더 많은 사람들이 적당한 하드웨어에서 체인을 검증할 수 있게 할 수 있지만, 이러한 검증 노드는 블록에 투표하고 보상을 받는 완전한 합의 검증자와는 근본적으로 다르다.
+
+    솔라나의 보안 모델은 또 다른 주름을 추가한다. 대부분의 지분 증명 체인과 달리, 솔라나는 현재 메인넷에서 **슬래싱(Slashing)**을 시행하지 않는다. 검증자는 충돌하는 블록에 투표하거나 장기간 오프라인 상태를 유지하는 것과 같은 부정행위로 자동으로 스테이킹된 SOL을 잃지 않지만, 이러한 메커니즘은 설계되고 테스트되고 있다. 솔라나 커뮤니티는 정직한 실수로 인한 우발적인 지분 손실을 피하는 것을 우선시하기로 선택했으며, 슬래싱이 사업 비용으로 손실을 기꺼이 감수하는 정교한 공격자를 실제로 억제할 것인지에 대해 의문을 제기한다.
+
+    자동 페널티 없이, 네트워크는 평판과 경제적 기회 비용에 더 많이 의존한다. 네트워크를 공격하는 검증자는 하드웨어 인프라 및 비즈니스 관계의 가치와 함께 미래 위임 및 거래 수수료 수익을 잃을 위험이 있다. 이러한 인센티브가 충분한지는 열린 질문으로 남아 있다. 대부분의 다른 주요 체인은 강력한 슬래싱을 암호경제적 보안의 기본으로 간주한다. 한편, 검증자 운영 비용을 줄이기 위한 지속적인 작업은 노드 실행을 소규모 운영자에게 더 경제적으로 실행 가능하게 만드는 것을 목표로 하며, 이는 슬래싱 정책과 관계없이 시간이 지남에 따라 탈중앙화를 개선할 수 있다.
+
+    ### 거버넌스와 업그레이드 메커니즘
+
+    솔라나의 거버넌스 모델은 구속력 있는 온체인 투표가 없으며, 대신 오프체인 조정, 검증자 합의, 솔라나 파운데이션 영향력을 통해 운영된다. 이는 공식화된 민주적 프로세스보다 속도와 실용주의를 우선시하여, 핵심 개발자와 주요 검증자가 일치할 때 빠른 반복을 가능하게 하지만, 비평가들은 이것이 더 적은 행위자들 사이에 권력을 집중시키고 의사 결정 투명성을 감소시킨다고 주장한다.
+
+    프로토콜 변경은 이더리움의 EIP 시스템과 유사한 **솔라나 개선 문서(Solana Improvement Document, SIMD)** 프로세스를 따른다. 누구나 GitHub, Discord, 포럼을 통해 커뮤니티 논의를 위해 SIMD를 제안할 수 있으며, 중대한 변경은 광범위한 검증자와 개발자의 동의가 필요하다. 솔라나 파운데이션과 Solana Labs, Anza(주요 Agave 검증자 클라이언트를 유지 관리), Jump Crypto, Jito Labs와 같은 주요 생태계 이해관계자들은 기술적 전문성, 리소스 통제, 지분 가중치를 통해 상당한 비공식적 영향력을 행사한다. Section VI에서 논의하는 여러 검증자 클라이언트 구현의 존재는 하나의 코드베이스에 있는 버그가 전체 네트워크를 다운시킬 위험을 줄인다.
+
+    검증자는 클라이언트 소프트웨어를 업그레이드할지 여부를 선택함으로써 사회적 합의를 통해 궁극적인 결정을 내린다. 새로운 릴리스는 클라이언트가 이해하지만 시행하지 않는 기본적으로 비활성화된 프로토콜 변경인 **기능 게이트(Feature Gates)**를 사용한다. 지분 가중치 검증자의 절대 다수가 업그레이드하고 명확한 지지가 있으면, 핵심 기여자들은 온체인 명령을 통해 관련 기능 게이트를 활성화하여 특정 슬롯이나 에포크에서 활성화되도록 예약한다. 그 시점부터 업그레이드된 클라이언트는 새로운 규칙을 합의의 일부로 시행한다. 업그레이드나 기능 활성화에 대한 상당한 검증자 분열은 이론적으로 네트워크를 포크할 수 있지만, 강력한 조정과 커뮤니케이션이 이를 방지해왔다.
+
+    파운데이션은 초기 토큰 할당에서 상당한 SOL 재무를 유지하며, 생태계 개발, 보조금, 보안 감사, 인프라에 자금을 지원한다. 이 재정적 영향력은 거버넌스로 확장되어, 파운데이션이 리소스를 투입할 수 있는 변경에 대해 신뢰성 있게 옹호할 수 있게 한다. 그러나 파운데이션은 점진적으로 통제를 탈중앙화하여 생태계가 성숙해짐에 따라 궁극적으로 그 역할을 줄이는 것을 목표로 한다.
+
+    이러한 경제적 및 운영적 현실은 개발자가 솔라나에서 어떻게 구축하는지에 직접적으로 영향을 미친다.
+
+=== "EN"
+
+    ## Section V: Developer Stack and Standards
+
+    The constraints that enable Solana's performance shape the entire developer experience. Building on Solana means working within deliberate limits that make execution predictable enough for parallel processing.
+
+    ### The Execution Environment
+
+    Solana developers write smart contracts primarily in Rust (though C/C++ is also supported). Programs compile to a portable instruction format that the network can analyze before deployment, ensuring programs can't escape their sandbox or consume unbounded resources. This verification happens automatically when you deploy a program.
+
+    Programs run in a tightly constrained environment. There are hard limits on computation, memory usage, and how deeply programs can call into other programs. These constraints might seem restrictive, but they serve a critical purpose: they make execution times predictable, which the parallel scheduler depends on to pack transactions efficiently. Unbounded execution would make parallelization impossible.
+
+    #### The Solana Virtual Machine (SVM)
+
+    The term SVM encompasses Solana's complete execution environment: the virtual machine itself, the loaders that deploy programs, the syscalls programs use to interact with the blockchain, the account model, and the **Sealevel** parallel scheduler.
+
+    At its core, the SVM implements a register-based virtual machine. Unlike Ethereum's stack-based EVM (which pushes and pops values from a stack, like a pile of plates), a register-based VM operates more like a CPU, storing values in numbered registers for faster access. This architectural choice delivers better performance for the intensive parallel execution Solana demands.
+
+    Programs interact with the blockchain through a deliberately narrow set of allowed operations: they can read and write accounts, invoke other programs, and access system state via special read-only accounts called sysvars. Sysvars expose information like the current timestamp, fee parameters, and recent blockhashes, allowing programs to respond dynamically to network conditions. There is no filesystem access, no network access, and no way to reach outside the sandbox. This minimal interface keeps execution predictable and makes programs easier to audit and reason about.
+
+    #### Program Security and Sandboxing
+
+    These execution constraints provide security benefits beyond performance predictability. Before deployment, the network verifies that a program follows strict rules about how it uses memory and what operations it can perform. Programs that violate these rules are rejected, closing off entire classes of low-level bugs before they ever reach the network.
+
+    However, this protective layer cannot prevent every problem. Logic bugs, meaning errors in how a program is written, can still slip through. Several major exploits of protocols on Solana have succeeded not by breaking out of the sandbox, but by exploiting flawed logic in the applications themselves. Think of it as the difference between breaking out of jail versus convincing the guard to open the door.
+
+    ### Building Programs: Anchor and Development Tools
+
+    This low-level interface, while powerful, presents substantial complexity. In practice, developers could write programs directly against the low-level SVM interfaces, but almost nobody does. The Anchor framework has become the de facto standard development toolkit, comparable to how most web developers use React or Vue rather than manipulating the DOM directly.
+
+    Anchor automates the tedious and error-prone aspects of Solana development. It generates Interface Definition Languages (IDLs), machine-readable descriptions of your program's interface that tools can use to automatically generate client code. It validates that transactions include the correct accounts in the correct order. It provides standardized patterns for common operations like transferring tokens or invoking other programs. This abstraction makes development significantly faster while reducing the surface area for bugs.
+
+    ### Token Architecture: Standardization Over Replication
+
+    Solana's approach to tokens reveals a fundamental design philosophy. Rather than each token existing as a separate smart contract with potentially divergent implementations, **SPL tokens** are managed by a single, battle-tested program that all tokens share. Creating a new token doesn't mean deploying new code. Instead, you create a "mint" account managed by the existing SPL Token program. This mint account defines your token's properties: how many decimal places it uses, what the total supply is, who has authority to mint new tokens. The SPL Token program handles all the transfer logic uniformly.
+
+    The advantages compound across the ecosystem. When the SPL Token program receives an optimization or security improvement, every token benefits immediately. Wallets only need to understand one token program rather than thousands of variations. Developers building DeFi protocols can confidently rely on standardized behavior. This philosophy of shared infrastructure over isolated implementations extends throughout Solana's developer ecosystem: improvements to core systems compound across all users rather than fragmenting across thousands of reimplementations.
+
+    **Associated Token Accounts** extend this standardization to account management. Rather than users manually creating token accounts (and potentially sending tokens to the wrong address), the system automatically derives a standard account address for each wallet-token pair. If you hold SOL at address X and want to receive token Y, your associated token account for Y has a predictable, fixed address. This eliminates entire categories of user error common in other ecosystems.
+
+    The standardization philosophy continues evolving. Token-2022 pushes this model further while maintaining backward compatibility. It adds programmable features within the standardized framework: transfer hooks that execute custom logic during transfers (enabling use cases like automatic royalty payments or compliance checks), confidential transfers that add privacy through cryptographic proofs while preserving regulatory auditability when needed, and other extensions like transfer fees, permanent delegates, and metadata pointers.
+
+    ### Managing Deployed Programs
+
+    Standardized token programs solve one challenge; another practical question every developer faces is how to maintain deployed code. Blockchain immutability creates an obvious tension: bugs happen, requirements evolve, but deployed code is permanent. How do you fix a critical bug in a program managing millions of dollars?
+
+    Solana's Upgradeable Loader provides a controlled solution. Programs can designate an upgrade authority (usually a multisig wallet governed by the project's core team). This authority can deploy new program versions, fixing bugs or adding features, while maintaining the same program address so existing integrations don't break. The upgrade authority can later be revoked to make the program truly immutable once it's mature and proven.
+
+    This pragmatic approach balances security with operational reality, building the capability directly into the runtime rather than requiring additional proxy contract layers.
+
+    ### Scaling NFT Collections: State Compression
+
+    Traditional NFT implementations on Solana require separate on-chain accounts for each item: a mint account, metadata account, and token account. For a 10,000-item PFP collection, this means 10,000+ accounts, each paying rent. At scale, this becomes prohibitively expensive. A 1 million NFT collection would cost roughly $250,000 just in account rent.
+
+    State compression solves this through clever cryptography. Rather than storing each NFT's metadata in its own account, the system stores all metadata off-chain and maintains a single concurrent Merkle tree on-chain. Think of this tree as a cryptographic fingerprint of the entire collection. The tree root lives on-chain (a single account), while the detailed data lives in cheaper off-chain storage.
+
+    When you want to prove you own a specific NFT, you provide a Merkle proof: a short chain of hashes demonstrating that your NFT's metadata is included in the tree whose root is on-chain. Validators can verify this proof quickly without accessing the full dataset. The "concurrent" part means multiple people can update different NFTs simultaneously without conflicts, preserving the benefits of parallel processing.
+
+    The economics transform dramatically. That 1 million NFT collection costs under $100 instead of $250,000, making large-scale generative art, gaming assets, and loyalty programs economically viable. The Metaplex standards provide the tooling and conventions that make compressed NFTs work seamlessly with existing wallets and marketplaces.
+
+=== "KO"
+
+    ## Section V: 개발자 스택과 표준
+
+    솔라나의 성능을 가능하게 하는 제약은 전체 개발자 경험을 형성한다. 솔라나에서 구축한다는 것은 병렬 처리를 위해 충분히 예측 가능한 실행을 만드는 의도적인 제한 내에서 작업하는 것을 의미한다.
+
+    ### 실행 환경
+
+    솔라나 개발자는 주로 Rust로 스마트 컨트랙트를 작성한다(C/C++도 지원됨). 프로그램은 네트워크가 배포 전에 분석할 수 있는 이식 가능한 명령어 형식으로 컴파일되어, 프로그램이 샌드박스를 벗어나거나 무한 리소스를 소비할 수 없도록 보장한다. 이 검증은 프로그램을 배포할 때 자동으로 발생한다.
+
+    프로그램은 엄격하게 제한된 환경에서 실행된다. 연산, 메모리 사용, 프로그램이 다른 프로그램을 호출할 수 있는 깊이에 하드 제한이 있다. 이러한 제약은 제한적으로 보일 수 있지만 중요한 목적을 수행한다: 실행 시간을 예측 가능하게 만들어, 병렬 스케줄러가 거래를 효율적으로 패킹하는 데 의존한다. 무한 실행은 병렬화를 불가능하게 만들 것이다.
+
+    #### 솔라나 가상 머신(SVM)
+
+    **SVM(Solana Virtual Machine)**이라는 용어는 솔라나의 완전한 실행 환경을 포함한다: 가상 머신 자체, 프로그램을 배포하는 로더, 프로그램이 블록체인과 상호작용하는 데 사용하는 시스콜, 계정 모델, 그리고 **Sealevel** 병렬 스케줄러.
+
+    핵심적으로, SVM은 레지스터 기반 가상 머신을 구현한다. 접시 더미처럼 스택에서 값을 밀고 당기는 이더리움의 스택 기반 EVM과 달리, 레지스터 기반 VM은 CPU처럼 작동하여 더 빠른 접근을 위해 번호가 매겨진 레지스터에 값을 저장한다. 이 아키텍처 선택은 솔라나가 요구하는 집중적인 병렬 실행에 더 나은 성능을 제공한다.
+
+    프로그램은 의도적으로 좁은 허용된 작업 집합을 통해 블록체인과 상호작용한다: 계정을 읽고 쓰고, 다른 프로그램을 호출하고, **시스바(Sysvars)**라고 불리는 특수 읽기 전용 계정을 통해 시스템 상태에 접근할 수 있다. Sysvars는 현재 타임스탬프, 수수료 매개변수, 최근 블록해시와 같은 정보를 노출하여 프로그램이 네트워크 상태에 동적으로 응답할 수 있게 한다. 파일 시스템 접근, 네트워크 접근, 샌드박스 외부에 도달할 방법이 없다. 이 최소한의 인터페이스는 실행을 예측 가능하게 유지하고 프로그램을 감사하고 추론하기 쉽게 만든다.
+
+    #### 프로그램 보안과 샌드박싱
+
+    이러한 실행 제약은 성능 예측 가능성을 넘어 보안 이점을 제공한다. 배포 전에, 네트워크는 프로그램이 메모리 사용 방법과 수행할 수 있는 작업에 대한 엄격한 규칙을 따르는지 검증한다. 이러한 규칙을 위반하는 프로그램은 거부되어, 네트워크에 도달하기 전에 저수준 버그의 전체 클래스를 차단한다.
+
+    그러나 이 보호 계층이 모든 문제를 방지할 수는 없다. 프로그램이 어떻게 작성되었는지의 오류인 로직 버그는 여전히 빠져나갈 수 있다. 솔라나의 프로토콜에 대한 여러 주요 익스플로잇은 샌드박스를 탈출하는 것이 아니라 애플리케이션 자체의 결함 있는 로직을 악용하여 성공했다. 감옥을 탈출하는 것과 경비원을 설득하여 문을 열게 하는 것의 차이라고 생각하면 된다.
+
+    ### 프로그램 구축: Anchor와 개발 도구
+
+    이 저수준 인터페이스는 강력하지만 상당한 복잡성을 제시한다. 실제로 개발자들은 저수준 SVM 인터페이스에 대해 직접 프로그램을 작성할 수 있지만, 거의 아무도 그렇게 하지 않는다. **Anchor** 프레임워크는 대부분의 웹 개발자가 DOM을 직접 조작하는 대신 React나 Vue를 사용하는 것과 비교할 수 있는 사실상의 표준 개발 툴킷이 되었다.
+
+    Anchor는 솔라나 개발의 지루하고 오류가 발생하기 쉬운 측면을 자동화한다. 도구가 자동으로 클라이언트 코드를 생성하는 데 사용할 수 있는 프로그램 인터페이스의 기계 판독 가능한 설명인 **인터페이스 정의 언어(Interface Definition Languages, IDLs)**를 생성한다. 거래가 올바른 순서로 올바른 계정을 포함하는지 검증한다. 토큰 전송이나 다른 프로그램 호출과 같은 일반적인 작업에 대한 표준화된 패턴을 제공한다. 이 추상화는 버그의 표면적을 줄이면서 개발을 상당히 빠르게 한다.
+
+    ### 토큰 아키텍처: 복제보다 표준화
+
+    토큰에 대한 솔라나의 접근 방식은 근본적인 설계 철학을 드러낸다. 잠재적으로 다양한 구현을 가진 각 토큰이 별도의 스마트 컨트랙트로 존재하는 대신, **SPL 토큰**은 모든 토큰이 공유하는 단일의 철저히 테스트된 프로그램에 의해 관리된다. 새로운 토큰을 생성한다고 해서 새로운 코드를 배포하는 것이 아니다. 대신, 기존 SPL 토큰 프로그램이 관리하는 "민트(Mint)" 계정을 생성한다. 이 민트 계정은 토큰의 속성을 정의한다: 사용하는 소수점 자릿수, 총 공급량, 새 토큰을 발행할 권한이 있는 사람. SPL 토큰 프로그램은 모든 전송 로직을 균일하게 처리한다.
+
+    이점은 생태계 전반에 걸쳐 복합적으로 나타난다. SPL 토큰 프로그램이 최적화나 보안 개선을 받으면, 모든 토큰이 즉시 이점을 얻는다. 지갑은 수천 가지 변형 대신 하나의 토큰 프로그램만 이해하면 된다. DeFi 프로토콜을 구축하는 개발자는 표준화된 동작에 자신 있게 의존할 수 있다. 격리된 구현보다 공유 인프라의 이 철학은 솔라나의 개발자 생태계 전반에 걸쳐 확장된다: 핵심 시스템의 개선이 수천 개의 재구현에 파편화되는 대신 모든 사용자에게 복합적으로 적용된다.
+
+    **연관 토큰 계정(Associated Token Accounts)**은 이 표준화를 계정 관리로 확장한다. 사용자가 수동으로 토큰 계정을 생성하는 대신(잘못된 주소로 토큰을 보낼 가능성이 있음), 시스템이 각 지갑-토큰 쌍에 대해 표준 계정 주소를 자동으로 유도한다. 주소 X에 SOL을 보유하고 토큰 Y를 받고 싶다면, Y에 대한 연관 토큰 계정은 예측 가능하고 고정된 주소를 가진다. 이는 다른 생태계에서 흔한 전체 범주의 사용자 오류를 제거한다.
+
+    표준화 철학은 계속 발전하고 있다. **Token-2022**는 역호환성을 유지하면서 이 모델을 더욱 밀어붙인다. 표준화된 프레임워크 내에서 프로그래밍 가능한 기능을 추가한다: 전송 중 커스텀 로직을 실행하는 전송 후크(자동 로열티 지불이나 규정 준수 확인과 같은 사용 사례 가능), 필요시 규제 감사 가능성을 유지하면서 암호학적 증명을 통해 프라이버시를 추가하는 기밀 전송, 그리고 전송 수수료, 영구 위임자, 메타데이터 포인터와 같은 기타 확장.
+
+    ### 배포된 프로그램 관리
+
+    표준화된 토큰 프로그램이 하나의 과제를 해결한다; 모든 개발자가 직면하는 또 다른 실질적인 질문은 배포된 코드를 유지 관리하는 방법이다. 블록체인 불변성은 명백한 긴장을 만든다: 버그가 발생하고 요구 사항이 진화하지만 배포된 코드는 영구적이다. 수백만 달러를 관리하는 프로그램의 치명적인 버그를 어떻게 수정할 수 있을까?
+
+    솔라나의 **업그레이드 가능 로더(Upgradeable Loader)**는 제어된 솔루션을 제공한다. 프로그램은 업그레이드 권한(보통 프로젝트의 핵심 팀이 지배하는 다중서명 지갑)을 지정할 수 있다. 이 권한은 버그를 수정하거나 기능을 추가하면서 기존 통합이 깨지지 않도록 동일한 프로그램 주소를 유지하면서 새로운 프로그램 버전을 배포할 수 있다. 업그레이드 권한은 나중에 성숙하고 검증된 프로그램을 진정으로 불변으로 만들기 위해 철회될 수 있다.
+
+    이 실용적인 접근 방식은 추가적인 프록시 컨트랙트 계층을 요구하지 않고 런타임에 직접 기능을 구축하여 보안과 운영 현실의 균형을 맞춘다.
+
+    ### NFT 컬렉션 확장: 상태 압축
+
+    솔라나의 전통적인 NFT 구현은 각 항목에 대해 별도의 온체인 계정을 요구한다: 민트 계정, 메타데이터 계정, 토큰 계정. 10,000개 항목 PFP 컬렉션의 경우, 이는 10,000개 이상의 계정을 의미하며, 각각 임대료를 지불한다. 대규모에서 이는 엄청나게 비싸진다. 100만 NFT 컬렉션은 계정 임대료만으로 대략 250,000달러가 들 것이다.
+
+    **상태 압축(State Compression)**은 영리한 암호학을 통해 이를 해결한다. 각 NFT의 메타데이터를 자체 계정에 저장하는 대신, 시스템은 모든 메타데이터를 오프체인에 저장하고 온체인에 단일 동시 머클 트리를 유지한다. 이 트리를 전체 컬렉션의 암호학적 지문으로 생각하면 된다. 트리 루트는 온체인(단일 계정)에 있고, 상세 데이터는 더 저렴한 오프체인 저장소에 있다.
+
+    특정 NFT를 소유하고 있음을 증명하고 싶을 때, 머클 증명을 제공한다: NFT의 메타데이터가 온체인에 루트가 있는 트리에 포함되어 있음을 보여주는 짧은 해시 체인. 검증자는 전체 데이터셋에 접근하지 않고도 이 증명을 빠르게 확인할 수 있다. "동시(Concurrent)" 부분은 여러 사람이 충돌 없이 다른 NFT를 동시에 업데이트할 수 있음을 의미하며, 병렬 처리의 이점을 보존한다.
+
+    경제학이 극적으로 변환된다. 그 100만 NFT 컬렉션은 250,000달러 대신 100달러 미만이 들어, 대규모 제너레이티브 아트, 게임 자산, 로열티 프로그램을 경제적으로 실행 가능하게 만든다. **Metaplex** 표준은 압축된 NFT가 기존 지갑 및 마켓플레이스와 원활하게 작동하도록 하는 툴링과 규약을 제공한다.
+
+=== "EN"
+
+    ## Section VI: Performance and Its Trade-offs
+
+    The developer tools and standards described above enable efficient application development, but high performance creates infrastructure challenges that shape who can operate nodes and how data is managed.
+
+    ### The Data Growth Challenge
+
+    High throughput drives rapid blockchain expansion. Solana's full archive ledger (roughly 350 TB) grows at roughly 90 TB annually, creating substantially different infrastructure economics compared to other chains. Archive storage at this scale represents significant cost, approximately $100 per TB per month, translating to roughly $40,000 monthly for full historical archives. However, it's crucial to understand that regular Solana validators and RPC nodes (servers that respond to queries from wallets and applications) prune historical data and don't face these extreme storage requirements. These figures apply specifically to archive nodes maintaining complete transaction history.
+
+    ### Mitigation Strategies
+
+    Solana addresses these challenges through two complementary approaches: operational strategies and architectural resilience.
+
+    Most validators and RPC nodes reduce their storage burden through pruning. Operators configure ledger retention limits, which controls how many ledger shreds are retained on disk (affecting blockstore size and transaction history availability). Without explicit configuration, validators accumulate ledger data indefinitely until disk space runs out, so operators typically set retention policies based on their specific needs and available storage.
+
+    Nodes bootstrap from snapshots rather than replaying entire history, which keeps synchronization times manageable. Long-term historical data is typically offloaded to specialized archival infrastructure and third-party indexers rather than stored by every validator.
+
+    Public datasets and community-run archives provide access to historical data. For example, Solana data is available through Google BigQuery and other community datasets, though these resources may have coverage gaps, schema limitations, and varying update schedules compared to running your own archive node. Most validators keep only a rolling window of recent data and rely on snapshots for fast bootstrapping.
+
+    While these approaches mean ordinary validators aren't burdened with full historical storage requirements, they do concentrate archive responsibilities among a smaller set of specialized providers rather than distributing this function across all node operators.
+
+    ### Client Diversity and Firedancer
+
+    Architectural resilience increasingly depends on client diversity rather than a single reference implementation. Ethereum sets the benchmark here, with multiple independent execution and consensus clients in production, all maintained by different teams. If one implementation has a critical flaw, the network does not have to grind to a halt.
+
+    Solana historically relied on a single codebase lineage (Agave and forks like Jito-Solana). This monoculture has been one of the network's central weaknesses, contributing to the early reliability issues mentioned in Section II. Firedancer, developed by Jump Crypto, represents an independent, ground-up reimplementation of the Solana validator written in C rather than Rust, directly addressing this single point of failure.
+
+    Firedancer's design goal is to turn Solana's validator into a deterministic, high-throughput engine capable of processing millions of transactions per second with minimal latency variance. Benchmarks and demos have shown very high transaction rates, though actual network-level throughput remains constrained by protocol-level consensus limits that currently cap Solana well below those benchmark figures. The project also aims to reduce hardware requirements, though this remains aspirational. Because the current hybrid implementation (**Frankendancer**) still depends on Agave for major components, hardware requirements remain comparable to those described in Section IV.
+
+    Frankendancer, the transitional implementation that combines Firedancer's networking and block production modules with Agave's runtime and consensus components, went live on mainnet with a subset of validators in September 2024. As Firedancer progresses toward mainnet readiness, validator diversity should increase substantially. Both the Agave and Firedancer teams have iterated significantly on the backdrop of this competitive relationship, with each implementation pushing the other toward better performance and reliability. As of early 2026, it is still not possible to run a full Firedancer validator without Agave components. The timeline for full deployment remains uncertain and depends on ongoing testing, audits, and ecosystem readiness.
+
+    These infrastructure improvements work alongside the consensus upgrades described in Section III to form a comprehensive strategy for maintaining Solana's competitive position, aiming to unlock use cases that remain economically unviable under current network conditions.
+
+=== "KO"
+
+    ## Section VI: 성능과 트레이드오프
+
+    위에서 설명한 개발자 도구와 표준은 효율적인 애플리케이션 개발을 가능하게 하지만, 고성능은 누가 노드를 운영할 수 있고 데이터가 어떻게 관리되는지를 형성하는 인프라 과제를 만든다.
+
+    ### 데이터 성장 과제
+
+    높은 처리량은 빠른 블록체인 확장을 주도한다. 솔라나의 전체 아카이브 원장(대략 350 TB)은 연간 약 90 TB씩 성장하여, 다른 체인과 상당히 다른 인프라 경제학을 만든다. 이 규모의 아카이브 저장은 상당한 비용, 월간 TB당 약 100달러를 나타내며, 전체 역사적 아카이브에 대해 월간 약 40,000달러로 환산된다. 그러나 일반 솔라나 검증자와 RPC 노드(지갑과 애플리케이션의 쿼리에 응답하는 서버)는 역사적 데이터를 정리하며 이러한 극단적인 저장 요구 사항에 직면하지 않는다는 것을 이해하는 것이 중요하다. 이 수치는 특히 완전한 거래 기록을 유지하는 아카이브 노드에 적용된다.
+
+    ### 완화 전략
+
+    솔라나는 두 가지 상호보완적인 접근 방식을 통해 이러한 과제를 해결한다: 운영 전략과 아키텍처 회복력.
+
+    대부분의 검증자와 RPC 노드는 정리(Pruning)를 통해 저장 부담을 줄인다. 운영자는 디스크에 보유되는 원장 슈레드 수를 제어하는 원장 보존 한도를 구성하며(블록스토어 크기와 거래 기록 가용성에 영향), 명시적인 구성 없이 검증자는 디스크 공간이 소진될 때까지 원장 데이터를 무기한 축적하므로 운영자는 일반적으로 특정 요구 사항과 사용 가능한 저장소에 따라 보존 정책을 설정한다.
+
+    노드는 전체 기록을 재생하는 대신 스냅샷에서 부트스트랩하여 동기화 시간을 관리 가능하게 유지한다. 장기 역사 데이터는 일반적으로 모든 검증자가 저장하는 대신 특수 아카이브 인프라와 타사 인덱서로 오프로드된다.
+
+    공개 데이터셋과 커뮤니티 운영 아카이브가 역사적 데이터에 대한 접근을 제공한다. 예를 들어, 솔라나 데이터는 Google BigQuery와 기타 커뮤니티 데이터셋을 통해 사용 가능하지만, 이러한 리소스는 자체 아카이브 노드를 실행하는 것에 비해 커버리지 격차, 스키마 제한, 다양한 업데이트 일정을 가질 수 있다. 대부분의 검증자는 최근 데이터의 롤링 윈도우만 유지하고 빠른 부트스트래핑을 위해 스냅샷에 의존한다.
+
+    이러한 접근 방식은 일반 검증자가 전체 역사적 저장 요구 사항에 부담을 받지 않는다는 것을 의미하지만, 모든 노드 운영자에게 이 기능을 분산시키는 대신 더 작은 전문 제공업체 세트에 아카이브 책임을 집중시킨다.
+
+    ### 클라이언트 다양성과 Firedancer
+
+    아키텍처 회복력은 단일 참조 구현보다 클라이언트 다양성에 점점 더 의존한다. 이더리움은 여기서 벤치마크를 설정하며, 모두 다른 팀이 유지 관리하는 여러 독립적인 실행 및 합의 클라이언트가 프로덕션에 있다. 하나의 구현에 치명적인 결함이 있더라도 네트워크가 완전히 중단될 필요가 없다.
+
+    솔라나는 역사적으로 단일 코드베이스 계열(Agave와 Jito-Solana와 같은 포크)에 의존해왔다. 이 단일문화는 Section II에서 언급한 초기 신뢰성 문제에 기여한 네트워크의 중심 약점 중 하나였다. Jump Crypto가 개발한 **Firedancer**는 이 단일 장애점을 직접 해결하는 Rust가 아닌 C로 작성된 솔라나 검증자의 독립적인 바닥부터의 재구현을 나타낸다.
+
+    Firedancer의 설계 목표는 솔라나의 검증자를 초당 수백만 거래를 최소한의 지연 변동으로 처리할 수 있는 결정론적 고처리량 엔진으로 전환하는 것이다. 벤치마크와 데모는 매우 높은 거래 속도를 보여주었지만, 실제 네트워크 수준 처리량은 현재 솔라나를 해당 벤치마크 수치보다 훨씬 아래로 제한하는 프로토콜 수준 합의 제한에 의해 제약되어 있다. 프로젝트는 또한 하드웨어 요구 사항을 줄이는 것을 목표로 하지만, 이것은 여전히 열망적인 목표로 남아 있다. 현재 하이브리드 구현(**Frankendancer**)이 주요 구성 요소에 대해 여전히 Agave에 의존하기 때문에, 하드웨어 요구 사항은 Section IV에서 설명한 것과 비슷하게 유지된다.
+
+    Firedancer의 네트워킹과 블록 생성 모듈을 Agave의 런타임 및 합의 구성 요소와 결합한 과도기적 구현인 Frankendancer는 2024년 9월 검증자 하위 집합과 함께 메인넷에 출시되었다. Firedancer가 메인넷 준비 상태로 진행됨에 따라, 검증자 다양성이 상당히 증가해야 한다. Agave와 Firedancer 팀 모두 이 경쟁 관계를 배경으로 상당히 반복해왔으며, 각 구현이 다른 쪽을 더 나은 성능과 신뢰성을 향해 밀어붙이고 있다. 2026년 초 기준으로, Agave 구성 요소 없이 완전한 Firedancer 검증자를 실행하는 것은 아직 불가능하다. 전체 배포 일정은 불확실하며 지속적인 테스트, 감사, 생태계 준비 상태에 달려 있다.
+
+    이러한 인프라 개선은 Section III에서 설명한 합의 업그레이드와 함께 솔라나의 경쟁적 위치를 유지하기 위한 포괄적인 전략을 형성하며, 현재 네트워크 상태에서 경제적으로 실행 불가능한 사용 사례를 가능하게 하는 것을 목표로 한다.
+
+=== "EN"
+
+    ## Section VII: Use-Case Fit and Design Patterns
+
+    The technical characteristics explored throughout this chapter create a distinct profile: Solana excels where applications need atomic composability combined with high-speed execution, but faces challenges where other priorities take precedence. The 2026 upgrade cycle, potentially the most aggressive in the network's history, aims to transform Solana into an exchange-grade environment where native on-chain order books can viably compete with centralized exchange latency, liquidity depth, and fairness. The vision is nothing less than becoming a decentralized Nasdaq, though whether Alpenglow and a production-ready Firedancer actually ship in 2026 remains an open question. Solana's roadmap has historically been ambitious, and major protocol upgrades across the industry routinely take longer than announced.
+
+    ### Where Solana Shines
+
+    Memecoin trading is where Solana has found its strongest product-market fit. The fee economics and confirmation speeds described in Section II enable a style of rapid, experimental trading that's economically impractical elsewhere. Small-ticket speculation, frequent position changes, and quick exits all work because the cost of each transaction is negligible.
+
+    The ecosystem has leaned into this with mobile-first design: polished iOS and Android apps like Phantom and Moonshot that feel like native phone apps rather than clunky browser plugins. Platforms like Pump.fun create streamlined experiences where users can launch tokens, trade, and cash out in seconds. Jupiter, the leading DEX aggregator, routes trades across multiple liquidity sources to optimize execution, demonstrating how complex multi-protocol interactions can happen atomically within single transactions.
+
+    Beyond retail speculation, these same characteristics enable more sophisticated financial infrastructure. CLOBs provide better price discovery and more efficient use of capital compared to the passive Automated Market Makers (AMMs) that dominate slower blockchains. Traditional L1s struggle with true CLOBs because slow block times and high fees make it impractical to constantly update and cancel orders. Solana-level performance also unlocks proactive AMMs (or "prop AMMs"), which continuously update their prices to track external markets and manage inventory like an on-chain market maker. These found early success on Solana and are only now starting to appear on the fastest EVM rollups.
+
+    However, even with these capabilities, the most demanding applications like Hyperliquid still choose application-specific chains. This reflects a broader pattern: performance-critical applications often choose purpose-built infrastructure over general-purpose L1s, no matter how capable.
+
+    The upgrades detailed in Section III aim to close this gap. Alpenglow's sub-200-millisecond finality, combined with infrastructure layers like DoubleZero, BAM, Harmonic, and Raiku, collectively target the performance levels that institutional trading demands. While Hyperliquid has captured much of the on-chain perpetuals market (for now), Solana has established itself as the premier L1 for trading any spot pair. The ecosystem has recognized that performance needs to reach parity with centralized players to compete effectively.
+
+    Beyond trading existing crypto assets, products like xStocks are bringing tokenized equities directly to Solana. These synthetic representations of traditional stocks trade on-chain with Solana's settlement speed and composability advantages. Liquidity, price discovery, and speculative attention are consolidating toward a single chain that offers faster settlement, better UX, and denser capital concentration. This represents Solana's case for bringing capital markets on-chain: not replacing traditional finance infrastructure, but offering an alternative venue where the same assets can trade with different properties.
+
+    ### Limitations and Trade-offs
+
+    Despite these strengths, Solana's architecture creates clear trade-offs that favor certain applications over others. Projects prioritizing maximum decentralization over performance might prefer an L1 with a more distributed validator set and lower hardware barriers. Solana's Rust-based development environment also remains less familiar to developers who learned on Ethereum's Solidity, though the Anchor framework significantly lowers the learning curve.
+
+    Applications requiring the deepest liquidity pools often gravitate toward established networks. Network effects matter in finance, and first-mover advantages create significant switching costs for protocols.
+
+    Uptime and liveness represent critical considerations for institutional DeFi operations. Institutions with strict uptime requirements typically implement comprehensive risk management: multi-region RPC configurations, automated failovers, and continuous monitoring. For organizations where near-zero downtime constitutes a hard operational requirement, the decision often centers on whether Solana's current reliability track record aligns with their risk tolerance or whether multi-venue and multi-chain contingencies become necessary.
+
+=== "KO"
+
+    ## Section VII: 사용 사례 적합성과 설계 패턴
+
+    이 장 전체에서 탐구한 기술적 특성은 뚜렷한 프로필을 만든다: 솔라나는 애플리케이션이 원자적 조합성과 고속 실행을 함께 필요로 하는 곳에서 뛰어나지만, 다른 우선순위가 우세한 곳에서는 도전에 직면한다. 네트워크 역사상 가장 공격적인 2026년 업그레이드 주기는 솔라나를 거래소 등급 환경으로 변환하여 네이티브 온체인 오더북이 중앙화 거래소의 지연, 유동성 깊이, 공정성과 경쟁할 수 있게 하는 것을 목표로 한다. 비전은 탈중앙화된 나스닥(Nasdaq)에 다름 아니지만, Alpenglow와 프로덕션 준비가 된 Firedancer가 실제로 2026년에 출시될지는 열린 질문으로 남아 있다. 솔라나의 로드맵은 역사적으로 야심적이었고, 업계 전반의 주요 프로토콜 업그레이드는 발표된 것보다 일상적으로 더 오래 걸린다.
+
+    ### 솔라나가 빛나는 곳
+
+    밈코인 거래는 솔라나가 가장 강한 제품-시장 적합성을 발견한 곳이다. Section II에서 설명한 수수료 경제학과 확인 속도는 다른 곳에서는 경제적으로 비실용적인 빠르고 실험적인 거래 스타일을 가능하게 한다. 소액 투기, 빈번한 포지션 변경, 빠른 청산 모두 각 거래 비용이 무시해도 될 정도이기 때문에 작동한다.
+
+    생태계는 모바일 우선 설계로 이를 수용했다: 투박한 브라우저 플러그인이 아닌 네이티브 폰 앱처럼 느껴지는 Phantom과 Moonshot 같은 세련된 iOS 및 Android 앱. Pump.fun과 같은 플랫폼은 사용자가 몇 초 만에 토큰을 출시하고, 거래하고, 현금화할 수 있는 간소화된 경험을 만든다. 선도적인 DEX 애그리게이터인 Jupiter는 실행을 최적화하기 위해 여러 유동성 소스에 걸쳐 거래를 라우팅하여, 복잡한 다중 프로토콜 상호작용이 단일 거래 내에서 원자적으로 발생할 수 있는 방법을 보여준다.
+
+    소매 투기 외에도, 이러한 동일한 특성은 더 정교한 금융 인프라를 가능하게 한다. CLOB는 느린 블록체인을 지배하는 패시브 **자동화된 시장 메이커(Automated Market Makers, AMMs)**에 비해 더 나은 가격 발견과 더 효율적인 자본 사용을 제공한다. 전통적인 L1은 느린 블록 시간과 높은 수수료가 주문을 지속적으로 업데이트하고 취소하는 것을 비실용적으로 만들기 때문에 진정한 CLOB에 어려움을 겪는다. 솔라나 수준의 성능은 또한 외부 시장을 추적하고 온체인 마켓 메이커처럼 재고를 관리하기 위해 가격을 지속적으로 업데이트하는 프로액티브 AMM(또는 "prop AMM")을 가능하게 한다. 이들은 솔라나에서 초기 성공을 거두었고 이제야 가장 빠른 EVM 롤업에 등장하기 시작하고 있다.
+
+    그러나 이러한 기능에도 불구하고, Hyperliquid와 같은 가장 까다로운 애플리케이션은 여전히 애플리케이션 특화 체인을 선택한다. 이는 더 넓은 패턴을 반영한다: 성능이 중요한 애플리케이션은 아무리 유능하더라도 범용 L1보다 목적에 맞게 구축된 인프라를 선택하는 경우가 많다.
+
+    Section III에서 자세히 설명한 업그레이드는 이 격차를 좁히는 것을 목표로 한다. Alpenglow의 200밀리초 미만 최종성과 DoubleZero, BAM, Harmonic, Raiku와 같은 인프라 계층은 함께 기관 거래가 요구하는 성능 수준을 목표로 한다. Hyperliquid가 (현재로서는) 온체인 영구 시장의 대부분을 포착했지만, 솔라나는 어떤 스팟 페어든 거래하기 위한 최고의 L1으로 자리매김했다. 생태계는 성능이 효과적으로 경쟁하기 위해 중앙화된 플레이어와 동등해야 한다는 것을 인식했다.
+
+    기존 암호 자산 거래를 넘어, xStocks와 같은 제품은 토큰화된 주식을 솔라나에 직접 가져오고 있다. 전통 주식의 이러한 합성 표현은 솔라나의 정산 속도와 조합성 이점으로 온체인에서 거래된다. 유동성, 가격 발견, 투기적 관심이 더 빠른 정산, 더 나은 UX, 더 밀집된 자본 집중을 제공하는 단일 체인을 향해 통합되고 있다. 이것은 자본 시장을 온체인으로 가져오기 위한 솔라나의 사례를 나타낸다: 전통적인 금융 인프라를 대체하는 것이 아니라, 동일한 자산이 다른 속성으로 거래될 수 있는 대안 장소를 제공하는 것이다.
+
+    ### 제한 사항과 트레이드오프
+
+    이러한 강점에도 불구하고, 솔라나의 아키텍처는 특정 애플리케이션을 다른 것보다 선호하는 명확한 트레이드오프를 만든다. 성능보다 최대 탈중앙화를 우선시하는 프로젝트는 더 분산된 검증자 세트와 낮은 하드웨어 장벽을 가진 L1을 선호할 수 있다. 솔라나의 Rust 기반 개발 환경도 이더리움의 Solidity를 배운 개발자에게는 덜 친숙하지만, Anchor 프레임워크가 학습 곡선을 상당히 낮춘다.
+
+    가장 깊은 유동성 풀을 필요로 하는 애플리케이션은 종종 확립된 네트워크로 끌린다. 네트워크 효과는 금융에서 중요하며, 선발 주자 이점은 프로토콜에 대해 상당한 전환 비용을 만든다.
+
+    가동 시간과 활성은 기관 DeFi 운영에 대한 중요한 고려 사항을 나타낸다. 엄격한 가동 시간 요구 사항을 가진 기관은 일반적으로 포괄적인 위험 관리를 구현한다: 다중 지역 RPC 구성, 자동화된 장애 조치, 지속적인 모니터링. 거의 제로 다운타임이 엄격한 운영 요구 사항인 조직의 경우, 결정은 종종 솔라나의 현재 신뢰성 기록이 그들의 위험 허용 범위와 일치하는지 또는 다중 장소 및 다중 체인 비상 계획이 필요한지에 중점을 둔다.

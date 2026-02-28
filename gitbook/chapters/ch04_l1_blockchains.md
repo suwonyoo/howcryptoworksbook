@@ -1,0 +1,673 @@
+# Chapter IV: L1 Blockchains
+
+=== "English"
+
+    Having explored Bitcoin, Ethereum, and Solana in depth in the preceding chapters, we now step back to examine the broader L1 landscape and the fundamental trade-offs that shape all blockchain design.
+
+    Imagine you're building a decentralized exchange. Ethereum offers unmatched security and liquidity but costs users $10 per swap. Solana offers transactions costing only a few cents but doesn't have as much liquidity and isn't as decentralized. Which do you choose?
+
+    This scenario illustrates the **blockchain trilemma**: the practical reality that optimizing for decentralization, security, and scalability simultaneously involves inherent tensions. No chain escapes these constraints. Bitcoin (Chapter I) prioritizes decentralization and security while accepting limited **throughput**. Solana (Chapter III) pushes throughput higher but demands powerful hardware that naturally concentrates validation. Ethereum (Chapter II) pursues a middle path, maintaining reasonable decentralization while scaling through L2s that introduce their own complexity.
+
+    The core thesis of this chapter is that every blockchain design involves inherent compromises, and competition between L1s depends as much on liquidity, developer mindshare, and cultural momentum as on raw technical performance. A chain might process 100,000 transactions per second, but if it lacks users and developers, those transactions flow elsewhere. Understanding both the technical architectures and the market dynamics that determine adoption is essential for evaluating any L1's long-term prospects.
+
+=== "한국어"
+
+    앞선 장들에서 비트코인, 이더리움, 솔라나를 깊이 있게 살펴보았으니, 이제 한 발 물러서 더 넓은 L1 환경과 모든 블록체인 설계를 형성하는 근본적인 트레이드오프를 검토해 보자.
+
+    당신이 탈중앙화 거래소를 구축한다고 상상해 보자. 이더리움은 비교할 수 없는 보안성과 유동성을 제공하지만 사용자에게 스왑당 $10의 비용이 든다. 솔라나는 단 몇 센트의 거래 비용만 발생하지만 유동성이 그만큼 풍부하지 않고 탈중앙화 수준도 낮다. 어떤 것을 선택할 것인가?
+
+    이 시나리오는 **블록체인 트릴레마(Blockchain Trilemma)**를 잘 보여준다: 탈중앙화, 보안, 확장성을 동시에 최적화하려면 본질적인 긴장이 수반된다는 실질적인 현실 말이다. 어떤 체인도 이러한 제약에서 벗어날 수 없다. 비트코인(제1장)은 탈중앙화와 보안을 우선시하면서 제한된 **처리량(Throughput)**을 수용한다. 솔라나(제3장)는 처리량을 높이지만 강력한 하드웨어를 요구하며, 이는 자연스럽게 검증자 집중을 야기한다. 이더리움(제2장)은 중간 경로를 추구하며, 합리적인 탈중앙화를 유지하면서 L2를 통해 확장하지만 그에 따른 복잡성이 발생한다.
+
+    이 장의 핵심 주장은 모든 블록체인 설계에는 본질적인 타협이 수반되며, L1 간의 경쟁은 순수한 기술적 성능만큼이나 유동성, 개발자 관심, 문화적 모멘텀에 크게 의존한다는 것이다. 체인이 초당 100,000개의 트랜잭션을 처리할 수 있더라도 사용자와 개발자가 없다면 그 트랜잭션들은 다른 곳으로 흘러간다. 어떤 L1의 장기적 전망을 평가하려면 기술적 아키텍처와 채택을 결정하는 시장 역학 모두를 이해하는 것이 필수적이다.
+
+## Section I: The Adoption Reality
+
+=== "English"
+
+    Before diving into the differences between consensus mechanisms and virtual machines, we need to establish what actually matters for L1 success. Technical superiority alone rarely determines winners. User adoption has emerged as the scarcest resource in crypto, more valuable than throughput benchmarks or theoretical decentralization scores.
+
+    Dozens of prominent L1s compete for a limited user base primarily consisting of crypto natives and retail speculators. Effectively no blockchain to date has achieved widespread sustainable demand for applications outside of specific categories: trading (decentralized exchanges), speculation (memecoins, NFTs), stablecoins, yield farming, and payments (particularly in emerging markets). Early pockets are emerging in areas like tokenized real-world assets and decentralized physical infrastructure, but these remain nascent.
+
+    Liquidity serves as the ultimate kingmaker. Networks with native USDC and USDT support can tap into hundreds of billions in circulating stablecoins and trillions in annual transfer volume. Those without native stablecoin integration struggle to attract meaningful on-chain activity. Central exchange listings provide essential fiat on-ramps that determine practical user accessibility. Superior technology means little if major exchanges don't support deposits and withdrawals.
+
+    Developer attention and cultural dynamics also matter significantly. As we'll see when examining virtual machines in Section IV, ecosystem network effects and established infrastructure often prove more decisive for adoption than raw technical performance. The technical architectures we're about to examine operate within market constraints where liquidity and ecosystem momentum can outweigh architectural elegance.
+
+    With these market realities established, let's examine the technical architectures that L1s must navigate within these constraints.
+
+=== "한국어"
+
+    합의 메커니즘과 가상 머신의 차이점을 깊이 파고들기 전에, L1 성공에 실제로 무엇이 중요한지 먼저 확립해야 한다. 기술적 우월성만으로는 승자가 결정되는 경우가 드물다. 사용자 채택이 암호화폐에서 가장 희소한 자원으로 부상했으며, 처리량 벤치마크나 이론적 탈중앙화 점수보다 더 가치 있다.
+
+    수십 개의 저명한 L1이 주로 암호화폐 네이티브와 소매 투기꾼으로 구성된 제한된 사용자 기반을 두고 경쟁한다. 현재까지 어떤 블록체인도 특정 범주 외의 애플리케이션에 대해 지속 가능한 광범위한 수요를 달성하지 못했다: 거래(탈중앙화 거래소), 투기(밈코인, NFT), 스테이블코인, 이자 농사, 결제(특히 신흥 시장에서). 토큰화된 실물 자산과 탈중앙화 물리적 인프라 같은 영역에서 초기 성장 조짐이 나타나고 있지만, 아직 초기 단계에 머물러 있다.
+
+    유동성(Liquidity)은 궁극적인 결정자 역할을 한다. 네이티브 USDC와 USDT 지원을 갖춘 네트워크는 수천억 달러의 유통 스테이블코인과 연간 수조 달러의 이체량에 접근할 수 있다. 네이티브 스테이블코인 통합이 없는 네트워크는 의미 있는 온체인 활동을 유치하기 어렵다. 중앙화 거래소 상장은 실질적인 사용자 접근성을 결정하는 필수 법정화폐 진입로를 제공한다. 주요 거래소가 입출금을 지원하지 않으면 우수한 기술도 의미가 없다.
+
+    개발자 관심과 문화적 역학도 상당히 중요하다. 섹션 IV에서 가상 머신을 살펴볼 때 알 수 있듯이, 생태계 네트워크 효과와 확립된 인프라가 종종 순수한 기술적 성능보다 채택에 더 결정적인 것으로 입증된다. 우리가 곧 살펴볼 기술적 아키텍처는 유동성과 생태계 모멘텀이 아키텍처의 우아함을 압도할 수 있는 시장 제약 내에서 작동한다.
+
+    이러한 시장 현실을 확립했으니, 이제 L1이 이러한 제약 내에서 탐색해야 하는 기술적 아키텍처를 살펴보자.
+
+## Section II: Blockchain Architectures
+
+=== "English"
+
+    ### The Four Planes
+
+    Every L1 is fundamentally a bundle of four core functions. Think of a blockchain as a restaurant that needs to handle these essential operations:
+
+    **Execution** is the kitchen where orders (transactions) get processed and meals (state changes) get prepared. **Settlement** is the dining room where completed meals get delivered and customers pay their bills (finalized state). Consensus is the management system, ensuring everyone agrees on which orders came first and which tables they belong to. **Data availability** is the record-keeping, maintaining receipts and records so anyone can verify what happened.
+
+    ### The Modularity Spectrum
+
+    Now that we understand these four functions, the key question becomes: should they be bundled together or separated? Blockchain architecture exists along a spectrum from fully integrated to fully unbundled designs. At one end sit **monolithic blockchains** that handle all four functions (execution, consensus, settlement, and data availability) within a single unified layer. At the other end lie designs that separate each function into specialized, interoperable components. Most real-world implementations occupy various points along this spectrum, blending characteristics from both extremes based on their specific goals and constraints.
+
+    Monolithic designs prioritize tight integration. When execution, consensus, settlement, and data availability all share a single chain, most applications live inside one global atomic composability domain. **Atomic composability** means a single transaction can touch many contracts, and either all state changes are applied or they all revert together, like an "all or nothing" guarantee. This makes building complex DeFi systems much simpler, because everything settles within the same state machine. Bitcoin and Solana sit closer to this end of the spectrum architecturally, even though they differ dramatically in throughput and hardware requirements.
+
+    High-throughput monolithic chains demand more powerful hardware and networking infrastructure, a tradeoff we'll explore in Section V when examining vertical scaling approaches.
+
+    The unbundled approach asks: why force the same nodes to handle lightning-fast trading execution and long-term data storage? Separated architectures let different layers specialize. Execution layers handle transaction processing. Settlement layers provide economic finality and dispute resolution. Consensus layers optimize for fast, secure block production. Data availability layers efficiently store and distribute transaction data.
+
+    Ethereum's evolution exemplifies this transition. The network's rollup-centric roadmap transforms Ethereum into a base layer where L2s handle most transaction execution, while L1 specializes in consensus, settlement (verifying rollup proofs and resolving disputes), and data availability for rollup transaction data. Rollups optimize for throughput and cost; Ethereum provides security and finality.
+
+    ### Key Design Choices
+
+    Where a blockchain sits on this spectrum determines fundamental capabilities and constraints. The most significant tension involves composability: the ability to combine protocols atomically in a single transaction.
+
+    Monolithic chains offer local composability. Complex multi-step operations work seamlessly because all actions execute in a single atomic transaction. If any step fails, everything reverts, leaving you exactly where you started. Flash loans exemplify this power: a user can borrow millions of dollars, use those funds across multiple protocols, and repay the loan all within a single transaction that either succeeds completely or fails completely with no partial execution (Chapter VII covers flash loans in depth).
+
+    Distributed architectures require cross-layer composability, coordinating actions across multiple chains with different finality timings and trust assumptions. The same single-transaction arbitrage that's trivial on a monolithic chain cannot be expressed as a truly atomic operation across rollups. Flash loans remain strictly local to one execution environment. Cross-rollup arbitrage instead relies on pre-funded capital (or credit lines) and accepts inventory and bridge risk while messages or assets move between domains. Atomicity across rollups generally isn't possible without extra coordination mechanisms that synchronize execution across multiple chains, which are still maturing.
+
+    This composability difference shapes what builders can create and how they must think about application design. As we'll see in Section VI on interoperability, this remains one of blockchain's central challenges.
+
+    The modularity spectrum we've discussed doesn't just affect composability; it also determines how chains scale capacity. Beyond choosing where on this spectrum to sit, chains must decide how to distribute work across multiple parallel chains.
+
+    ### Scaling Through Modularity: Horizontal Approaches
+
+    While vertical scaling pushes individual chains to process more transactions (covered in Section V), horizontal scaling distributes work across multiple parallel chains.
+
+    **Sharding** represents the classic horizontal approach, like dividing a large database into smaller pieces that can be processed independently. It splits the network's state and transaction processing across multiple parallel shards, each handled by different validator subsets. Ethereum's original roadmap envisioned execution sharding, but this approach has largely fallen out of favor for L1s. The complexity of cross-shard communication, validator assignment, and security guarantees proved more challenging than anticipated.
+
+    Instead, Ethereum pivoted to a rollup-centric model: L2s provide the parallelism and handle most user transactions, while the L1 focuses on settlement and data availability. Through blob transactions (EIP-4844, covered in Chapter II) and planned future upgrades, Ethereum spreads rollup data across validators rather than splitting execution into separate shards. This exemplifies how separated layers can optimize independently while coordinating through well-defined interfaces.
+
+    #### Alternative Approaches to Specialization
+
+    Other ecosystems pursue specialization differently. Avalanche scales through a subnet architecture where independent, application-specific blockchains run in parallel, each with its own set of validators selected from a larger validator pool. Unlike systems where all chains share the same security, subnets operate independently and can customize their own rules, including which virtual machine to use, what token to charge for fees, and how governance works.
+
+    This design provides performance isolation, meaning that heavy applications on one subnet don't slow down or increase costs for applications on other subnets. These chains communicate with each other through Avalanche Warp Messaging, a system that enables secure cross-chain messaging without requiring all subnets to pool their security together. The result is a federation of customizable blockchains that can scale horizontally by adding more subnets rather than competing for space on a single shared network.
+
+    The architectural choice between integrated and unbundled designs involves trading the simpler composability of monolithic chains for the specialized optimization that separation enables, though it introduces the cross-layer coordination challenges inherent to fragmented execution environments. These architectural patterns shape everything from how validators coordinate to how developers build applications.
+
+    But architecture is just the foundation. The consensus mechanisms that enable validators to actually agree on transaction ordering and validity determine the security and performance characteristics that make those architectures viable. That's where we turn next.
+
+=== "한국어"
+
+    ### 네 가지 계층
+
+    모든 L1은 기본적으로 네 가지 핵심 기능의 묶음이다. 블록체인을 이러한 필수 운영을 처리해야 하는 레스토랑으로 생각해 보자:
+
+    **실행(Execution)**은 주문(트랜잭션)이 처리되고 음식(상태 변경)이 준비되는 주방이다. **정산(Settlement)**은 완성된 음식이 전달되고 고객이 계산(최종 상태)하는 식당이다. **합의(Consensus)**는 모든 사람이 어떤 주문이 먼저 왔고 어떤 테이블에 속하는지 동의하도록 보장하는 관리 시스템이다. **데이터 가용성(Data Availability)**은 누구나 무슨 일이 일어났는지 검증할 수 있도록 영수증과 기록을 유지하는 기록 보관이다.
+
+    ### 모듈성 스펙트럼
+
+    이제 이 네 가지 기능을 이해했으니, 핵심 질문은 다음과 같다: 이들을 함께 묶어야 할까, 아니면 분리해야 할까? 블록체인 아키텍처는 완전히 통합된 설계부터 완전히 분리된 설계까지 스펙트럼 상에 존재한다. 한쪽 끝에는 네 가지 기능(실행, 합의, 정산, 데이터 가용성)을 모두 단일 통합 레이어 내에서 처리하는 **모놀리식 블록체인(Monolithic Blockchain)**이 있다. 다른 쪽 끝에는 각 기능을 전문화되고 상호 운용 가능한 구성 요소로 분리하는 설계가 있다. 대부분의 실제 구현은 특정 목표와 제약에 따라 양극단의 특성을 혼합하여 이 스펙트럼의 다양한 지점을 차지한다.
+
+    모놀리식 설계는 긴밀한 통합을 우선시한다. 실행, 합의, 정산, 데이터 가용성이 모두 단일 체인을 공유할 때, 대부분의 애플리케이션은 하나의 전역 원자적 구성 가능성 도메인 내에 존재한다. **원자적 구성 가능성(Atomic Composability)**이란 단일 트랜잭션이 여러 컨트랙트를 건드릴 수 있고, 모든 상태 변경이 적용되거나 모두 함께 되돌려지는, "전부 아니면 전무" 보장과 같은 것을 의미한다. 이는 복잡한 DeFi 시스템 구축을 훨씬 단순하게 만든다. 왜냐하면 모든 것이 동일한 상태 머신 내에서 정산되기 때문이다. 비트코인과 솔라나는 처리량과 하드웨어 요구 사항에서 극적으로 다르지만, 아키텍처적으로는 이 스펙트럼의 같은 쪽에 더 가깝다.
+
+    고처리량 모놀리식 체인은 더 강력한 하드웨어와 네트워킹 인프라를 요구하며, 이는 섹션 V에서 수직적 확장 접근 방식을 살펴볼 때 탐구할 트레이드오프이다.
+
+    분리된 접근 방식은 다음을 묻는다: 왜 동일한 노드가 번개처럼 빠른 거래 실행과 장기 데이터 저장을 모두 처리해야 하는가? 분리된 아키텍처는 서로 다른 레이어가 전문화할 수 있게 한다. 실행 레이어는 트랜잭션 처리를 담당한다. 정산 레이어는 경제적 최종성과 분쟁 해결을 제공한다. 합의 레이어는 빠르고 안전한 블록 생산을 최적화한다. 데이터 가용성 레이어는 트랜잭션 데이터를 효율적으로 저장하고 배포한다.
+
+    이더리움의 진화가 이 전환을 잘 보여준다. 네트워크의 롤업 중심 로드맵은 이더리움을 L2가 대부분의 트랜잭션 실행을 처리하는 베이스 레이어로 변환하고, L1은 합의, 정산(롤업 증명 검증 및 분쟁 해결), 롤업 트랜잭션 데이터의 데이터 가용성에 전문화한다. 롤업은 처리량과 비용을 최적화하고, 이더리움은 보안과 최종성을 제공한다.
+
+    ### 핵심 설계 선택
+
+    블록체인이 이 스펙트럼의 어디에 위치하느냐에 따라 근본적인 능력과 제약이 결정된다. 가장 중요한 긴장은 구성 가능성(Composability)과 관련된다: 단일 트랜잭션에서 프로토콜을 원자적으로 결합하는 능력 말이다.
+
+    모놀리식 체인은 로컬 구성 가능성을 제공한다. 복잡한 다단계 작업이 원활하게 작동하는데, 모든 작업이 단일 원자적 트랜잭션에서 실행되기 때문이다. 어떤 단계가 실패하면 모든 것이 되돌려지고, 시작했던 정확히 그 상태로 남는다. 플래시 론(Flash Loan)이 이 힘을 잘 보여준다: 사용자가 수백만 달러를 빌리고, 여러 프로토콜에서 그 자금을 사용하고, 대출을 상환하는 것을 모두 단일 트랜잭션 내에서 할 수 있으며, 완전히 성공하거나 부분 실행 없이 완전히 실패한다(제7장에서 플래시 론을 깊이 다룬다).
+
+    분산 아키텍처는 크로스 레이어 구성 가능성을 요구하며, 서로 다른 최종성 타이밍과 신뢰 가정을 가진 여러 체인 간의 작업을 조정한다. 모놀리식 체인에서 간단한 단일 트랜잭션 차익 거래는 롤업 간에서는 진정한 원자적 작업으로 표현될 수 없다. 플래시 론은 엄격히 하나의 실행 환경에 로컬로 유지된다. 크로스 롤업 차익 거래는 대신 사전 자금(또는 신용 한도)에 의존하고, 메시지나 자산이 도메인 간에 이동하는 동안 재고 및 브릿지 리스크를 수용한다. 롤업 간 원자성은 일반적으로 여러 체인에서 실행을 동기화하는 추가 조정 메커니즘 없이는 불가능하며, 이는 아직 성숙 단계에 있다.
+
+    이 구성 가능성 차이는 빌더가 무엇을 만들 수 있고 애플리케이션 설계에 대해 어떻게 생각해야 하는지를 형성한다. 섹션 VI의 상호운용성에서 볼 수 있듯이, 이것은 블록체인의 핵심 과제 중 하나로 남아 있다.
+
+    우리가 논의한 모듈성 스펙트럼은 구성 가능성에만 영향을 미치는 것이 아니다; 체인이 어떻게 용량을 확장하는지도 결정한다. 이 스펙트럼의 어디에 위치할지 선택하는 것 외에도, 체인은 여러 병렬 체인에 걸쳐 작업을 어떻게 분배할지 결정해야 한다.
+
+    ### 모듈성을 통한 확장: 수평적 접근
+
+    수직적 확장이 개별 체인이 더 많은 트랜잭션을 처리하도록 밀어붙이는 동안(섹션 V에서 다룸), 수평적 확장은 작업을 여러 병렬 체인에 분배한다.
+
+    **샤딩(Sharding)**은 대형 데이터베이스를 독립적으로 처리할 수 있는 작은 조각으로 나누는 것과 같은 고전적인 수평적 접근 방식을 나타낸다. 네트워크의 상태와 트랜잭션 처리를 여러 병렬 샤드로 분할하며, 각각 다른 검증자 부분 집합이 처리한다. 이더리움의 원래 로드맵은 실행 샤딩을 구상했지만, 이 접근 방식은 L1에서 대부분 선호되지 않게 되었다. 크로스 샤드 통신, 검증자 할당, 보안 보장의 복잡성이 예상보다 더 도전적으로 판명되었다.
+
+    대신, 이더리움은 롤업 중심 모델로 전환했다: L2가 병렬성을 제공하고 대부분의 사용자 트랜잭션을 처리하는 반면, L1은 정산과 데이터 가용성에 집중한다. 블롭 트랜잭션(EIP-4844, 제2장에서 다룸)과 계획된 미래 업그레이드를 통해, 이더리움은 실행을 별도의 샤드로 분할하는 대신 롤업 데이터를 검증자들에게 분산한다. 이는 분리된 레이어가 잘 정의된 인터페이스를 통해 조정하면서 독립적으로 최적화할 수 있는 방법을 보여준다.
+
+    #### 전문화의 대안적 접근
+
+    다른 생태계는 전문화를 다르게 추구한다. 아발란체(Avalanche)는 독립적인 애플리케이션별 블록체인이 병렬로 실행되는 서브넷(Subnet) 아키텍처를 통해 확장하며, 각각은 더 큰 검증자 풀에서 선택된 자체 검증자 집합을 가진다. 모든 체인이 동일한 보안을 공유하는 시스템과 달리, 서브넷은 독립적으로 운영되며 사용할 가상 머신, 수수료로 청구할 토큰, 거버넌스 작동 방식을 포함한 자체 규칙을 사용자 정의할 수 있다.
+
+    이 설계는 성능 격리를 제공하는데, 한 서브넷의 무거운 애플리케이션이 다른 서브넷의 애플리케이션을 느리게 하거나 비용을 증가시키지 않는다는 것을 의미한다. 이러한 체인들은 아발란체 워프 메시징(Avalanche Warp Messaging)을 통해 서로 통신하며, 이 시스템은 모든 서브넷이 보안을 함께 풀링할 필요 없이 안전한 크로스 체인 메시징을 가능하게 한다. 결과는 단일 공유 네트워크에서 공간을 경쟁하는 대신 더 많은 서브넷을 추가하여 수평적으로 확장할 수 있는 사용자 정의 가능한 블록체인들의 연합이다.
+
+    통합 설계와 분리된 설계 사이의 아키텍처적 선택은 모놀리식 체인의 더 단순한 구성 가능성과 분리가 가능하게 하는 전문화된 최적화 사이의 트레이드오프를 수반하지만, 분산된 실행 환경에 내재된 크로스 레이어 조정 과제를 도입한다. 이러한 아키텍처 패턴은 검증자가 어떻게 조정하는지부터 개발자가 애플리케이션을 어떻게 구축하는지까지 모든 것을 형성한다.
+
+    하지만 아키텍처는 기초일 뿐이다. 검증자가 실제로 트랜잭션 순서와 유효성에 동의할 수 있게 하는 합의 메커니즘이 그 아키텍처를 실행 가능하게 만드는 보안 및 성능 특성을 결정한다. 그것이 우리가 다음에 다룰 내용이다.
+
+## Section III: Consensus and Finality
+
+=== "English"
+
+    Understanding how blockchains reach agreement reveals the practical constraints of the trilemma. Different consensus mechanisms balance decentralization (who can participate), security (cost to attack), and performance (throughput and finality speed) in fundamentally different ways.
+
+    ### Proof-of-Work vs. Proof-of-Stake
+
+    Proof-of-Work (PoW) systems like Bitcoin (detailed in Chapter I) use computational puzzles to select block producers. Miners compete to solve cryptographically difficult problems, and the winner gets to propose the next block. Security derives from the sheer cost of acquiring and operating enough hardware to control the network. An attacker would need to outpace the combined computational power of all honest miners.
+
+    Proof-of-Stake (PoS) systems like Ethereum (detailed in Chapter II) use economic stake rather than computational work to select block producers. Validators lock up capital as collateral, earning rewards for honest participation but facing **slashing penalties** if they misbehave. Security comes from making attacks economically irrational: attacking the network means destroying your own staked capital.
+
+    The key difference shapes how each system handles finality, performance, and economic security. PoW externalizes costs through energy consumption, creating ongoing operational expenses that make sustained attacks expensive. PoS internalizes costs through staked capital, enabling different finality guarantees and lower ongoing resource consumption. We'll examine how these consensus mechanisms translate into different finality models after understanding the fundamental trade-offs they navigate.
+
+    ### Liveness vs Safety
+
+    A deeper lens on these consensus families is the liveness versus safety trade-off. Blockchains face a core tension: should they keep producing blocks no matter what (liveness), or should they refuse to produce any blocks if there's a risk of creating conflicting information (safety)? The CAP theorem from distributed systems theory captures a similar tension, and it applies loosely to blockchains facing network disruptions.
+
+    Liveness means the network keeps making progress and producing new blocks. Safety means the network never creates invalid or conflicting blocks, even if that means stopping completely.
+
+    Different blockchains make different choices about this balance:
+
+    Bitcoin chooses liveness. The network will keep producing blocks even if parts of it get disconnected from each other. This might temporarily create competing versions of the chain (forks), but the network stays alive and eventually resolves these conflicts when connectivity returns.
+
+    Ethereum takes a balanced approach. It has an "inactivity leak" feature that gradually reduces the stake of validators who go offline. If enough validators disappear, this mechanism eventually lets the remaining online validators continue producing blocks, preserving liveness while normally prioritizing safety.
+
+    Many BFT chains choose safety. These chains completely halt when validators drop below the required threshold for consensus, refusing to produce any new blocks rather than risk creating conflicting information. This safety-first stance enables deterministic finality (which we'll examine shortly), giving stronger guarantees that what gets finalized is correct, but it means the network can become unavailable during major outages or coordinated attacks.
+
+    Neither approach is inherently better. The right choice depends on what the blockchain is trying to achieve. A financial settlement layer might prioritize safety above all else, accepting the risk of downtime. A high-throughput application chain might prioritize staying available, accepting that it needs mechanisms to handle temporary forks.
+
+    Understanding how different chains handle this liveness/safety balance helps explain why consensus mechanisms produce fundamentally different finality guarantees.
+
+    ### BFT Consensus Families
+
+    Many newer chains use Byzantine Fault Tolerance (BFT) consensus algorithms. The name comes from a classic computer science problem: how can a group of generals coordinate an attack when some of them might be traitors sending false messages? BFT systems solve this by enabling networks to reach agreement even when some participants act maliciously or fail. These systems provide **deterministic finality**, achieving confirmation within seconds with no risk of reversal.
+
+    The core constraint is that BFT chains prioritize safety over liveness. They can tolerate up to one-third of validators being faulty or offline while maintaining correctness. However, if more than one-third of voting power goes offline, the chain halts completely rather than risk producing incorrect results.
+
+    A second constraint is scalability. BFT protocols require validators to exchange messages with each other for each block, so communication overhead grows quickly as the validator set expands. In practice, most BFT chains limit their active validator sets to tens or low hundreds. Token holders who want to participate but can't run a validator can delegate their stake to existing validators, allowing the system to aggregate economic weight behind a manageable number of participants. This trades some decentralization for performance.
+
+    #### Tendermint
+
+    Tendermint is used by Cosmos and many application-specific chains. Validators must reach consensus through multiple rounds of voting before producing each block. Block times typically range from 1-7 seconds depending on validator set size and network conditions. The system requires at least two-thirds of voting power online to make progress. This represents a deliberate constraint: slower transaction processing in exchange for immediate finality and strong safety guarantees.
+
+    #### Newer BFT Variants
+
+    Chains like Aptos and the former Diem project use improved versions of BFT consensus that build on earlier designs. These newer approaches achieve higher throughput by processing multiple consensus stages simultaneously and reducing the number of message exchanges validators need to complete. They maintain the same safety guarantees and fault tolerance as earlier BFT systems while delivering faster performance. The tradeoff is added protocol complexity.
+
+    #### Proof-of-History
+
+    Proof-of-History represents Solana's distinctive consensus innovation, combining a cryptographic timekeeping mechanism with Tower BFT voting. The system delivers optimistic confirmations around 400 milliseconds and full finality at approximately 12.8 seconds. For detailed coverage of how Proof-of-History works, its interaction with Gulf Stream transaction forwarding, Turbine data propagation, and the Alpenglow upgrade, see Chapter III.
+
+    ### Finality Types and Their Implications
+
+    With these consensus mechanisms and their liveness/safety choices established, we can now examine the three distinct types of finality they produce:
+
+    **Probabilistic finality** (Bitcoin and PoW chains) means reversal becomes exponentially less likely over time but never reaches absolute zero probability. Think of it like adding locks to a safe: each lock makes theft harder, but a sufficiently motivated attacker with enough resources could theoretically break through. Six confirmations provide very high confidence, but large transactions might wait for more confirmations during periods of high uncertainty or network stress.
+
+    **Economic finality** (Ethereum post-Merge, as discussed in Chapter II) means reversal would require destroying significant economic value, making attacks economically irrational for profit-motivated attackers. Ethereum's finality mechanism creates checkpoints where reversal would require destroying at least one-third of all staked ETH (currently worth tens of billions of dollars). This makes reversal not just computationally expensive but economically catastrophic. However, this assumes rational attackers; nation-state or ideologically motivated attacks might accept economic losses to achieve political or strategic goals.
+
+    Deterministic finality (BFT consensus families) means finality arrives within seconds and is mathematically guaranteed, assuming less than one-third of validators are malicious. Once a block receives sufficient votes from the validator set, it's immediately and permanently final with no possibility of reversal. The limitation usually involves lower throughput compared to optimistic approaches, or higher centralization pressure due to the coordination requirements of reaching consensus quickly among many validators.
+
+    These differences have practical implications across the ecosystem. DeFi protocols might wait 6-12 blocks on Bitcoin for high-value transactions. On Ethereum, some applications act on 1-2 block confirmations for better UX, but true *economic finality* doesn't arrive until after approximately 2 epochs (~12.8 minutes when the network finalizes a checkpoint). BFT chains provide deterministic finality within seconds, enabling different application designs. Cross-chain bridges must carefully calibrate their security parameters around these finality models. As we'll see in Section VI, the mismatch between probabilistic and deterministic finality has contributed to bridge exploits when systems didn't wait for sufficient confirmations on the source chain.
+
+    Consensus mechanisms determine security and finality, but developers experience blockchains through the virtual machine environments where they actually build applications. The programming model shapes not just technical performance but also ecosystem growth and security properties.
+
+=== "한국어"
+
+    블록체인이 어떻게 합의에 도달하는지 이해하면 트릴레마의 실질적 제약이 드러난다. 서로 다른 합의 메커니즘은 탈중앙화(누가 참여할 수 있는가), 보안(공격 비용), 성능(처리량과 최종성 속도)을 근본적으로 다른 방식으로 균형 잡는다.
+
+    ### 작업 증명 vs 지분 증명
+
+    비트코인과 같은 작업 증명(Proof-of-Work, PoW) 시스템(제1장에서 자세히 다룸)은 블록 생산자를 선택하기 위해 계산 퍼즐을 사용한다. 채굴자들은 암호학적으로 어려운 문제를 풀기 위해 경쟁하고, 승자가 다음 블록을 제안할 수 있다. 보안은 네트워크를 통제하기 위한 충분한 하드웨어를 획득하고 운영하는 순수한 비용에서 비롯된다. 공격자는 모든 정직한 채굴자의 결합된 계산 능력을 능가해야 할 것이다.
+
+    이더리움과 같은 지분 증명(Proof-of-Stake, PoS) 시스템(제2장에서 자세히 다룸)은 계산 작업 대신 경제적 지분을 사용하여 블록 생산자를 선택한다. 검증자는 담보로 자본을 잠그고, 정직한 참여에 대해 보상을 받지만 잘못 행동하면 **슬래싱 페널티(Slashing Penalty)**를 받는다. 보안은 공격을 경제적으로 비합리적으로 만드는 것에서 비롯된다: 네트워크를 공격하는 것은 자신의 스테이킹된 자본을 파괴하는 것을 의미한다.
+
+    핵심 차이점은 각 시스템이 최종성, 성능, 경제적 보안을 어떻게 처리하는지를 형성한다. PoW는 에너지 소비를 통해 비용을 외부화하여, 지속적인 공격을 비싸게 만드는 지속적인 운영 비용을 생성한다. PoS는 스테이킹된 자본을 통해 비용을 내부화하여, 다른 최종성 보장과 더 낮은 지속적 자원 소비를 가능하게 한다. 이러한 합의 메커니즘이 그들이 탐색하는 근본적인 트레이드오프를 이해한 후에 어떻게 다른 최종성 모델로 변환되는지 살펴볼 것이다.
+
+    ### 라이브니스 vs 안전성
+
+    이러한 합의 계열에 대한 더 깊은 렌즈는 라이브니스(Liveness) 대 안전성(Safety) 트레이드오프이다. 블록체인은 핵심적인 긴장에 직면한다: 무슨 일이 있어도 블록을 계속 생산해야 할까(라이브니스), 아니면 충돌하는 정보를 생성할 위험이 있다면 어떤 블록도 생산하지 않아야 할까(안전성)? 분산 시스템 이론의 CAP 정리는 유사한 긴장을 포착하며, 네트워크 중단에 직면한 블록체인에 느슨하게 적용된다.
+
+    라이브니스는 네트워크가 계속 진전을 이루고 새로운 블록을 생산한다는 것을 의미한다. 안전성은 네트워크가 완전히 멈추더라도 절대 유효하지 않거나 충돌하는 블록을 생성하지 않는다는 것을 의미한다.
+
+    서로 다른 블록체인은 이 균형에 대해 다른 선택을 한다:
+
+    비트코인은 라이브니스를 선택한다. 네트워크는 일부가 서로 연결이 끊어지더라도 블록을 계속 생산한다. 이것은 일시적으로 체인의 경쟁 버전(포크)을 생성할 수 있지만, 네트워크는 살아 있고 연결이 복원되면 결국 이러한 충돌을 해결한다.
+
+    이더리움은 균형 잡힌 접근 방식을 취한다. 오프라인이 되는 검증자의 지분을 점진적으로 줄이는 "비활성 누수(Inactivity Leak)" 기능이 있다. 충분한 검증자가 사라지면, 이 메커니즘은 결국 남은 온라인 검증자가 블록을 계속 생산할 수 있게 하여, 일반적으로 안전성을 우선시하면서 라이브니스를 보존한다.
+
+    많은 BFT 체인은 안전성을 선택한다. 이러한 체인은 검증자가 합의에 필요한 임계값 아래로 떨어지면 완전히 중단되며, 충돌하는 정보를 생성할 위험을 감수하기보다 새로운 블록 생산을 거부한다. 이 안전성 우선 입장은 결정론적 최종성(곧 살펴볼 것)을 가능하게 하여, 최종 확정된 것이 올바르다는 더 강력한 보장을 제공하지만, 주요 장애나 조정된 공격 중에 네트워크가 사용 불가능해질 수 있다는 것을 의미한다.
+
+    어떤 접근 방식도 본질적으로 더 낫지 않다. 올바른 선택은 블록체인이 달성하려는 것에 달려 있다. 금융 정산 레이어는 다운타임 위험을 감수하면서 무엇보다 안전성을 우선시할 수 있다. 고처리량 애플리케이션 체인은 일시적인 포크를 처리하는 메커니즘이 필요하다는 것을 받아들이면서 가용성 유지를 우선시할 수 있다.
+
+    서로 다른 체인이 이 라이브니스/안전성 균형을 어떻게 처리하는지 이해하면 왜 합의 메커니즘이 근본적으로 다른 최종성 보장을 생산하는지 설명하는 데 도움이 된다.
+
+    ### BFT 합의 계열
+
+    많은 새로운 체인은 비잔틴 장애 허용(Byzantine Fault Tolerance, BFT) 합의 알고리즘을 사용한다. 이름은 고전적인 컴퓨터 과학 문제에서 비롯된다: 장군 그룹이 일부가 잘못된 메시지를 보내는 반역자일 수 있을 때 어떻게 공격을 조정할 수 있을까? BFT 시스템은 일부 참여자가 악의적으로 행동하거나 실패하더라도 네트워크가 합의에 도달할 수 있게 함으로써 이를 해결한다. 이러한 시스템은 **결정론적 최종성(Deterministic Finality)**을 제공하며, 되돌릴 위험 없이 수 초 내에 확인을 달성한다.
+
+    핵심 제약은 BFT 체인이 라이브니스보다 안전성을 우선시한다는 것이다. 검증자의 최대 3분의 1이 결함이 있거나 오프라인인 상태에서도 정확성을 유지하며 허용할 수 있다. 그러나 투표 권한의 3분의 1 이상이 오프라인이 되면, 체인은 잘못된 결과를 생성할 위험을 감수하기보다 완전히 중단된다.
+
+    두 번째 제약은 확장성이다. BFT 프로토콜은 검증자가 각 블록에 대해 서로 메시지를 교환해야 하므로, 검증자 집합이 확장됨에 따라 통신 오버헤드가 빠르게 증가한다. 실제로 대부분의 BFT 체인은 활성 검증자 집합을 수십 명에서 낮은 수백 명으로 제한한다. 참여하고 싶지만 검증자를 운영할 수 없는 토큰 보유자는 기존 검증자에게 자신의 지분을 위임(Delegate)할 수 있어, 시스템이 관리 가능한 수의 참여자 뒤에 경제적 가중치를 집계할 수 있게 한다. 이것은 성능을 위해 일부 탈중앙화를 거래한다.
+
+    #### Tendermint
+
+    Tendermint는 코스모스(Cosmos)와 많은 애플리케이션별 체인에서 사용된다. 검증자는 각 블록을 생산하기 전에 여러 차례의 투표를 통해 합의에 도달해야 한다. 블록 시간은 일반적으로 검증자 집합 크기와 네트워크 조건에 따라 1-7초 범위이다. 시스템은 진행을 위해 최소 3분의 2의 투표 권한이 온라인이어야 한다. 이것은 의도적인 제약을 나타낸다: 즉각적인 최종성과 강력한 안전성 보장을 위해 더 느린 트랜잭션 처리를 교환하는 것이다.
+
+    #### 새로운 BFT 변형
+
+    앱토스(Aptos)와 이전 디엠(Diem) 프로젝트 같은 체인은 초기 설계를 기반으로 구축된 개선된 버전의 BFT 합의를 사용한다. 이러한 새로운 접근 방식은 여러 합의 단계를 동시에 처리하고 검증자가 완료해야 하는 메시지 교환 횟수를 줄임으로써 더 높은 처리량을 달성한다. 이전 BFT 시스템과 동일한 안전성 보장 및 장애 허용을 유지하면서 더 빠른 성능을 제공한다. 트레이드오프는 추가된 프로토콜 복잡성이다.
+
+    #### 역사 증명
+
+    역사 증명(Proof-of-History)은 암호학적 시간 기록 메커니즘과 Tower BFT 투표를 결합한 솔라나의 독특한 합의 혁신을 나타낸다. 시스템은 약 400밀리초의 낙관적 확인과 약 12.8초의 전체 최종성을 제공한다. 역사 증명이 어떻게 작동하는지, Gulf Stream 트랜잭션 포워딩, Turbine 데이터 전파, Alpenglow 업그레이드와의 상호 작용에 대한 자세한 내용은 제3장을 참조하라.
+
+    ### 최종성 유형과 그 함의
+
+    이러한 합의 메커니즘과 그들의 라이브니스/안전성 선택이 확립되었으니, 이제 그들이 생산하는 세 가지 구별되는 최종성 유형을 살펴볼 수 있다:
+
+    **확률적 최종성(Probabilistic Finality)**(비트코인과 PoW 체인)은 되돌림이 시간이 지남에 따라 기하급수적으로 덜 가능해지지만 절대 제로 확률에 도달하지 않는다는 것을 의미한다. 금고에 자물쇠를 추가하는 것처럼 생각하라: 각 자물쇠는 도난을 더 어렵게 만들지만, 충분히 동기부여된 공격자가 충분한 자원을 가지면 이론적으로 뚫을 수 있다. 6번의 확인은 매우 높은 신뢰를 제공하지만, 큰 트랜잭션은 높은 불확실성이나 네트워크 스트레스 기간 동안 더 많은 확인을 기다릴 수 있다.
+
+    **경제적 최종성(Economic Finality)**(머지 후 이더리움, 제2장에서 논의)은 되돌림이 상당한 경제적 가치를 파괴해야 하므로, 이익 동기를 가진 공격자에게 공격이 경제적으로 비합리적이 된다는 것을 의미한다. 이더리움의 최종성 메커니즘은 되돌림이 모든 스테이킹된 ETH의 최소 3분의 1(현재 수백억 달러 가치)을 파괴해야 하는 체크포인트를 생성한다. 이것은 되돌림을 계산적으로 비싸게 만드는 것이 아니라 경제적으로 재앙적으로 만든다. 그러나 이것은 합리적인 공격자를 가정한다; 국가 또는 이념적으로 동기부여된 공격은 정치적 또는 전략적 목표를 달성하기 위해 경제적 손실을 감수할 수 있다.
+
+    **결정론적 최종성(Deterministic Finality)**(BFT 합의 계열)은 최종성이 수 초 내에 도착하며, 검증자의 3분의 1 미만이 악의적이라고 가정할 때 수학적으로 보장된다는 것을 의미한다. 블록이 검증자 집합으로부터 충분한 투표를 받으면, 즉시 그리고 영구적으로 최종 확정되며 되돌릴 가능성이 없다. 제한은 일반적으로 낙관적 접근 방식에 비해 낮은 처리량이거나, 많은 검증자 간에 빠르게 합의에 도달하는 조정 요구 사항으로 인한 더 높은 중앙화 압력을 수반한다.
+
+    이러한 차이는 생태계 전반에 걸쳐 실질적인 함의를 갖는다. DeFi 프로토콜은 비트코인에서 고가치 트랜잭션에 대해 6-12블록을 기다릴 수 있다. 이더리움에서 일부 애플리케이션은 더 나은 UX를 위해 1-2블록 확인으로 행동하지만, 진정한 *경제적 최종성*은 약 2 에포크(네트워크가 체크포인트를 최종 확정할 때 ~12.8분) 후에야 도착한다. BFT 체인은 수 초 내에 결정론적 최종성을 제공하여 다른 애플리케이션 설계를 가능하게 한다. 크로스 체인 브릿지는 이러한 최종성 모델을 중심으로 보안 매개변수를 신중하게 조정해야 한다. 섹션 VI에서 볼 수 있듯이, 확률적 최종성과 결정론적 최종성 사이의 불일치는 시스템이 소스 체인에서 충분한 확인을 기다리지 않았을 때 브릿지 익스플로잇에 기여했다.
+
+    합의 메커니즘은 보안과 최종성을 결정하지만, 개발자는 실제로 애플리케이션을 구축하는 가상 머신 환경을 통해 블록체인을 경험한다. 프로그래밍 모델은 기술적 성능뿐만 아니라 생태계 성장과 보안 속성도 형성한다.
+
+## Section IV: Virtual Machines and Programming Models
+
+=== "English"
+
+    Once a chain establishes its consensus mechanism, it must decide how developers will build applications on it. This choice shapes ecosystem growth as much as technical performance does.
+
+    ### The Ecosystem vs. Innovation Dilemma
+
+    The choice between virtual machines presents a classic innovator's dilemma. Building on an established VM like the EVM means accessing mature infrastructure: extensive documentation, battle-tested libraries, experienced developers, sophisticated debugging tools, comprehensive testing frameworks, and auditing firms with deep expertise. A protocol like Uniswap can deploy on EVM chains with minimal changes, bringing battle-tested DeFi primitives across networks. A new DeFi protocol can immediately plug into Uniswap liquidity, Chainlink oracles, and Aave lending markets. This shared application layer spanning EVM chains creates composability benefits (discussed in Section II) that alternative platforms struggle to replicate.
+
+    Alternative VMs provide genuine technical improvements. Parallel execution architectures enable higher throughput. Advanced type systems prevent entire classes of exploits through language design rather than developer discipline. More efficient compilation produces faster code while supporting multiple source languages.
+
+    However, these architectural improvements come with substantial adoption barriers. Finding and hiring experienced developers in newer languages takes longer and costs more. Development velocity suffers without mature tooling that established ecosystem developers take for granted. Security auditing creates bottlenecks; few firms possess expertise in newer languages, making reviews slower and more expensive. Newer platforms lack ecosystem depth, forcing developers to build more infrastructure themselves or wait for community growth.
+
+    For alternative VMs to succeed, they must either provide such dramatically better developer experience that it overcomes infrastructure disadvantages, or target specific niches where their advantages clearly matter more than missing tooling depth.
+
+    With these selection criteria established, let's examine the major virtual machine options and how they navigate these trade-offs.
+
+    ### The EVM Gravity Well
+
+    As established in Section I, network effects dominate adoption, and the EVM (introduced in Chapter II) exemplifies this dynamic. EVM-compatible chains like BNB Chain, Avalanche, and Polygon can instantly inherit this ecosystem. However, the EVM's architectural constraints become apparent at scale. Sequential execution means complex transactions block simpler ones, gas price volatility creates unpredictable costs, and the lack of native parallel execution limits throughput. These limitations have driven innovation in both optimized EVM implementations and alternative virtual machines that attempt to overcome these inherent constraints.
+
+    ### Parallel Execution: The SVM Approach
+
+    As detailed in Chapter III, the Solana Virtual Machine (SVM) enables blockchain execution through parallel processing. By requiring transactions to declare account access upfront, SVM enables concurrent execution of non-conflicting transactions, increasing throughput. Its account ownership model enhances security by preventing many reentrancy attacks.
+
+    The SVM design has attracted attention from new blockchain projects. Networks like Solayer and Fogo are building entirely new L1 blockchains on top of the SVM architecture. Fogo takes this further by attempting to maximize SVM performance through a permissioned validator set running exclusively the Firedancer client with multi-local consensus, exploring the SVM model's performance potential in a controlled environment.
+
+    ### Move: Safety Through Language Design
+
+    MoveVM, which is used by Aptos and Sui, takes a different approach by building safety directly into the programming language. Move treats digital assets as resources, special objects that cannot be copied or accidentally destroyed but only moved between accounts.
+
+    Move's linear types prevent accidental duplication/destruction of resources, helping avoid entire classes of bugs like double-spending through programming errors. However, mint and authorization policies still depend on how modules are written. Resources can only exist in one place at a time and must be explicitly consumed or stored.
+
+    Sui's object model treats everything as objects with unique identifiers. Transactions can operate on disjoint sets of objects in parallel, enabling very high throughput while maintaining safety guarantees. Simple transfers touching different objects can process in parallel, while complex transactions touching shared objects coordinate through consensus.
+
+    ### WASM and Emerging VMs
+
+    WebAssembly (WASM) provides a compilation target that enables multiple programming languages on the same blockchain. The approach offers a middle ground: better performance than interpreted bytecode while supporting diverse languages, though at the cost of increased complexity.
+
+    CosmWasm in the Cosmos ecosystem allows Rust contracts that compile to WASM. NEAR Protocol uses WASM while maintaining an account model familiar to Ethereum developers, bridging performance and familiarity. Polkadot's Substrate framework uses WASM as the format for its runtime logic. Because that runtime is stored on-chain and upgradable via governance, chains can replace core logic through "forkless" runtime upgrades rather than coordinating traditional hard forks. This approach is powerful but complex.
+
+    The WASM approach hasn't achieved the network effects of EVM or the performance claims of specialized VMs like SVM, occupying an intermediate position that trades universal compatibility for modest performance gains.
+
+    ### Bridging the Gap: Monad's Approach
+
+    Some projects aim to keep EVM compatibility while reimagining execution internals. Monad demonstrates this pragmatic path through the ecosystem versus innovation dilemma by maintaining full EVM bytecode compatibility while reimagining execution internals. Any Solidity contract written for Ethereum deploys on Monad without modification, preserving access to familiar tooling and audited libraries.
+
+    Underneath that compatible interface, Monad achieves 10,000+ TPS through optimistic parallel execution, asynchronous I/O, and a custom state database. Developers use familiar tools like Foundry and Remix. Protocols port seamlessly. Yet the performance gains are real, delivered through architectural innovation abstracted from the developer experience.
+
+    By separating the interface developers interact with from the execution engine underneath, Monad shows that chains can capture compatibility benefits while innovating on performance constraints. This approach may represent a more viable path than building entirely new VM communities from scratch, at least until alternative platforms develop infrastructure depth that justifies their technical advantages.
+
+    These architectural patterns (from modularity choices to consensus mechanisms to virtual machines) all influence throughput, but raw capacity remains the central challenge. How do individual chains push their performance limits? Vertical scaling provides answers through hardware optimization, fee market design, and clever data management.
+
+=== "한국어"
+
+    체인이 합의 메커니즘을 확립하면, 개발자가 어떻게 애플리케이션을 구축할지 결정해야 한다. 이 선택은 기술적 성능만큼이나 생태계 성장을 형성한다.
+
+    ### 생태계 vs 혁신 딜레마
+
+    가상 머신 간의 선택은 고전적인 혁신자의 딜레마를 제시한다. EVM과 같은 확립된 VM에서 구축하는 것은 성숙한 인프라에 접근하는 것을 의미한다: 광범위한 문서, 실전 검증된 라이브러리, 경험 있는 개발자, 정교한 디버깅 도구, 포괄적인 테스팅 프레임워크, 깊은 전문성을 가진 감사 회사. 유니스왑(Uniswap) 같은 프로토콜은 최소한의 변경으로 EVM 체인에 배포할 수 있어, 실전 검증된 DeFi 프리미티브를 네트워크 간에 가져온다. 새로운 DeFi 프로토콜은 유니스왑 유동성, 체인링크 오라클, 에이브(Aave) 대출 시장에 즉시 연결할 수 있다. EVM 체인에 걸친 이 공유 애플리케이션 레이어는 대안 플랫폼이 복제하기 어려운 구성 가능성 이점(섹션 II에서 논의)을 만든다.
+
+    대안 VM은 진정한 기술적 개선을 제공한다. 병렬 실행 아키텍처는 더 높은 처리량을 가능하게 한다. 고급 타입 시스템은 개발자 규율보다 언어 설계를 통해 전체 종류의 익스플로잇을 방지한다. 더 효율적인 컴파일은 여러 소스 언어를 지원하면서 더 빠른 코드를 생산한다.
+
+    그러나 이러한 아키텍처적 개선은 상당한 채택 장벽과 함께 온다. 새로운 언어로 경험 있는 개발자를 찾고 고용하는 데 더 오래 걸리고 더 많은 비용이 든다. 확립된 생태계 개발자가 당연하게 여기는 성숙한 도구 없이 개발 속도가 저하된다. 보안 감사가 병목을 만든다; 새로운 언어에 전문성을 갖춘 회사가 거의 없어 검토가 느리고 더 비싸다. 새로운 플랫폼은 생태계 깊이가 부족하여, 개발자가 더 많은 인프라를 직접 구축하거나 커뮤니티 성장을 기다려야 한다.
+
+    대안 VM이 성공하려면, 인프라 단점을 극복할 만큼 극적으로 더 나은 개발자 경험을 제공하거나, 도구 깊이 부족보다 장점이 분명히 더 중요한 특정 틈새를 타겟으로 해야 한다.
+
+    이러한 선택 기준이 확립되었으니, 주요 가상 머신 옵션과 그들이 이러한 트레이드오프를 어떻게 탐색하는지 살펴보자.
+
+    ### EVM 중력장
+
+    섹션 I에서 확립했듯이, 네트워크 효과가 채택을 지배하며, EVM(제2장에서 소개)이 이 역학을 잘 보여준다. BNB 체인, 아발란체, 폴리곤과 같은 EVM 호환 체인은 이 생태계를 즉시 상속받을 수 있다. 그러나 EVM의 아키텍처적 제약은 규모에서 명확해진다. 순차적 실행은 복잡한 트랜잭션이 더 단순한 것들을 차단한다는 것을 의미하고, 가스 가격 변동성은 예측 불가능한 비용을 만들고, 네이티브 병렬 실행의 부재가 처리량을 제한한다. 이러한 제한은 최적화된 EVM 구현과 이러한 본질적인 제약을 극복하려는 대안 가상 머신 모두에서 혁신을 촉진했다.
+
+    ### 병렬 실행: SVM 접근
+
+    제3장에서 자세히 설명했듯이, 솔라나 가상 머신(Solana Virtual Machine, SVM)은 병렬 처리를 통해 블록체인 실행을 가능하게 한다. 트랜잭션이 미리 계정 접근을 선언하도록 요구함으로써, SVM은 충돌하지 않는 트랜잭션의 동시 실행을 가능하게 하여 처리량을 증가시킨다. 계정 소유권 모델은 많은 재진입 공격을 방지하여 보안을 강화한다.
+
+    SVM 설계는 새로운 블록체인 프로젝트들의 관심을 끌었다. 솔레이어(Solayer)와 포고(Fogo) 같은 네트워크는 SVM 아키텍처 위에 완전히 새로운 L1 블록체인을 구축하고 있다. 포고는 Firedancer 클라이언트만 독점적으로 실행하는 허가된 검증자 집합과 멀티 로컬 합의를 통해 SVM 성능을 최대화하려고 시도하며, 통제된 환경에서 SVM 모델의 성능 잠재력을 탐구한다.
+
+    ### Move: 언어 설계를 통한 안전성
+
+    앱토스와 수이(Sui)에서 사용되는 MoveVM은 프로그래밍 언어에 직접 안전성을 구축하는 다른 접근 방식을 취한다. Move는 디지털 자산을 리소스(Resource)로 취급하며, 복사하거나 실수로 파괴할 수 없고 오직 계정 간에 이동만 할 수 있는 특별한 객체이다.
+
+    Move의 선형 타입(Linear Type)은 리소스의 우발적인 복제/파괴를 방지하여, 프로그래밍 오류로 인한 이중 지불 같은 전체 종류의 버그를 피하는 데 도움이 된다. 그러나 발행 및 권한 정책은 여전히 모듈이 어떻게 작성되느냐에 달려 있다. 리소스는 한 번에 한 곳에만 존재할 수 있으며 명시적으로 소비되거나 저장되어야 한다.
+
+    수이의 객체 모델은 모든 것을 고유 식별자를 가진 객체로 취급한다. 트랜잭션은 서로 겹치지 않는 객체 집합에서 병렬로 작동할 수 있어, 안전성 보장을 유지하면서 매우 높은 처리량을 가능하게 한다. 서로 다른 객체를 건드리는 단순 전송은 병렬로 처리될 수 있고, 공유 객체를 건드리는 복잡한 트랜잭션은 합의를 통해 조정된다.
+
+    ### WASM과 신흥 VM
+
+    웹어셈블리(WebAssembly, WASM)는 동일한 블록체인에서 여러 프로그래밍 언어를 가능하게 하는 컴파일 대상을 제공한다. 이 접근 방식은 중간 지점을 제공한다: 해석된 바이트코드보다 더 나은 성능을 제공하면서 다양한 언어를 지원하지만, 복잡성 증가 비용이 따른다.
+
+    코스모스 생태계의 CosmWasm은 WASM으로 컴파일되는 러스트 컨트랙트를 허용한다. 니어 프로토콜(NEAR Protocol)은 이더리움 개발자에게 익숙한 계정 모델을 유지하면서 WASM을 사용하여, 성능과 친숙함을 연결한다. 폴카닷(Polkadot)의 서브스트레이트(Substrate) 프레임워크는 런타임 로직의 형식으로 WASM을 사용한다. 그 런타임은 온체인에 저장되고 거버넌스를 통해 업그레이드 가능하기 때문에, 체인은 전통적인 하드 포크를 조정하는 대신 "포크리스" 런타임 업그레이드를 통해 핵심 로직을 교체할 수 있다. 이 접근 방식은 강력하지만 복잡하다.
+
+    WASM 접근 방식은 EVM의 네트워크 효과나 SVM 같은 전문화된 VM의 성능 주장을 달성하지 못했으며, 보편적 호환성을 온건한 성능 향상과 교환하는 중간 위치를 차지하고 있다.
+
+    ### 격차 해소: 모나드의 접근
+
+    일부 프로젝트는 실행 내부를 재구상하면서 EVM 호환성을 유지하는 것을 목표로 한다. 모나드(Monad)는 전체 EVM 바이트코드 호환성을 유지하면서 실행 내부를 재구상함으로써 생태계 대 혁신 딜레마를 통과하는 이 실용적인 경로를 보여준다. 이더리움을 위해 작성된 모든 솔리디티 컨트랙트는 수정 없이 모나드에 배포되어, 익숙한 도구와 감사된 라이브러리에 대한 접근을 보존한다.
+
+    그 호환 가능한 인터페이스 아래에서, 모나드는 낙관적 병렬 실행, 비동기 I/O, 커스텀 상태 데이터베이스를 통해 10,000+ TPS를 달성한다. 개발자는 파운드리(Foundry)와 리믹스(Remix) 같은 익숙한 도구를 사용한다. 프로토콜은 원활하게 포팅된다. 그러나 성능 향상은 실제이며, 개발자 경험에서 추상화된 아키텍처 혁신을 통해 제공된다.
+
+    개발자가 상호 작용하는 인터페이스와 그 아래의 실행 엔진을 분리함으로써, 모나드는 체인이 성능 제약을 혁신하면서 호환성 이점을 취할 수 있음을 보여준다. 이 접근 방식은 완전히 새로운 VM 커뮤니티를 처음부터 구축하는 것보다 더 실행 가능한 경로를 나타낼 수 있으며, 적어도 대안 플랫폼이 기술적 장점을 정당화하는 인프라 깊이를 개발할 때까지는 그렇다.
+
+    이러한 아키텍처 패턴(모듈성 선택에서 합의 메커니즘, 가상 머신까지)은 모두 처리량에 영향을 미치지만, 원시 용량은 중심적인 도전으로 남아 있다. 개별 체인은 어떻게 성능 한계를 밀어붙이는가? 수직적 확장은 하드웨어 최적화, 수수료 시장 설계, 영리한 데이터 관리를 통해 답을 제공한다.
+
+## Section V: Vertical Scaling Approaches
+
+=== "English"
+
+    While Section II explored how modularity enables horizontal scaling through parallel chains, individual chains must also decide how to maximize their own capacity. Vertical scaling makes individual chains more powerful through hardware improvements, optimized fee markets, and clever data management.
+
+    ### Hardware Requirements
+
+    The hardware demands for running validators reveal one of the clearest balancing acts between accessibility and performance across blockchain architectures.
+
+    Bitcoin sets the lowest barrier to entry. A modest Raspberry Pi with adequate storage can fully validate the chain, enabling broad participation from nearly anyone with basic computing resources. This democratic approach comes at a cost: throughput maxes out around 5 transactions per second, depending on transaction size.
+
+    Ethereum strikes a middle ground post-Merge. While validation requires more substantial resources than Bitcoin (32 GB RAM and 4 TB of fast solid-state storage are recommended, along with a 32 ETH stake), these requirements remain achievable for home operators. This balance has fostered a geographically distributed validator set, supporting roughly 20 TPS on Layer 1 (varying with gas usage and 12-second block times).
+
+    As mentioned in the introduction, Solana's architecture illustrates this trade-off starkly. The network prioritizes performance through demanding specifications: high-clock CPUs, 256+ GB RAM, fast NVMe drives, and at least 1 Gbps network connections. To manage storage, validators typically prune ledger history by default. In return, the network sustains thousands of transactions per second during normal operations. However, these steep requirements concentrate validation power among well-resourced entities.
+
+    This hardware spectrum illustrates the core tradeoff clearly. Higher performance demands deliver greater throughput but shrink the pool of potential validators, affecting both current participation and the barrier to entry for newcomers. Decentralization in practice exists on a spectrum; there is no crisp threshold for being 'decentralized enough.' A pragmatic lens is the cost and coordination required to shut the network down economically, legally, and operationally. Each network has chosen its position on this curve.
+
+    ### Fee Markets and Resource Allocation
+
+    Hardware requirements determine a chain's theoretical capacity, but fee markets determine how that scarce capacity gets allocated among competing users. Different chains have developed pricing mechanisms that reflect their underlying resource constraints.
+
+    Bitcoin pioneered the classic auction where miners collect fees directly. Ethereum combines a protocol-set base fee that adjusts automatically based on network congestion with user-paid priority tips. Solana introduced localized fee markets with fixed base components and optional priority fees, reflecting its high-throughput architecture where different transaction types compete for different computational resources.
+
+    Newer networks are pushing toward more sophisticated, multi-market fee designs that align fees with specific bottlenecks and resource usage patterns. A transaction that consumes significant compute might be priced differently than one requiring substantial storage. This evolution from one-size-fits-all pricing to nuanced, resource-aware fee markets represents blockchain infrastructure maturing to serve diverse use cases.
+
+    ### Bigger Blocks and Faster Intervals
+
+    Bigger blocks are the simplest way to scale. They just increase how much transaction data fits in each block. Bitcoin Cash took this approach, starting with 8 MB blocks in 2017 and expanding to 32 MB in 2018. Today it has no hard limit, though blocks rarely go above a few MB. BNB Chain scales by adjusting its block gas limit, which is currently around 100 megagas. There's a proposal to increase it tenfold to 1 gigagas.
+
+    Shorter block times can boost throughput without making each block bigger. Ethereum's 12-second slots process more transactions per minute than Bitcoin's 10-minute blocks, even when the blocks are similar in size. But there's a catch with proof-of-work chains: very short intervals create more competing blocks (called orphans or uncles). This wastes honest mining work and reduces security. Proof-of-stake systems like Ethereum after the Merge face different problems. When slots are too short, the network struggles to keep up. This leads to missed attestations and missed slots rather than uncle blocks, and it makes the fork choice process harder.
+
+    The core limitation is simple: larger or faster blocks need more bandwidth and storage. This makes it harder for regular people to participate in the network. While techniques like pipelining and parallel execution help chains process blocks more efficiently, the fundamental trade-off between performance and accessibility remains.
+
+    ### State Growth and Storage
+
+    While transaction throughput gets most attention, state growth poses an equally serious scalability threat. State is the complete snapshot of all current blockchain data: account balances, smart contract variables, and stored information. Unlike transaction history, state must remain immediately accessible for validation.
+
+    The core problem: state only grows, never shrinks. Every new account, contract, or stored data adds to state permanently. As state expands from gigabytes to terabytes, hardware requirements increase, sync times lengthen, and running a node becomes prohibitively expensive. Without intervention, only data centers can afford to validate the chain, undermining decentralization.
+
+    Three main approaches have emerged to manage state growth. **State rent** charges ongoing fees for storing data on-chain, creating economic pressure to remove unnecessary state, though this risks disrupting applications built on assumptions of free permanent storage. **State expiry** automatically removes data that hasn't been accessed for a set period (users can later restore expired state with cryptographic proofs), capping state size but adding significant complexity. Advanced data structures can also help by dramatically shrinking the proofs needed to verify state. Ethereum is pursuing an approach called **Verkle trees**, which allow nodes to prove facts about the blockchain's state using much smaller proofs than current methods require. This enables lightweight nodes to participate without storing the full state, reducing the barrier to running a node.
+
+    State management creates a stark decentralization constraint: aggressive solutions like expiry risk breaking applications, while inaction allows state bloat to gradually exclude ordinary node operators.
+
+    All the scaling techniques we've discussed (whether horizontal through modularity or vertical through hardware and optimization) ultimately fragment liquidity and users across chains. This creates the interoperability problem: how do we reconnect these isolated islands of value? Section VI examines the bridges and cross-chain infrastructure attempting to solve this challenge.
+
+=== "한국어"
+
+    섹션 II가 모듈성이 병렬 체인을 통해 수평적 확장을 가능하게 하는 방법을 탐구한 반면, 개별 체인도 자체 용량을 최대화하는 방법을 결정해야 한다. 수직적 확장은 하드웨어 개선, 최적화된 수수료 시장, 영리한 데이터 관리를 통해 개별 체인을 더 강력하게 만든다.
+
+    ### 하드웨어 요구 사항
+
+    검증자를 실행하기 위한 하드웨어 요구 사항은 블록체인 아키텍처 전반에 걸쳐 접근성과 성능 사이의 가장 명확한 균형 행위 중 하나를 보여준다.
+
+    비트코인은 진입 장벽을 가장 낮게 설정한다. 적절한 저장 공간을 갖춘 겸손한 라즈베리 파이가 체인을 완전히 검증할 수 있어, 기본적인 컴퓨팅 자원을 가진 거의 모든 사람의 광범위한 참여를 가능하게 한다. 이 민주적 접근 방식은 비용이 따른다: 처리량은 트랜잭션 크기에 따라 초당 약 5개 트랜잭션에서 최대치에 도달한다.
+
+    이더리움은 머지 후 중간 지점을 찍는다. 검증에는 비트코인보다 더 상당한 리소스가 필요하지만(32GB RAM과 4TB의 빠른 솔리드 스테이트 스토리지가 권장되며, 32 ETH 스테이크와 함께), 이러한 요구 사항은 홈 오퍼레이터에게 달성 가능하다. 이 균형은 지리적으로 분산된 검증자 집합을 육성하여, L1에서 대략 20 TPS를 지원한다(가스 사용량과 12초 블록 시간에 따라 달라짐).
+
+    서론에서 언급했듯이, 솔라나의 아키텍처는 이 트레이드오프를 뚜렷하게 보여준다. 네트워크는 까다로운 사양을 통해 성능을 우선시한다: 고클록 CPU, 256+ GB RAM, 빠른 NVMe 드라이브, 최소 1Gbps 네트워크 연결. 저장 공간을 관리하기 위해, 검증자는 일반적으로 기본적으로 원장 기록을 정리한다. 그 대가로, 네트워크는 정상 운영 중 초당 수천 건의 트랜잭션을 유지한다. 그러나 이러한 가파른 요구 사항은 자원이 풍부한 엔티티 사이에서 검증 권한을 집중시킨다.
+
+    이 하드웨어 스펙트럼은 핵심 트레이드오프를 명확히 보여준다. 더 높은 성능 요구 사항은 더 큰 처리량을 제공하지만 잠재적 검증자 풀을 축소하여, 현재 참여와 신규 진입자에 대한 진입 장벽 모두에 영향을 미친다. 실제로 탈중앙화는 스펙트럼 상에 존재한다; '충분히 탈중앙화된' 것에 대한 명확한 임계값은 없다. 실용적인 렌즈는 경제적, 법적, 운영적으로 네트워크를 폐쇄하는 데 필요한 비용과 조정이다. 각 네트워크는 이 곡선에서 자신의 위치를 선택했다.
+
+    ### 수수료 시장과 자원 할당
+
+    하드웨어 요구 사항은 체인의 이론적 용량을 결정하지만, 수수료 시장은 그 희소한 용량이 경쟁하는 사용자들 사이에서 어떻게 할당되는지를 결정한다. 서로 다른 체인은 기본 자원 제약을 반영하는 가격 책정 메커니즘을 개발했다.
+
+    비트코인은 채굴자가 직접 수수료를 수집하는 고전적인 경매를 개척했다. 이더리움은 네트워크 혼잡에 따라 자동으로 조정되는 프로토콜 설정 기본 수수료와 사용자 지불 우선 팁을 결합한다. 솔라나는 고정 기본 구성 요소와 선택적 우선 수수료를 가진 지역화된 수수료 시장을 도입하여, 서로 다른 트랜잭션 유형이 서로 다른 계산 자원을 경쟁하는 고처리량 아키텍처를 반영한다.
+
+    새로운 네트워크는 수수료를 특정 병목 현상과 자원 사용 패턴에 맞추는 더 정교한 다중 시장 수수료 설계를 향해 나아가고 있다. 상당한 계산을 소비하는 트랜잭션은 상당한 저장 공간을 요구하는 트랜잭션과 다르게 가격이 책정될 수 있다. 모든 것에 맞는 단일 가격 책정에서 미묘하고 자원 인식적인 수수료 시장으로의 이 진화는 블록체인 인프라가 다양한 사용 사례를 서비스하기 위해 성숙해지는 것을 나타낸다.
+
+    ### 더 큰 블록과 더 빠른 간격
+
+    더 큰 블록은 확장하는 가장 간단한 방법이다. 각 블록에 맞는 트랜잭션 데이터 양을 늘리기만 하면 된다. 비트코인 캐시(Bitcoin Cash)는 이 접근 방식을 취해, 2017년 8MB 블록으로 시작하여 2018년 32MB로 확장했다. 오늘날에는 하드 리밋이 없지만, 블록이 몇 MB를 넘는 경우는 드물다. BNB 체인은 블록 가스 리밋을 조정하여 확장하며, 현재 약 100 메가가스이다. 이를 10배 증가시켜 1 기가가스로 만드는 제안이 있다.
+
+    더 짧은 블록 시간은 각 블록을 더 크게 만들지 않고도 처리량을 높일 수 있다. 이더리움의 12초 슬롯은 블록이 비슷한 크기일 때에도 비트코인의 10분 블록보다 분당 더 많은 트랜잭션을 처리한다. 하지만 작업 증명 체인에는 단점이 있다: 매우 짧은 간격은 더 많은 경쟁 블록(고아 또는 엉클이라고 함)을 만든다. 이것은 정직한 채굴 작업을 낭비하고 보안을 감소시킨다. 머지 후 이더리움과 같은 지분 증명 시스템은 다른 문제에 직면한다. 슬롯이 너무 짧으면 네트워크가 따라가기 어렵다. 이는 엉클 블록 대신 누락된 증명과 누락된 슬롯으로 이어지고, 포크 선택 프로세스를 더 어렵게 만든다.
+
+    핵심 제한은 간단하다: 더 크거나 더 빠른 블록은 더 많은 대역폭과 저장 공간을 필요로 한다. 이것은 일반 사람들이 네트워크에 참여하기 더 어렵게 만든다. 파이프라이닝과 병렬 실행 같은 기술이 체인이 블록을 더 효율적으로 처리하도록 돕지만, 성능과 접근성 사이의 근본적인 트레이드오프는 남아 있다.
+
+    ### 상태 성장과 저장
+
+    트랜잭션 처리량이 가장 많은 관심을 받지만, 상태 성장(State Growth)은 똑같이 심각한 확장성 위협을 제기한다. 상태(State)는 모든 현재 블록체인 데이터의 완전한 스냅샷이다: 계정 잔액, 스마트 컨트랙트 변수, 저장된 정보. 트랜잭션 기록과 달리, 상태는 검증을 위해 즉시 접근 가능해야 한다.
+
+    핵심 문제: 상태는 오직 성장하고, 절대 줄어들지 않는다. 모든 새 계정, 컨트랙트, 저장된 데이터는 상태에 영구적으로 추가된다. 상태가 기가바이트에서 테라바이트로 확장됨에 따라, 하드웨어 요구 사항이 증가하고, 동기화 시간이 길어지며, 노드 실행이 감당할 수 없을 정도로 비싸진다. 개입 없이는 오직 데이터 센터만이 체인을 검증할 여유가 있어, 탈중앙화를 약화시킨다.
+
+    상태 성장을 관리하기 위해 세 가지 주요 접근 방식이 등장했다. **상태 렌트(State Rent)**는 온체인에 데이터를 저장하는 데 지속적인 수수료를 부과하여, 불필요한 상태를 제거하도록 경제적 압력을 생성하지만, 무료 영구 저장의 가정 위에 구축된 애플리케이션을 방해할 위험이 있다. **상태 만료(State Expiry)**는 설정된 기간 동안 접근되지 않은 데이터를 자동으로 제거한다(사용자는 나중에 암호학적 증명으로 만료된 상태를 복원할 수 있다), 상태 크기를 제한하지만 상당한 복잡성을 추가한다. 고급 데이터 구조도 상태 검증에 필요한 증명을 극적으로 줄여 도움이 될 수 있다. 이더리움은 **버클 트리(Verkle Tree)**라는 접근 방식을 추구하고 있으며, 이는 노드가 현재 방법보다 훨씬 작은 증명을 사용하여 블록체인 상태에 대한 사실을 증명할 수 있게 한다. 이것은 경량 노드가 전체 상태를 저장하지 않고도 참여할 수 있게 하여, 노드 실행의 진입 장벽을 낮춘다.
+
+    상태 관리는 뚜렷한 탈중앙화 제약을 만든다: 만료와 같은 공격적인 솔루션은 애플리케이션을 깨뜨릴 위험이 있고, 무작위는 상태 비대화가 점진적으로 일반 노드 운영자를 배제하도록 허용한다.
+
+    우리가 논의한 모든 확장 기술(모듈성을 통한 수평적이든 하드웨어와 최적화를 통한 수직적이든)은 궁극적으로 유동성과 사용자를 체인 간에 분산시킨다. 이것이 상호운용성 문제를 만든다: 이러한 고립된 가치의 섬을 어떻게 다시 연결할 것인가? 섹션 VI는 이 도전을 해결하려는 브릿지와 크로스 체인 인프라를 살펴본다.
+
+## Section VI: Interoperability and Cross-Chain Architecture
+
+=== "English"
+
+    The proliferation of Layer 1 blockchains creates a fundamental fragmentation problem. Each chain optimizes for different priorities. Ethereum prioritizes security and decentralization, Solana emphasizes speed and low costs, Cosmos focuses on application-specific sovereignty. This specialization attracts specific applications and users, but comes at a steep cost: liquidity, users, and applications become scattered across incompatible networks that cannot natively communicate.
+
+    Consider a straightforward scenario. You hold assets on Ethereum but want to use an application on Solana. You cannot do this directly. Your Ethereum assets exist only on Ethereum, validated by Ethereum's validators. Solana's validators have no knowledge of what happens on Ethereum, and vice versa. Each blockchain operates as an isolated island with its own consensus, state, and integrity guarantees.
+
+    Interoperability is the solution to this fragmentation. It enables assets and data to move between chains. However, solving interoperability is far from trivial. When you transfer value within a single blockchain, that network's validators ensure everything is correct. But when transferring between chains, you cross a verification boundary. The critical question becomes: who ensures the transaction is valid on both sides?
+
+    Bridges have become the highest-value targets in crypto, responsible for roughly $2.5 billion in losses from major exploits. Understanding their security models is essential for evaluating cross-chain risk. (Chapter V's historical custody failures section examines several prominent bridge exploits.)
+
+    ### How Bridges Work
+
+    Think of a bridge as a mechanism that removes assets from circulation on one chain and creates matching copies on another chain. To do this, the bridge either locks the assets in a contract or burns them (depending on the design). Then it creates corresponding representations on the destination chain.
+
+    If you want to move back, the process reverses. The representation on the destination chain gets burned or locked, and the original asset is released or reminted on the source chain. This keeps the total supply consistent across both chains.
+
+    If you want to move 100 USDC from Ethereum to Solana, a bridge locks your 100 USDC in a smart contract on Ethereum, then mints 100 "bridged USDC" for you on Solana. When you want to move back, the process reverses: your Solana tokens are burned, and the original USDC is unlocked on Ethereum. This maintains consistent total supply across both chains.
+
+    The elegant simplicity of this model, however, masks a difficult coordination problem. Both chains run independently with different validators, different consensus mechanisms, and different finality timings. They need a way to verify what happened on the other chain without direct access to each other's state. Different bridge designs solve this coordination challenge in fundamentally different ways.
+
+    ### Infrastructure vs. Applications
+
+    Before diving into the technical solutions, it's worth understanding how cross-chain infrastructure is organized. Cross-chain systems operate in two distinct layers:
+
+    Messaging protocols provide communication channels between chains, handling verification, but aren't consumer-facing (analogous to HTTP for the web). These are the foundational infrastructure that enable cross-chain communication.
+
+    Bridge applications use these protocols to provide user-facing services like asset transfers and liquidity (analogous to browsers and websites). These are what users actually interact with when moving assets between chains.
+
+    Several messaging protocols have emerged, each with different verification approaches. The Cosmos ecosystem uses IBC (Inter-Blockchain Communication), which relies on cryptographic light-client verification where chains directly verify each other's state. LayerZero takes a different approach, using a combination of oracles and relayers to verify messages across many different chains. Wormhole uses a guardian network where trusted parties attest to messages. Chainlink's CCIP adds extra safety controls on top of its oracle infrastructure. Circle's CCTP provides a specialized messaging layer specifically for USDC transfers.
+
+    On the application side, Stargate uses LayerZero for cross-chain liquidity transfers, while Across Protocol uses an optimistic model where third parties provide fast liquidity while settlement happens after a challenge window.
+
+    Understanding this layered architecture helps clarify how different bridge security models operate at the messaging protocol level.
+
+    ### The Core Security Question
+
+    Every bridge design must answer: Who verifies that the lock on Chain A and the mint on Chain B happened correctly?
+
+    This question has no perfect answer. Every approach balances competing goals. Some bridges trust intermediaries, which is fast and simple but makes human operators into attack targets. Others verify cryptographically, providing the strongest guarantees with minimal trust assumptions but requiring complex and expensive infrastructure with limited chain compatibility. A third approach assumes validity by default and allows challenges, offering a middle ground between safety and speed at the cost of delayed finality and implementation risk. Finally, some systems create entirely new validator networks, providing flexibility and broad chain support but introducing an additional verification layer with its own security assumptions.
+
+    Understanding these design choices is essential because bridge security determines the safety of all assets crossing that bridge. It doesn't matter how robust Ethereum or Solana's consensus mechanisms are if the bridge connecting them can be compromised.
+
+    ### The Fundamental Bridge Challenge
+
+    Before examining specific bridge designs, we need to understand a crucial property of blockchains that explains why cross-chain verification is inherently different from single-chain validation.
+
+    A key property of a blockchain is that even a 51% attack cannot make an invalid transaction valid in the eyes of honest full nodes. Block producers can censor or reorder transactions, but they cannot create a state transition that violates the chain's own rules (for example, spending funds without a valid signature) and have honest nodes accept it.
+
+    However, that protection only applies to state the chain can verify natively. When validators start attesting to events on other chains without providing verifiable proofs, their signatures become an oracle. If a protocol says "mint tokens on Chain B whenever 2/3 or more of validators sign a message that 100 tokens were locked on Chain A," then a colluding supermajority can lie about that external event. The destination chain has no cryptographic way to distinguish truth from fraud because the rule itself defines "enough signatures" as truth.
+
+    This is exactly what light-client and proof-based bridges try to avoid. Systems like Cosmos IBC and NEAR's Rainbow Bridge have the destination chain verify cryptographic proofs of the source chain's headers or state. Breaking these bridges requires actually breaking or compromising the source chain's consensus, not just having a committee lie. Ethereum's own architecture is evolving in this direction, with upgrades that allow smart contracts to verify consensus-layer data directly instead of trusting external attestations.
+
+    In other words, the real risk isn't "validators talking about external chains" in general. It's when a bridge or protocol treats validator signatures (or a small external committee) as authoritative about something the chain itself cannot verify. Whenever we can make external data verifiable on-chain (via light clients, ZK proofs, or dedicated consensus-execution hooks), that additional trust assumption disappears and we're back in the realm where "51% can't make an invalid state transition valid."
+
+    This distinction explains why bridges represent such a significant challenge. On their native chains, validators cannot steal funds even with majority collusion because the protocol simply won't accept invalid blocks. But when those same validators (or separate bridge validators) relay information between chains, the native protections no longer apply. They're being asked to honestly report on things the destination chain cannot independently verify, creating a new category of vulnerability.
+
+    ### Bridge Security Models
+
+    Bridge designs exist on a spectrum from relying on human intermediaries to using pure cryptographic proofs.
+
+    #### External Verification: Trust Intermediaries
+
+    External verification bridges rely on third parties to observe both chains and relay messages between them. Trusted/Multisig Bridges use a group of guardians. Wormhole exemplifies this with 19 Guardians operating on a 13-of-19 threshold. Validator Set Bridges like Axelar create dedicated proof-of-stake networks specifically for cross-chain messaging, with validators staking tokens and facing economic penalties for misbehavior.
+
+    Trade-offs: Simple to build, fast to use, and can support virtually any blockchain. The disadvantage: safety depends on human operators or a separate validator set. The 2022 Wormhole hack exploited a signature-verification bug that allowed unauthorized minting of approximately 120,000 WETH (roughly $325M). The Ronin Bridge theft occurred when attackers compromised enough validator keys to approve fraudulent withdrawals.
+
+    #### Native Verification: Cryptographic Proofs
+
+    Native verification bridges have chains directly verify each other's state through cryptographic proofs by maintaining on-chain **light clients**. IBC (Inter-Blockchain Communication) in the Cosmos ecosystem represents the gold standard. Participating chains maintain light clients of each other and cryptographically verify that state changes occurred correctly. Zero-Knowledge Light Client Bridges optimize this using ZK proofs to compress verification, combining strong guarantees with dramatically lower computational costs.
+
+    Trade-offs: Protection matches that of the source blockchain itself with no additional assumptions. However, substantial technical complexity is required, and chains must handle finality timing carefully (recall Section III's discussion of finality types). IBC primarily works with Tendermint-based chains in Cosmos, though extensions for other consensus mechanisms are in development.
+
+    #### Optimistic Verification: Assume Valid, Allow Challenges
+
+    Optimistic bridges assume messages are valid by default but allow anyone to challenge them during a dispute window. A relayer submits a bridge message claiming "100 tokens were locked on Chain A." This message is tentatively accepted but enters a challenge period. Watchers monitoring both chains can submit **fraud proofs** if they detect the message is invalid. If no one challenges within the time window, the message becomes final. Across Protocol currently uses an optimistic model where third-party relayers provide fast fills for immediate liquidity, while final settlement occurs after a challenge window using UMA's Optimistic Oracle.
+
+    Trade-offs: Provides stronger protection than intermediary-based bridges while supporting more chains than light client verification can practically handle. The assumption is that at least one honest party is watching. The downside is delayed finality, though fast-fill mechanisms can provide immediate liquidity.
+
+    ### Practical Vulnerabilities in Bridge Implementation
+
+    Cross-chain infrastructure introduces attack surfaces that don't exist in single-chain systems. The track record is sobering: high-profile exploits include Ronin Bridge (validator key compromise), Poly Network (flawed contract authorization), Wormhole (signature verification bug), Nomad (initialization bug that turned a specific call pattern into a valid withdrawal), and Harmony Horizon (multisig key compromise). Most of these incidents were not about "waiting too few confirmations," but about incorrect trust assumptions, poor key management, and implementation bugs in high-value code.
+
+    Implementation complexity introduces many of these vulnerability points. Bridge contracts that secure hundreds of millions in assets often consist of thousands of lines of intricate verification and accounting logic that must be implemented perfectly and kept updated as underlying chains evolve. Economic mismatches have also plagued the industry: if a bridge validator set has $50 million staked but secures $500 million in assets, attacking it can be economically rational. Governance risks are critical as well; multisig keyholders who can upgrade bridge contracts or change validator sets effectively control all bridged assets regardless of the technical security model.
+
+    Consensus and finality mismatches are a more subtle, forward-looking class of risk. Bridges that read from probabilistic-finality chains (like PoW systems) or from rollups with challenge windows must choose how long to wait before treating a lock or proof as irreversible. Too few confirmations or too short a challenge period can expose users to reorgs or fraud proofs that invalidate a previously "accepted" message; too many confirmations hurt user experience and capital efficiency. Even if this hasn't been the primary cause of marquee exploits so far, it's a structural constraint every robust bridge design has to handle.
+
+    ### Emerging Challenges and Future Directions
+
+    Even with improved bridge security, cross-chain infrastructure faces persistent challenges that engineering alone cannot fully resolve.
+
+    Asset fragmentation has become endemic. The "same" asset on different chains isn't actually the same. Native USDC issued by Circle on Ethereum carries fundamentally different risk than Wormhole-wrapped USDC on Solana, despite both appearing as "USDC" in most wallet interfaces. Developers building DeFi applications can't simply say "we support USDC." They must specify which USDC on which chain accessed through which bridge. Users must track not just "I have 1000 USDC" but "I have 500 native USDC on Ethereum, 300 bridged USDC on Arbitrum via Bridge X, and 200 wrapped USDC on Solana via Bridge Y." Each version has different liquidity, different depegging risk, and different withdrawal mechanisms.
+
+    The composability limitations discussed in Section II persist across chains. Operations that work seamlessly within a single chain require complex coordination patterns when spanning multiple networks, including escrows, delayed execution, and waiting periods between steps.
+
+    User experience friction remains significant. Bridging typically requires multiple on-chain actions: first approving the bridge contract to spend your tokens on Chain A (gas), then calling the bridge's lock/burn or deposit function (more gas), waiting for the bridge to finalize and relay the message, switching your wallet to Chain B, and in some designs submitting a claim transaction there before the tokens are usable.
+
+    The path forward likely involves hybrid models combining zero-knowledge-verified light clients with economic fault proofs. ZK technology can make native verification practical where traditional light client approaches would be prohibitively expensive. Intent-based architectures may abstract away bridging complexity, letting users specify desired outcomes while solvers handle the cross-chain routing. Standardization around shared liquidity layers and universal bridge standards could reduce fragmentation. However, these solutions introduce their own trade-offs and complexities, suggesting that cross-chain infrastructure will remain an area of active experimentation rather than settled consensus.
+
+=== "한국어"
+
+    레이어 1 블록체인의 확산은 근본적인 분산 문제를 만든다. 각 체인은 서로 다른 우선순위에 최적화한다. 이더리움은 보안과 탈중앙화를 우선시하고, 솔라나는 속도와 낮은 비용을 강조하며, 코스모스는 애플리케이션별 주권에 집중한다. 이 전문화는 특정 애플리케이션과 사용자를 끌어들이지만, 가파른 비용이 따른다: 유동성, 사용자, 애플리케이션이 네이티브로 통신할 수 없는 호환되지 않는 네트워크에 분산된다.
+
+    간단한 시나리오를 고려하라. 당신은 이더리움에 자산을 보유하고 있지만 솔라나의 애플리케이션을 사용하고 싶다. 이것을 직접적으로 할 수 없다. 당신의 이더리움 자산은 이더리움에서만 존재하며, 이더리움 검증자에 의해 검증된다. 솔라나의 검증자는 이더리움에서 무슨 일이 일어나는지 알지 못하고, 그 반대도 마찬가지다. 각 블록체인은 자체 합의, 상태, 무결성 보장을 가진 고립된 섬으로 운영된다.
+
+    상호운용성(Interoperability)은 이 분산에 대한 해결책이다. 자산과 데이터가 체인 간에 이동할 수 있게 한다. 그러나 상호운용성을 해결하는 것은 결코 간단하지 않다. 단일 블록체인 내에서 가치를 전송할 때, 그 네트워크의 검증자가 모든 것이 올바른지 확인한다. 하지만 체인 간에 전송할 때, 검증 경계를 넘는다. 핵심 질문은 다음과 같다: 트랜잭션이 양쪽에서 유효한지 누가 보장하는가?
+
+    브릿지(Bridge)는 암호화폐에서 가장 높은 가치의 타겟이 되었으며, 주요 익스플로잇으로 약 25억 달러의 손실을 입혔다. 그들의 보안 모델을 이해하는 것은 크로스 체인 리스크를 평가하는 데 필수적이다. (제5장의 역사적 커스터디 실패 섹션은 몇몇 유명한 브릿지 익스플로잇을 살펴본다.)
+
+    ### 브릿지 작동 방식
+
+    브릿지를 한 체인에서 자산을 유통에서 제거하고 다른 체인에서 일치하는 복사본을 생성하는 메커니즘으로 생각하라. 이를 위해 브릿지는 자산을 컨트랙트에 잠그거나(설계에 따라) 소각한다. 그런 다음 목적지 체인에 해당하는 표현을 생성한다.
+
+    돌아가고 싶다면 프로세스가 역전된다. 목적지 체인의 표현이 소각되거나 잠기고, 원래 자산이 소스 체인에서 해제되거나 재발행된다. 이것은 양쪽 체인에서 총 공급을 일관되게 유지한다.
+
+    이더리움에서 솔라나로 100 USDC를 이동하고 싶다면, 브릿지는 당신의 100 USDC를 이더리움의 스마트 컨트랙트에 잠근 다음, 솔라나에서 당신에게 100 "브릿지된 USDC"를 발행한다. 돌아가고 싶을 때, 프로세스가 역전된다: 솔라나 토큰이 소각되고, 원래 USDC가 이더리움에서 해제된다. 이것은 양쪽 체인에서 일관된 총 공급을 유지한다.
+
+    그러나 이 모델의 우아한 단순함은 어려운 조정 문제를 가린다. 양쪽 체인은 서로 다른 검증자, 다른 합의 메커니즘, 다른 최종성 타이밍으로 독립적으로 실행된다. 서로의 상태에 직접 접근하지 않고도 다른 체인에서 무슨 일이 일어났는지 검증할 방법이 필요하다. 서로 다른 브릿지 설계는 이 조정 도전을 근본적으로 다른 방식으로 해결한다.
+
+    ### 인프라 vs 애플리케이션
+
+    기술적 솔루션을 살펴보기 전에, 크로스 체인 인프라가 어떻게 조직되어 있는지 이해하는 것이 가치 있다. 크로스 체인 시스템은 두 개의 구별되는 레이어에서 운영된다:
+
+    메시징 프로토콜은 체인 간의 통신 채널을 제공하며, 검증을 처리하지만 소비자 대면이 아니다(웹에서 HTTP에 유사). 이것들은 크로스 체인 통신을 가능하게 하는 기초 인프라이다.
+
+    브릿지 애플리케이션은 이러한 프로토콜을 사용하여 자산 전송 및 유동성과 같은 사용자 대면 서비스를 제공한다(브라우저와 웹사이트에 유사). 이것들은 사용자가 체인 간에 자산을 이동할 때 실제로 상호 작용하는 것이다.
+
+    여러 메시징 프로토콜이 등장했으며, 각각 다른 검증 접근 방식을 가진다. 코스모스 생태계는 체인이 서로의 상태를 직접 검증하는 암호학적 라이트 클라이언트 검증에 의존하는 IBC(Inter-Blockchain Communication)를 사용한다. 레이어제로(LayerZero)는 다른 접근 방식을 취하여, 오라클과 릴레이어의 조합을 사용하여 많은 다른 체인에서 메시지를 검증한다. 웜홀(Wormhole)은 신뢰할 수 있는 당사자가 메시지를 증명하는 가디언 네트워크를 사용한다. 체인링크의 CCIP는 오라클 인프라 위에 추가 안전 제어를 추가한다. 써클의 CCTP는 특히 USDC 전송을 위한 전문화된 메시징 레이어를 제공한다.
+
+    애플리케이션 측에서, 스타게이트(Stargate)는 크로스 체인 유동성 전송을 위해 레이어제로를 사용하고, 어크로스 프로토콜(Across Protocol)은 제3자가 빠른 유동성을 제공하면서 정산이 챌린지 윈도우 후에 발생하는 낙관적 모델을 사용한다.
+
+    이 계층화된 아키텍처를 이해하면 서로 다른 브릿지 보안 모델이 메시징 프로토콜 레벨에서 어떻게 작동하는지 명확해진다.
+
+    ### 핵심 보안 질문
+
+    모든 브릿지 설계는 다음을 답해야 한다: 체인 A에서의 잠금과 체인 B에서의 발행이 올바르게 발생했는지 누가 검증하는가?
+
+    이 질문에는 완벽한 답이 없다. 모든 접근 방식은 경쟁하는 목표를 균형 잡는다. 일부 브릿지는 중개자를 신뢰하며, 이는 빠르고 간단하지만 인간 운영자를 공격 대상으로 만든다. 다른 것들은 암호학적으로 검증하며, 최소한의 신뢰 가정으로 가장 강력한 보장을 제공하지만 제한된 체인 호환성과 함께 복잡하고 비싼 인프라를 요구한다. 세 번째 접근 방식은 기본적으로 유효성을 가정하고 챌린지를 허용하며, 지연된 최종성과 구현 위험의 비용으로 안전성과 속도 사이의 중간 지점을 제공한다. 마지막으로, 일부 시스템은 완전히 새로운 검증자 네트워크를 생성하며, 유연성과 광범위한 체인 지원을 제공하지만 자체 보안 가정을 가진 추가 검증 레이어를 도입한다.
+
+    이러한 설계 선택을 이해하는 것은 필수적인데, 브릿지 보안이 그 브릿지를 교차하는 모든 자산의 안전을 결정하기 때문이다. 이더리움이나 솔라나의 합의 메커니즘이 얼마나 견고하든, 그들을 연결하는 브릿지가 손상될 수 있다면 중요하지 않다.
+
+    ### 근본적인 브릿지 도전
+
+    특정 브릿지 설계를 살펴보기 전에, 왜 크로스 체인 검증이 단일 체인 검증과 본질적으로 다른지 설명하는 블록체인의 중요한 속성을 이해해야 한다.
+
+    블록체인의 핵심 속성은 51% 공격조차도 정직한 풀 노드의 눈에 무효한 트랜잭션을 유효하게 만들 수 없다는 것이다. 블록 생산자는 트랜잭션을 검열하거나 재정렬할 수 있지만, 체인 자체 규칙을 위반하는 상태 전이를 만들고(예를 들어, 유효한 서명 없이 자금을 지출하는 것) 정직한 노드가 수용하게 할 수는 없다.
+
+    그러나 그 보호는 체인이 네이티브로 검증할 수 있는 상태에만 적용된다. 검증자가 검증 가능한 증명을 제공하지 않고 다른 체인의 이벤트를 증명하기 시작하면, 그들의 서명은 오라클이 된다. 프로토콜이 "체인 A에서 100개 토큰이 잠겼다는 메시지에 검증자의 2/3 이상이 서명할 때마다 체인 B에서 토큰을 발행한다"고 말하면, 공모하는 슈퍼다수가 그 외부 이벤트에 대해 거짓말할 수 있다. 목적지 체인은 진실과 사기를 암호학적으로 구별할 방법이 없는데, 규칙 자체가 "충분한 서명"을 진실로 정의하기 때문이다.
+
+    이것이 바로 라이트 클라이언트(Light Client)와 증명 기반 브릿지가 피하려는 것이다. 코스모스 IBC와 니어의 레인보우 브릿지(Rainbow Bridge) 같은 시스템은 목적지 체인이 소스 체인의 헤더나 상태의 암호학적 증명을 검증하게 한다. 이러한 브릿지를 깨뜨리려면 단지 위원회가 거짓말하는 것이 아니라 실제로 소스 체인의 합의를 깨뜨리거나 손상시켜야 한다. 이더리움 자체 아키텍처도 이 방향으로 진화하고 있으며, 스마트 컨트랙트가 외부 증명을 신뢰하는 대신 합의 레이어 데이터를 직접 검증할 수 있게 하는 업그레이드가 진행 중이다.
+
+    다시 말해, 진정한 위험은 "검증자가 외부 체인에 대해 이야기하는 것" 일반이 아니다. 브릿지나 프로토콜이 검증자 서명(또는 작은 외부 위원회)을 체인 자체가 검증할 수 없는 것에 대해 권위 있는 것으로 취급할 때이다. 외부 데이터를 온체인에서 검증 가능하게 만들 수 있을 때마다(라이트 클라이언트, ZK 증명, 전용 합의-실행 후크를 통해), 그 추가 신뢰 가정은 사라지고 "51%도 무효한 상태 전이를 유효하게 만들 수 없는" 영역으로 돌아간다.
+
+    이 구분은 왜 브릿지가 그토록 중요한 도전을 나타내는지 설명한다. 자신의 네이티브 체인에서, 검증자는 다수가 공모해도 자금을 훔칠 수 없는데, 프로토콜이 단순히 무효한 블록을 수용하지 않기 때문이다. 그러나 동일한 검증자(또는 별도의 브릿지 검증자)가 체인 간에 정보를 중계할 때, 네이티브 보호는 더 이상 적용되지 않는다. 그들은 목적지 체인이 독립적으로 검증할 수 없는 것들에 대해 정직하게 보고하도록 요청받고 있으며, 이는 새로운 범주의 취약점을 만든다.
+
+    ### 브릿지 보안 모델
+
+    브릿지 설계는 인간 중개자에 의존하는 것에서 순수 암호학적 증명을 사용하는 것까지 스펙트럼 상에 존재한다.
+
+    #### 외부 검증: 중개자 신뢰
+
+    외부 검증 브릿지는 양쪽 체인을 관찰하고 그들 사이에 메시지를 중계하는 제3자에 의존한다. 신뢰/멀티시그 브릿지(Trusted/Multisig Bridge)는 가디언 그룹을 사용한다. 웜홀은 이것을 13-of-19 임계값으로 작동하는 19명의 가디언으로 예시한다. 액셀러(Axelar)와 같은 검증자 세트 브릿지(Validator Set Bridge)는 크로스 체인 메시징을 위해 특별히 전용 지분 증명 네트워크를 생성하며, 검증자는 토큰을 스테이킹하고 잘못된 행동에 대해 경제적 페널티를 받는다.
+
+    트레이드오프: 구축하기 간단하고, 사용하기 빠르며, 거의 모든 블록체인을 지원할 수 있다. 단점: 안전성이 인간 운영자나 별도의 검증자 세트에 달려 있다. 2022년 웜홀 해킹은 약 120,000 WETH(대략 $325M)의 무단 발행을 허용한 서명 검증 버그를 익스플로잇했다. 로닌 브릿지(Ronin Bridge) 절도는 공격자가 사기 출금을 승인할 수 있을 만큼 충분한 검증자 키를 손상시켰을 때 발생했다.
+
+    #### 네이티브 검증: 암호학적 증명
+
+    네이티브 검증 브릿지는 온체인 **라이트 클라이언트**를 유지하여 암호학적 증명을 통해 체인이 서로의 상태를 직접 검증하게 한다. 코스모스 생태계의 IBC(Inter-Blockchain Communication)는 골드 스탠다드를 나타낸다. 참여 체인은 서로의 라이트 클라이언트를 유지하고 상태 변경이 올바르게 발생했는지 암호학적으로 검증한다. 영지식 라이트 클라이언트 브릿지(Zero-Knowledge Light Client Bridge)는 ZK 증명을 사용하여 검증을 압축하며, 극적으로 낮은 계산 비용과 함께 강력한 보장을 결합한다.
+
+    트레이드오프: 추가 가정 없이 소스 블록체인 자체의 보호와 일치하는 보호. 그러나 상당한 기술적 복잡성이 필요하며, 체인은 최종성 타이밍을 신중하게 처리해야 한다(섹션 III의 최종성 유형 논의를 상기하라). IBC는 주로 코스모스의 Tendermint 기반 체인과 함께 작동하지만, 다른 합의 메커니즘에 대한 확장이 개발 중이다.
+
+    #### 낙관적 검증: 유효성 가정, 챌린지 허용
+
+    낙관적 브릿지(Optimistic Bridge)는 기본적으로 메시지가 유효하다고 가정하지만 분쟁 윈도우 동안 누구나 챌린지할 수 있게 한다. 릴레이어가 "체인 A에서 100개 토큰이 잠겼다"고 주장하는 브릿지 메시지를 제출한다. 이 메시지는 잠정적으로 수락되지만 챌린지 기간에 들어간다. 양쪽 체인을 모니터링하는 감시자가 메시지가 무효하다고 감지하면 **사기 증명(Fraud Proof)**을 제출할 수 있다. 시간 윈도우 내에 아무도 챌린지하지 않으면, 메시지는 최종 확정된다. 어크로스 프로토콜은 현재 제3자 릴레이어가 즉각적인 유동성을 위한 빠른 충당을 제공하면서, 최종 정산은 UMA의 낙관적 오라클을 사용하여 챌린지 윈도우 후에 발생하는 낙관적 모델을 사용한다.
+
+    트레이드오프: 중개자 기반 브릿지보다 더 강력한 보호를 제공하면서 라이트 클라이언트 검증이 실질적으로 처리할 수 있는 것보다 더 많은 체인을 지원한다. 가정은 최소 한 명의 정직한 당사자가 감시하고 있다는 것이다. 단점은 지연된 최종성이지만, 빠른 충당 메커니즘이 즉각적인 유동성을 제공할 수 있다.
+
+    ### 브릿지 구현의 실질적 취약점
+
+    크로스 체인 인프라는 단일 체인 시스템에 존재하지 않는 공격 표면을 도입한다. 실적은 냉정하다: 고프로필 익스플로잇에는 로닌 브릿지(검증자 키 손상), 폴리 네트워크(결함 있는 컨트랙트 권한), 웜홀(서명 검증 버그), 노마드(특정 호출 패턴을 유효한 출금으로 바꾼 초기화 버그), 하모니 호라이즌(멀티시그 키 손상)이 포함된다. 이러한 사건 대부분은 "너무 적은 확인을 기다리는 것"에 관한 것이 아니라, 잘못된 신뢰 가정, 부실한 키 관리, 고가치 코드의 구현 버그에 관한 것이었다.
+
+    구현 복잡성이 이러한 취약점 포인트의 많은 부분을 도입한다. 수억 달러의 자산을 보호하는 브릿지 컨트랙트는 종종 완벽하게 구현되어야 하고 기본 체인이 진화함에 따라 업데이트되어야 하는 수천 줄의 복잡한 검증 및 회계 로직으로 구성된다. 경제적 불일치도 업계를 괴롭혔다: 브릿지 검증자 세트가 5천만 달러를 스테이킹했지만 5억 달러의 자산을 보호한다면, 공격하는 것이 경제적으로 합리적일 수 있다. 거버넌스 위험도 중요하다; 브릿지 컨트랙트를 업그레이드하거나 검증자 세트를 변경할 수 있는 멀티시그 키 보유자는 기술적 보안 모델에 관계없이 모든 브릿지된 자산을 효과적으로 통제한다.
+
+    합의와 최종성 불일치는 더 미묘하고 미래 지향적인 위험 클래스이다. 확률적 최종성 체인(PoW 시스템과 같은)이나 챌린지 윈도우가 있는 롤업에서 읽는 브릿지는 잠금이나 증명을 되돌릴 수 없는 것으로 취급하기 전에 얼마나 기다릴지 선택해야 한다. 확인이 너무 적거나 챌린지 기간이 너무 짧으면 사용자가 이전에 "수락된" 메시지를 무효화하는 재구성이나 사기 증명에 노출될 수 있다; 확인이 너무 많으면 사용자 경험과 자본 효율성이 저하된다. 이것이 지금까지 주요 익스플로잇의 주된 원인이 아니었더라도, 모든 견고한 브릿지 설계가 처리해야 하는 구조적 제약이다.
+
+    ### 신흥 과제와 미래 방향
+
+    브릿지 보안이 개선되더라도, 크로스 체인 인프라는 엔지니어링만으로는 완전히 해결할 수 없는 지속적인 과제에 직면한다.
+
+    자산 분산이 만연해졌다. 서로 다른 체인의 "동일한" 자산은 실제로 동일하지 않다. 써클이 이더리움에서 발행한 네이티브 USDC는 대부분의 지갑 인터페이스에서 둘 다 "USDC"로 나타나지만, 솔라나의 웜홀 래핑 USDC와 근본적으로 다른 리스크를 가진다. DeFi 애플리케이션을 구축하는 개발자는 단순히 "우리는 USDC를 지원한다"고 말할 수 없다. 어떤 체인의 어떤 브릿지를 통해 접근한 어떤 USDC인지 명시해야 한다. 사용자는 단지 "나는 1000 USDC가 있다"가 아니라 "나는 이더리움에 500 네이티브 USDC, 브릿지 X를 통해 아비트럼에 300 브릿지된 USDC, 브릿지 Y를 통해 솔라나에 200 래핑 USDC가 있다"를 추적해야 한다. 각 버전은 서로 다른 유동성, 다른 디페깅 리스크, 다른 출금 메커니즘을 가진다.
+
+    섹션 II에서 논의한 구성 가능성 제한은 체인 간에 지속된다. 단일 체인 내에서 원활하게 작동하는 작업이 여러 네트워크에 걸쳐 있을 때 에스크로, 지연 실행, 단계 간 대기 기간을 포함한 복잡한 조정 패턴을 요구한다.
+
+    사용자 경험 마찰이 여전히 상당하다. 브릿징은 일반적으로 여러 온체인 작업을 요구한다: 먼저 체인 A에서 브릿지 컨트랙트가 토큰을 지출하도록 승인하고(가스), 그런 다음 브릿지의 잠금/소각 또는 입금 함수를 호출하고(더 많은 가스), 브릿지가 최종 확정되고 메시지를 중계할 때까지 기다리고, 지갑을 체인 B로 전환하고, 일부 설계에서는 토큰을 사용할 수 있기 전에 청구 트랜잭션을 제출한다.
+
+    앞으로의 경로는 아마도 영지식 검증 라이트 클라이언트와 경제적 오류 증명을 결합한 하이브리드 모델을 포함할 것이다. ZK 기술은 전통적인 라이트 클라이언트 접근 방식이 엄청나게 비쌀 곳에서 네이티브 검증을 실용적으로 만들 수 있다. 의도 기반 아키텍처(Intent-based Architecture)는 브릿징 복잡성을 추상화하여, 사용자가 원하는 결과를 지정하면서 솔버가 크로스 체인 라우팅을 처리하게 할 수 있다. 공유 유동성 레이어와 범용 브릿지 표준을 중심으로 한 표준화는 분산을 줄일 수 있다. 그러나 이러한 솔루션은 자체 트레이드오프와 복잡성을 도입하며, 크로스 체인 인프라가 정착된 합의보다는 활발한 실험 영역으로 남을 것임을 시사한다.

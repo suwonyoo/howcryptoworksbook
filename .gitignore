@@ -1,2 +1,12 @@
 # Tests (not ready for public release yet)
 Tests/
+
+# Build artifacts
+site/
+gitbook/_book/
+gitbook/node_modules/
+gitbook/package.json
+gitbook/package-lock.json
+
+# MkDocs
+.cache/

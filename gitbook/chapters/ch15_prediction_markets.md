@@ -1,0 +1,393 @@
+# Chapter XV: Prediction Markets
+
+=== "EN"
+
+    ## Section I: The Core Mechanism
+
+    Picture an election night: commentators debate on tv, polls show conflicting results, and everyone waits for official vote counts. Meanwhile, in a parallel universe, thousands of people are putting real money behind their beliefs about the outcome, creating a live, publicly observable feed that continuously updates the probability of said outcome, which often proves more accurate than any expert analysis.
+
+    This is the core insight behind **prediction markets**: when people risk their own money on future events, they reveal information that polls and punditry cannot capture. Unlike traditional betting sites that simply offer odds set by bookmakers, prediction markets create a mechanism where the collective wisdom of participants determines prices through supply and demand.
+
+    The fundamental mechanism works through **binary outcome tokens**: for a presidential election, a trader might buy "Candidate A wins" tokens at 45 cents each. If Candidate A wins, each token pays out $1. If they lose, the tokens become worthless. The current price (45 cents) represents the market's collective assessment that Candidate A has a 45% chance of winning.
+
+    This creates a powerful information aggregation system. People with inside knowledge, superior analysis, or different perspectives can profit by trading against the consensus, which moves prices toward more accurate probabilities. The result is often remarkably precise forecasting that outperforms traditional polling and expert predictions.
+
+    The empirical evidence is compelling. Academic research consistently finds prediction markets outperform polls in a majority of elections. This superior accuracy stems from fundamental structural advantages. Traditional polling faces declining response rates (now under 5% for many surveys), difficulty reaching certain demographics, and social desirability bias where respondents may not truthfully report unpopular preferences. Prediction markets circumvent these issues by requiring participants to put money at stake, creating stronger incentives for accuracy than answering survey questions. Rather than relying on representative sampling, markets aggregate the beliefs of people willing to back their convictions with capital.
+
+    This raises a fundamental design question: should these markets be run by centralized companies or decentralized protocols?
+
+=== "KO"
+
+    ## Section I: 핵심 메커니즘
+
+    선거일 밤을 상상해 보라: 해설자들이 TV에서 토론하고, 여론조사는 상충하는 결과를 보여주며, 모든 사람들이 공식 개표 결과를 기다리고 있다. 한편, 평행 세계에서는 수천 명의 사람들이 결과에 대한 자신의 믿음에 실제 돈을 걸고 있으며, 해당 결과의 확률을 지속적으로 업데이트하는 실시간으로 공개 관찰 가능한 피드를 만들어낸다. 이는 종종 어떤 전문가 분석보다 더 정확하다.
+
+    이것이 **예측 시장(Prediction Market)**의 핵심 통찰이다: 사람들이 미래 사건에 자신의 돈을 걸 때, 여론조사와 평론가들이 포착할 수 없는 정보를 드러낸다. 단순히 북메이커가 설정한 배당률을 제공하는 전통적인 베팅 사이트와 달리, 예측 시장은 참여자들의 집단 지혜가 공급과 수요를 통해 가격을 결정하는 메커니즘을 만든다.
+
+    기본 메커니즘은 **이진 결과 토큰(Binary Outcome Token)**을 통해 작동한다: 대통령 선거의 경우, 트레이더는 "후보 A 승리" 토큰을 개당 45센트에 구매할 수 있다. 후보 A가 승리하면 각 토큰은 $1를 지급한다. 패배하면 토큰은 무가치해진다. 현재 가격(45센트)은 후보 A가 45% 승률을 가진다는 시장의 집단적 평가를 나타낸다.
+
+    이는 강력한 **정보 집약 시스템(Information Aggregation System)**을 만든다. 내부 정보, 우월한 분석 또는 다른 관점을 가진 사람들은 컨센서스에 반대하여 거래함으로써 이익을 얻을 수 있으며, 이는 가격을 더 정확한 확률로 이동시킨다. 그 결과는 종종 전통적인 여론조사와 전문가 예측을 능가하는 놀랍도록 정밀한 예측이다.
+
+    경험적 증거는 설득력이 있다. 학술 연구는 예측 시장이 대다수의 선거에서 여론조사를 능가한다는 것을 일관되게 발견한다. 이러한 우수한 정확성은 근본적인 구조적 이점에서 비롯된다. 전통적인 여론조사는 감소하는 응답률(현재 많은 설문조사에서 5% 미만), 특정 인구 집단에 도달하는 어려움, 응답자들이 인기 없는 선호를 솔직하게 보고하지 않을 수 있는 사회적 바람직성 편향에 직면한다. 예측 시장은 참여자들이 돈을 걸도록 요구함으로써 이러한 문제를 우회하며, 설문 질문에 답하는 것보다 정확성에 대한 더 강한 인센티브를 만든다. 대표 표본에 의존하는 대신, 시장은 자본으로 신념을 뒷받침할 의향이 있는 사람들의 믿음을 집약한다.
+
+    이것은 근본적인 설계 질문을 제기한다: 이러한 시장은 중앙화된 회사가 운영해야 할까, 아니면 탈중앙화 프로토콜이 운영해야 할까?
+
+=== "EN"
+
+    ## Section II: The Case for Decentralization
+
+    Decentralized prediction markets remove central authorities from the equation entirely. Rather than relying on bookmakers to set odds and manage payouts, these platforms use smart contracts to automatically match traders, execute transactions, and resolve outcomes through predetermined oracle mechanisms (oracle infrastructure is covered in Chapter VII). This fundamental shift creates distinct advantages over traditional betting platforms.
+
+    The most immediate benefit is transparency. Every transaction, position, and resolution mechanism exists on-chain for anyone to verify. Traditional betting sites operate as black boxes where users must simply trust the house's odds, calculations, and fairness. Decentralized markets make these elements mathematically verifiable, eliminating the need for trust.
+
+    Equally important is **censorship resistance**. When a prediction market is fully decentralized, no single authority can shut down markets or restrict trading on sensitive topics. This becomes crucial for politically charged predictions where traditional platforms might face pressure to delist certain markets. The protocol continues operating regardless of external pressures.
+
+    Permissionless access fundamentally changes market dynamics. Anyone with a crypto wallet can trade immediately without identity documents, verification delays, or geographic restrictions. Traditional platforms must verify identities and restrict users by jurisdiction, creating significant friction. Decentralized prediction markets sidestep these barriers entirely, tapping into global liquidity from anyone holding stablecoins or any other crypto asset the platform accepts. The difference in accessible user base can be orders of magnitude larger, though as discussed below, this advantage exists in tension with regulatory realities.
+
+    Beyond scale, the absence of identity requirements enables uninhibited information flow. Industry insiders, political operatives, and individuals with material knowledge can trade without creating identity trails that might trigger professional or legal consequences. Consider a campaign staffer who knows internal polling data, or a corporate executive aware of upcoming announcements. On traditional platforms, they must weigh their information's value against the risk of exposure. On decentralized platforms, they can trade pseudonymously, immediately incorporating valuable information into market prices.
+
+    From a pure market efficiency perspective, this accelerates price discovery. The participants with the most valuable information are precisely those filtered out by KYC (know-your-customer identity checks) requirements. When these informed traders can contribute their knowledge without reservation, markets converge on true probabilities faster.
+
+    Yet these same advantages create profound regulatory tensions. What prediction market advocates describe as "superior information aggregation" overlaps significantly with what securities regulators call "insider trading." This activity, when involving securities in traditional markets, is illegal precisely because it advantages those with privileged access over ordinary participants. The ethical and legal contradictions here are not easily dismissed.
+
+    Decentralized platforms have historically operated by basing themselves in jurisdictions with looser rules while blocking users from certain countries at the website level. This approach enables the permissionless access and information aggregation discussed above, but it comes with substantial risk. The 2022 action by the CFTC, the main U.S. derivatives regulator, against Polymarket demonstrated that operating without a license still carries real enforcement consequences. While decentralized architecture complicates regulatory action, platforms remain vulnerable to scrutiny, fines, and operational restrictions.
+
+=== "KO"
+
+    ## Section II: 탈중앙화의 필요성
+
+    탈중앙화 예측 시장은 중앙 권한을 완전히 방정식에서 제거한다. 북메이커에 의존하여 배당률을 설정하고 지급을 관리하는 대신, 이러한 플랫폼은 Smart Contract를 사용하여 트레이더를 자동으로 매칭하고, 트랜잭션을 실행하며, 사전 결정된 오라클 메커니즘을 통해 결과를 해결한다(오라클 인프라는 Chapter VII에서 다룬다). 이 근본적인 전환은 전통적인 베팅 플랫폼에 비해 뚜렷한 이점을 만든다.
+
+    가장 즉각적인 이점은 투명성이다. 모든 트랜잭션, 포지션, 해결 메커니즘이 누구나 검증할 수 있도록 On-chain에 존재한다. 전통적인 베팅 사이트는 사용자가 단순히 하우스의 배당률, 계산, 공정성을 신뢰해야 하는 블랙박스로 운영된다. 탈중앙화 시장은 이러한 요소들을 수학적으로 검증 가능하게 만들어 신뢰의 필요성을 제거한다.
+
+    마찬가지로 중요한 것은 **검열 저항(Censorship Resistance)**이다. 예측 시장이 완전히 탈중앙화되면, 어떤 단일 권한도 시장을 폐쇄하거나 민감한 주제에 대한 거래를 제한할 수 없다. 이는 전통적인 플랫폼이 특정 시장을 상장 폐지하라는 압력에 직면할 수 있는 정치적으로 민감한 예측에 특히 중요해진다. 프로토콜은 외부 압력과 관계없이 계속 운영된다.
+
+    무허가 접근(Permissionless Access)은 시장 역학을 근본적으로 변화시킨다. 암호화폐 지갑을 가진 누구나 신분 서류, 검증 지연 또는 지리적 제한 없이 즉시 거래할 수 있다. 전통적인 플랫폼은 신원을 확인하고 관할권별로 사용자를 제한해야 하므로 상당한 마찰을 만든다. 탈중앙화 예측 시장은 이러한 장벽을 완전히 우회하여, 스테이블코인이나 플랫폼이 수용하는 다른 암호화 자산을 보유한 누구로부터든 글로벌 유동성에 접근한다. 접근 가능한 사용자 기반의 차이는 수 배 더 클 수 있지만, 아래에서 논의하듯이 이 이점은 규제 현실과 긴장 관계에 있다.
+
+    규모를 넘어, 신원 요구 사항의 부재는 억제되지 않은 정보 흐름을 가능하게 한다. 업계 내부자, 정치 공작원, 중요한 정보를 가진 개인은 직업적 또는 법적 결과를 초래할 수 있는 신원 흔적을 만들지 않고 거래할 수 있다. 내부 여론조사 데이터를 아는 캠페인 직원이나 예정된 발표를 알고 있는 기업 임원을 생각해 보라. 전통적인 플랫폼에서 그들은 정보의 가치와 노출 위험을 저울질해야 한다. 탈중앙화 플랫폼에서 그들은 익명으로 거래할 수 있으며, 가치 있는 정보를 시장 가격에 즉시 반영시킬 수 있다.
+
+    순수한 시장 효율성 관점에서, 이것은 가격 발견을 가속화한다. 가장 가치 있는 정보를 가진 참여자들이 정확히 KYC(본인 확인 절차) 요구 사항에 의해 걸러지는 사람들이다. 이러한 정보를 가진 트레이더들이 망설임 없이 자신의 지식을 기여할 수 있을 때, 시장은 더 빠르게 실제 확률로 수렴한다.
+
+    그러나 이와 동일한 이점들이 심각한 규제적 긴장을 만든다. 예측 시장 지지자들이 "우월한 정보 집약"이라고 설명하는 것은 증권 규제 기관이 "내부자 거래"라고 부르는 것과 상당히 겹친다. 전통적인 시장에서 증권과 관련하여 이 활동은 특권적 접근을 가진 사람들이 일반 참여자들보다 유리하기 때문에 정확히 불법이다. 여기서의 윤리적, 법적 모순은 쉽게 무시할 수 없다.
+
+    탈중앙화 플랫폼은 역사적으로 더 느슨한 규칙을 가진 관할권에 기반을 두고 웹사이트 수준에서 특정 국가의 사용자를 차단함으로써 운영해 왔다. 이 접근법은 위에서 논의한 무허가 접근과 정보 집약을 가능하게 하지만, 상당한 위험을 수반한다. 2022년 미국의 주요 파생상품 규제 기관인 CFTC의 Polymarket에 대한 조치는 라이선스 없이 운영하는 것이 여전히 실제 집행 결과를 초래한다는 것을 보여주었다. 탈중앙화 아키텍처가 규제 조치를 복잡하게 만들지만, 플랫폼은 조사, 벌금, 운영 제한에 여전히 취약하다.
+
+=== "EN"
+
+    ## Section III: The Early Failures
+
+    To understand why pragmatism on user experience, liquidity, and resolution mechanisms became decisive, consider the first wave of decentralized platforms. The advantages of decentralized prediction markets (transparency, censorship resistance, and global liquidity) motivated significant investment and development in the mid-2010s, with Gnosis and Augur emerging as the most prominent attempts to build this infrastructure. Both projects raised substantial funding and generated considerable excitement, yet neither achieved meaningful adoption. Understanding their failures reveals the challenges that later platforms would need to overcome.
+
+    ### Gnosis
+
+    Gnosis, launched in 2017 after raising $12.5 million in one of the fastest public sales in history (12 minutes), suffered from a classic case of premature optimization. The platform was technically sophisticated, featuring complex market-making algorithms and a dual-token system, but this complexity created barriers for ordinary users. The interface was confusing, the market creation process was cumbersome, and the economic model was difficult to understand.
+
+    More fundamentally, Gnosis focused on building infrastructure rather than creating compelling markets. The platform could theoretically support any type of prediction market, but it launched with few interesting markets and little marketing to attract users. Without adequate **liquidity** (the depth of orders that enables traders to get good prices with tight spreads), even technically superior infrastructure becomes worthless.
+
+    ### Augur
+
+    Augur took a different approach, launching in 2018 after years of development and positioning itself as a fully decentralized oracle and prediction market platform. Augur's key innovation was its decentralized resolution mechanism: instead of relying on a single trusted oracle, market outcomes were decided by holders of its native REP ("reputation") token. These token holders could stake their REP to report what actually happened in the real world. If they reported the outcome that the wider community ultimately agreed on, they earned fees; if they lied or tried to manipulate results, they risked losing part of their stake. In theory, this financial carrot-and-stick was supposed to make telling the truth the most profitable strategy.
+
+    However, Augur's decentralized purity became its weakness. The resolution process was slow and complex, often taking weeks to finalize results. The platform attracted controversial markets (including assassination markets) that created regulatory concerns and public relations problems. Gas fees on Ethereum made small bets economically unviable, while the user experience remained clunky and intimidating for mainstream users.
+
+    Both platforms suffered from the chicken-and-egg problem that plagues many two-sided markets: traders need liquidity to get good prices, but liquidity providers need traders to make money. Without either, markets remained thin and unattractive. The platforms also launched during crypto bear markets when speculation was limited and mainstream attention was minimal.
+
+    Most critically, both Gnosis and Augur prioritized decentralization over user experience and market quality. While philosophically appealing, this approach created friction that prevented the network effects necessary for prediction market success. Users don't care about decentralization if the platform is difficult to use and the markets are illiquid.
+
+    The timing was also problematic. Ethereum's high gas fees and slow transaction times made frequent trading expensive and frustrating. The broader crypto ecosystem lacked the infrastructure that would later make DeFi accessible to mainstream users, including user-friendly wallets, easy ways to convert regular money into crypto, and polished mobile interfaces.
+
+=== "KO"
+
+    ## Section III: 초기 실패들
+
+    유동성, 사용자 경험, 해결 메커니즘에 대한 실용주의가 왜 결정적이 되었는지 이해하려면, 첫 번째 탈중앙화 플랫폼들의 물결을 살펴보라. 탈중앙화 예측 시장의 장점(투명성, 검열 저항, 글로벌 유동성)은 2010년대 중반에 상당한 투자와 개발을 유도했으며, Gnosis와 Augur가 이 인프라를 구축하려는 가장 두드러진 시도로 등장했다. 두 프로젝트 모두 상당한 자금을 조달하고 상당한 관심을 불러일으켰지만, 어느 쪽도 의미 있는 채택을 달성하지 못했다. 그들의 실패를 이해하면 이후 플랫폼들이 극복해야 할 과제가 드러난다.
+
+    ### Gnosis
+
+    2017년 역사상 가장 빠른 퍼블릭 세일(12분) 중 하나에서 1,250만 달러를 조달한 후 출시된 Gnosis는 조기 최적화의 전형적인 사례를 겪었다. 플랫폼은 복잡한 시장 조성 알고리즘과 이중 토큰 시스템을 특징으로 하는 기술적으로 정교했지만, 이 복잡성은 일반 사용자에게 장벽을 만들었다. 인터페이스는 혼란스러웠고, 시장 생성 과정은 번거로웠으며, 경제 모델은 이해하기 어려웠다.
+
+    더 근본적으로, Gnosis는 매력적인 시장을 만드는 것보다 인프라 구축에 집중했다. 플랫폼은 이론적으로 모든 유형의 예측 시장을 지원할 수 있었지만, 흥미로운 시장이 거의 없이 출시되었고 사용자를 유치하기 위한 마케팅도 부족했다. 적절한 **유동성(Liquidity)**(트레이더가 타이트한 스프레드로 좋은 가격을 얻을 수 있게 하는 주문의 깊이)이 없으면, 기술적으로 우수한 인프라도 쓸모없어진다.
+
+    ### Augur
+
+    Augur는 수년간의 개발 후 2018년에 출시하여 완전히 탈중앙화된 오라클 및 예측 시장 플랫폼으로 자리매김하는 다른 접근법을 취했다. Augur의 핵심 혁신은 **탈중앙화 해결 메커니즘(Decentralized Resolution Mechanism)**이었다: 단일 신뢰할 수 있는 오라클에 의존하는 대신, 시장 결과는 네이티브 REP("평판") 토큰 보유자에 의해 결정되었다. 이러한 토큰 보유자들은 실제 세계에서 무슨 일이 일어났는지 보고하기 위해 REP를 스테이킹할 수 있었다. 더 넓은 커뮤니티가 궁극적으로 동의하는 결과를 보고하면 수수료를 벌었고, 거짓말하거나 결과를 조작하려 하면 스테이크의 일부를 잃을 위험이 있었다. 이론적으로, 이 금전적 당근과 채찍은 진실을 말하는 것이 가장 수익성 있는 전략이 되도록 해야 했다.
+
+    그러나 Augur의 탈중앙화 순수성이 약점이 되었다. 해결 과정은 느리고 복잡했으며, 종종 결과를 확정하는 데 몇 주가 걸렸다. 플랫폼은 암살 시장을 포함한 논란이 되는 시장을 끌어들여 규제 우려와 홍보 문제를 만들었다. 이더리움의 가스 수수료는 소액 베팅을 경제적으로 불가능하게 만들었고, 사용자 경험은 주류 사용자에게 투박하고 위협적이었다.
+
+    두 플랫폼 모두 많은 양면 시장을 괴롭히는 닭과 달걀 문제에 시달렸다: 트레이더는 좋은 가격을 얻기 위해 유동성이 필요하지만, 유동성 제공자는 돈을 벌기 위해 트레이더가 필요하다. 둘 다 없으면 시장은 얇고 매력적이지 않게 유지되었다. 플랫폼들은 또한 투기가 제한적이고 주류의 관심이 최소화되었던 암호화폐 약세장 동안 출시되었다.
+
+    가장 중요한 것은, Gnosis와 Augur 모두 사용자 경험과 시장 품질보다 탈중앙화를 우선시했다는 것이다. 철학적으로는 매력적이지만, 이 접근법은 예측 시장 성공에 필요한 네트워크 효과를 방해하는 마찰을 만들었다. 플랫폼이 사용하기 어렵고 시장이 비유동적이면 사용자들은 탈중앙화에 관심을 두지 않는다.
+
+    타이밍도 문제였다. 이더리움의 높은 가스 수수료와 느린 트랜잭션 시간은 빈번한 거래를 비싸고 좌절스럽게 만들었다. 더 넓은 암호화폐 생태계는 나중에 DeFi를 주류 사용자들에게 접근 가능하게 만들 인프라가 부족했다 - 사용자 친화적인 지갑, 일반 화폐를 암호화폐로 쉽게 전환하는 방법, 세련된 모바일 인터페이스가 없었다.
+
+=== "EN"
+
+    ## Section IV: The Breakthrough
+
+    Understanding why earlier platforms failed reveals what Polymarket did differently. The 2024 election cycle marked a turning point for prediction markets, with Polymarket achieving unprecedented mainstream adoption. Its success came from learning the lessons of earlier failures, though at the cost of many of the decentralization principles that motivated the space initially.
+
+    Polymarket processed over $3 billion in trading volume during the 2024 election cycle. Built on Polygon, a faster and cheaper network than Ethereum's base layer, Polymarket made several key design decisions that differentiated it from earlier attempts. Instead of complex tokenomics, it used simple USDC-denominated markets where everything was priced in dollars. Crucially, Polymarket also reduced funding friction by handling the technical complexity of moving money onto the platform behind the scenes, so many users never have to think about blockchain mechanics at all.
+
+    Instead of decentralized resolution, it used a system where anyone can propose an outcome, and if no one disputes it within a short window, the outcome is accepted as true. This "optimistic" approach assumes proposals are correct unless challenged (similar to optimistic rollups in Chapter II), enabling faster resolution than earlier platforms that required active voting on every market. Market creation was curated rather than permissionless, which ensured well-defined questions with adequate liquidity but also introduced centralized gatekeeping that could limit controversial or niche markets.
+
+    The platform prioritized user experience above all else, with an interface resembling traditional trading platforms more than crypto applications. Heavy investment in liquidity provision ensured tight spreads and deep order books that made trading attractive, though this created dependence on market makers whose incentives don't always align with retail traders.
+
+    The platform's regulatory approach proved crucial. By operating offshore without KYC requirements (following a $1.4 million CFTC settlement in 2022), Polymarket enabled permissionless global access while sidestepping complex regulatory battles. This created ongoing uncertainty about long-term viability but allowed focus on product development and captured liquidity that fully compliant platforms couldn't access. It's worth noting that Polymarket is geo-blocked by IP address in many jurisdictions (including the U.S., UK, France, etc.) but it's still possible to avoid these restrictions by using VPNs.
+
+    Polymarket's breakthrough came through focus on high-visibility events. Rather than trying to be everything to everyone, it concentrated on major political and current events markets, essentially cherry-picking the topics most likely to generate volume. The 2024 presidential election provided the ideal catalyst: a globally significant event with massive public interest, clear binary outcomes, and strong opinions that people were willing to back with money.
+
+    Presidential elections combine several factors that make prediction markets particularly compelling: massive public interest, clear binary outcomes, strong partisan opinions, and extended time horizons that allow for meaningful price discovery. Unlike sports betting, which appeals primarily to gambling enthusiasts, election markets attract politically engaged users who view their participation as informed analysis rather than pure speculation. The 2024 cycle also benefited from unique circumstances: unprecedented polarization, questions about polling accuracy, and a media environment hungry for new ways to analyze and predict outcomes.
+
+    ### Kalshi: The Compliance Alternative
+
+    While Polymarket took the offshore route, Kalshi chose the opposite path. As a CFTC-regulated Designated Contract Market, Kalshi operates within regulatory frameworks across more than 100 countries. The platform requires KYC verification from users worldwide and uses a traditional central limit order book (the same matching engine found in regulated stock exchanges) rather than blockchain settlement.
+
+    Unlike platforms with region-specific markets, Kalshi maintains a single unified liquidity pool connecting traders worldwide to the same events. This positions it as the only major prediction market platform operating both globally and within regulatory frameworks, creating what the company calls a next-generation CME for the 21st century.
+
+    Kalshi's approach to crypto is equally compliance-focused. While the platform accepts deposits in USDC, Bitcoin, and other cryptocurrencies, these deposits are immediately converted to dollars. In practice, Kalshi never holds cryptocurrency on its books. Everything is denominated and settled in USD through conventional clearing procedures. Traditional funding methods like bank transfers and card payments work alongside crypto deposits, all flowing into the same dollar-based system.
+
+    Recently, Kalshi has pushed further into crypto-native distribution. In December 2025 it began rolling out tokenized prediction positions on Solana (Chapter III), making Kalshi-linked event positions tradeable as tokens that can be bought and sold through popular crypto wallets. These tokenized positions can be traded without going through Kalshi's identity verification process, since users are swapping tokens rather than trading directly on the platform. However, the system is not fully permissionless: access is geo-fenced from the U.S., and a centralized settlement authority still determines outcomes and handles payouts.
+
+    This competitive landscape recently shifted dramatically. In a $112 million deal, Polymarket acquired QCEX, a CFTC-regulated derivatives exchange. The acquisition gives Polymarket the regulatory infrastructure to operate legally in the United States, setting up a direct showdown with Kalshi. Polymarket plans to run both platforms simultaneously: its existing offshore, permissionless platform for global users who don't want KYC requirements, and the new QCEX-based platform with full compliance for the U.S. market.
+
+    That strategy is already taking shape. On its U.S. page, Polymarket says the app is now being rolled out to those on the waitlist with invites going out on a rolling basis, and the initial offering focused on sports event contracts. This effectively sets up a two-track approach: a regulated U.S. product alongside the offshore crypto-native platform that drove its breakout. The dual-platform strategy lets Polymarket maintain its permissionless edge internationally while competing head-to-head with Kalshi for American traders and KYC-compliant global users.
+
+=== "KO"
+
+    ## Section IV: 돌파구
+
+    왜 초기 플랫폼들이 실패했는지 이해하면 Polymarket이 무엇을 다르게 했는지가 드러난다. 2024년 선거 주기는 예측 시장의 전환점을 표시했으며, Polymarket은 전례 없는 주류 채택을 달성했다. 그 성공은 초기 실패에서 교훈을 배운 데서 비롯되었지만, 처음에 이 분야에 동기를 부여했던 많은 탈중앙화 원칙을 희생해야 했다.
+
+    Polymarket은 2024년 선거 주기 동안 30억 달러 이상의 거래량을 처리했다. 이더리움 기본 레이어보다 빠르고 저렴한 네트워크인 Polygon 위에 구축된 Polymarket은 이전 시도들과 차별화되는 몇 가지 핵심 설계 결정을 내렸다. 복잡한 토크노믹스 대신, 모든 것이 달러로 가격이 책정되는 간단한 USDC 표시 시장을 사용했다. 결정적으로, Polymarket은 플랫폼으로 자금을 이동하는 기술적 복잡성을 배후에서 처리하여, 많은 사용자가 Blockchain 메커니즘에 대해 전혀 생각할 필요가 없게 했다.
+
+    탈중앙화 해결 대신, 누구나 결과를 제안할 수 있는 시스템을 사용했고, 짧은 기간 내에 아무도 이의를 제기하지 않으면 결과가 참으로 수용된다. 이 **"낙관적(Optimistic)"** 접근법은 제안이 이의 제기되지 않는 한 올바르다고 가정하며(Chapter II의 Optimistic Rollup과 유사한 철학), 모든 시장에서 활성 투표를 요구했던 이전 플랫폼보다 더 빠른 해결을 가능하게 했다. 시장 생성은 무허가가 아닌 큐레이션되어, 적절한 유동성을 가진 잘 정의된 질문을 보장했지만, 논란이 되거나 틈새 시장을 제한할 수 있는 중앙화된 게이트키핑도 도입했다.
+
+    플랫폼은 무엇보다 사용자 경험을 우선시했으며, 암호화폐 애플리케이션보다 전통적인 거래 플랫폼을 닮은 인터페이스를 갖췄다. 유동성 제공에 대한 대규모 투자는 타이트한 스프레드와 깊은 오더북을 보장하여 거래를 매력적으로 만들었지만, 인센티브가 소매 트레이더와 항상 일치하지 않는 시장 조성자에 대한 의존성도 만들었다.
+
+    플랫폼의 규제 접근법은 결정적이었다. KYC 요구 사항 없이 역외에서 운영하면서(2022년 140만 달러 CFTC 합의 이후), Polymarket은 완전히 규정을 준수하는 플랫폼이 접근할 수 없는 유동성을 포착하면서 복잡한 규제 전투를 피하고 무허가 글로벌 접근을 가능하게 했다. 이는 장기적 생존 가능성에 대한 지속적인 불확실성을 만들었지만 제품 개발에 집중할 수 있게 했다. Polymarket은 미국, 영국, 프랑스 등을 포함한 많은 관할권에서 IP 주소로 지역 차단되어 있지만, VPN을 사용하여 이러한 제한을 피하는 것은 여전히 가능하다는 점을 주목할 가치가 있다.
+
+    Polymarket의 돌파구는 고가시성 이벤트에 집중함으로써 왔다. 모든 사람에게 모든 것이 되려고 하기보다, 주요 정치 및 시사 이벤트 시장에 집중했으며, 본질적으로 거래량을 생성할 가능성이 가장 높은 주제를 선별했다. 2024년 대통령 선거는 이상적인 촉매제를 제공했다: 엄청난 대중의 관심, 명확한 이진 결과, 사람들이 돈을 걸 의향이 있는 강한 의견을 가진 세계적으로 중요한 이벤트였다.
+
+    대통령 선거는 예측 시장을 특히 매력적으로 만드는 여러 요소를 결합한다: 엄청난 대중의 관심, 명확한 이진 결과, 강한 당파적 의견, 의미 있는 가격 발견을 허용하는 장기적인 시간 지평선. 주로 도박 열성팬에게 어필하는 스포츠 베팅과 달리, 선거 시장은 정치적으로 참여하는 사용자들을 끌어들이며, 그들은 참여를 순수한 투기보다 정보에 입각한 분석으로 본다. 2024년 주기는 또한 독특한 상황의 혜택을 받았다: 전례 없는 양극화, 여론조사 정확성에 대한 질문, 결과를 분석하고 예측하는 새로운 방법에 굶주린 미디어 환경.
+
+    ### Kalshi: 규정 준수 대안
+
+    Polymarket이 역외 경로를 택한 반면, **Kalshi**는 반대 경로를 선택했다. CFTC 규제 지정 계약 시장(Designated Contract Market)으로서, Kalshi는 100개국 이상에서 규제 프레임워크 내에서 운영된다. 플랫폼은 전 세계 사용자에게 KYC 검증을 요구하고, Blockchain 정산이 아닌 전통적인 중앙 지정가 주문서(Central Limit Order Book)(규제된 주식 거래소에서 발견되는 것과 동일한 매칭 엔진)를 사용한다.
+
+    지역별 시장을 가진 플랫폼과 달리, Kalshi는 전 세계 트레이더를 동일한 이벤트에 연결하는 단일 통합 유동성 풀을 유지한다. 이로 인해 회사가 21세기를 위한 차세대 CME라고 부르는 것처럼, 글로벌하면서 규제 프레임워크 내에서 운영되는 유일한 주요 예측 시장 플랫폼으로 자리매김한다.
+
+    Kalshi의 암호화폐 접근법도 마찬가지로 규정 준수에 초점을 맞춘다. 플랫폼은 USDC, 비트코인 및 기타 암호화폐로 예금을 받지만, 이러한 예금은 즉시 달러로 전환된다. 실제로 Kalshi는 장부에 암호화폐를 보유하지 않는다. 모든 것은 기존 청산 절차를 통해 USD로 표시되고 정산된다. 은행 이체 및 카드 결제와 같은 전통적인 자금 조달 방법은 암호화폐 예금과 함께 작동하며, 모두 동일한 달러 기반 시스템으로 흘러들어간다.
+
+    최근 Kalshi는 암호화 네이티브 배포로 더 나아갔다. 2025년 12월에 Solana(Chapter III)에서 토큰화된 예측 포지션을 출시하기 시작하여, 인기 있는 암호화폐 지갑을 통해 토큰으로 거래할 수 있는 Kalshi 연동 이벤트 포지션을 만들었다. 이러한 **토큰화된 포지션(Tokenized Position)**은 사용자가 플랫폼에서 직접 거래하는 것이 아니라 토큰을 스왑하기 때문에 Kalshi의 신원 확인 절차를 거치지 않고도 거래될 수 있다. 그러나 시스템은 완전히 무허가가 아니다: 접근은 미국에서 지역 차단되어 있으며, 중앙화된 정산 기관이 여전히 결과를 결정하고 지급을 처리한다.
+
+    이 경쟁 환경은 최근 극적으로 변화했다. 1억 1,200만 달러 규모의 거래에서, **Polymarket은 CFTC 규제 파생상품 거래소인 QCEX를 인수했다**. 이 인수는 Polymarket에게 미국에서 합법적으로 운영할 수 있는 규제 인프라를 제공하여, Kalshi와의 직접 대결을 준비한다. Polymarket은 두 플랫폼을 동시에 운영할 계획이다: KYC 요구 사항을 원하지 않는 글로벌 사용자를 위한 기존 역외, 무허가 플랫폼과 미국 시장을 위한 완전한 규정 준수를 갖춘 새로운 QCEX 기반 플랫폼.
+
+    이 전략은 이미 형태를 갖추고 있다. 미국 페이지에서 Polymarket은 앱이 현재 대기 목록에 있는 사람들에게 롤링 방식으로 초대장을 보내며 배포되고 있으며, 초기 제공은 스포츠 이벤트 계약에 초점을 맞추고 있다고 말한다. 이는 사실상 이중 트랙 접근법을 설정한다: 돌파구를 이끌었던 역외 암호화 네이티브 플랫폼과 함께 규제된 미국 제품. 이중 플랫폼 전략은 Polymarket이 국제적으로 무허가 우위를 유지하면서 미국 트레이더와 KYC 준수 글로벌 사용자를 놓고 Kalshi와 직접 경쟁할 수 있게 한다.
+
+=== "EN"
+
+    ## Section V: The Technical Architecture Behind the Success
+
+    Polymarket's breakthrough came from a pragmatic compromise: use blockchain where it matters most, but don't let decentralization ideology get in the way of a good product.
+
+    ### Selective Decentralization
+
+    The platform operates through selective decentralization. By building on Polygon (an Ethereum Layer 2, as discussed in Chapter II) rather than Ethereum's base layer, Polymarket avoided the high gas fees that made Augur's small bets economically unviable. Smart contracts handle the critical functions (custody of funds and settlement of bets) while centralized systems handle everything else for speed and efficiency.
+
+    Users maintain complete control of their money through smart contract wallets (a concept introduced in Chapter II and Chapter V) that feel like normal email-based accounts. This solved a key UX problem: you get self-custody without needing to manage seed phrases or understand blockchain mechanics. Polymarket cannot access user funds, and winners redeem directly through smart contracts when markets resolve.
+
+    The full collateralization model is simple: one USDC mints one YES token and one NO token. This guarantees there's always exactly enough money to pay winners, eliminating the counterparty risk inherent in traditional betting sites where you trust the house has funds.
+
+    But order matching, market creation, and most trading infrastructure runs on traditional centralized servers. This hybrid approach solved Augur and Gnosis's fatal flaw: trying to decentralize everything made those platforms slow, expensive, and unusable.
+
+    ### Optimistic Resolution
+
+    For market resolution, Polymarket uses an **optimistic oracle** system (similar in philosophy to the optimistic rollups described in Chapter II) where anyone can propose an outcome with a bond (typically $750). If no one disputes within two hours, the outcome is accepted. Disputes trigger token holder voting. This balances speed with accuracy. It's much faster than Augur's lengthy voting process, while maintaining economic incentives for honest reporting.
+
+    By handling blockchain complexity behind the scenes, Polymarket made decentralization invisible to users. The tradeoff: you're trusting centralized operators for order matching and market curation, though they can't steal your money.
+
+=== "KO"
+
+    ## Section V: 성공 뒤의 기술적 아키텍처
+
+    Polymarket의 돌파구는 실용적인 타협에서 비롯되었다: Blockchain을 가장 중요한 곳에 사용하되, 탈중앙화 이데올로기가 좋은 제품을 방해하지 않게 하라.
+
+    ### 선택적 탈중앙화
+
+    플랫폼은 선택적 탈중앙화를 통해 운영된다. 이더리움 기본 레이어가 아닌 Polygon(Chapter II에서 논의된 이더리움 Layer 2) 위에 구축함으로써, Polymarket은 Augur의 소액 베팅을 경제적으로 불가능하게 만들었던 높은 가스 수수료를 피했다. Smart Contract는 중요한 기능(자금 보관 및 베팅 정산)을 처리하고, 중앙화된 시스템은 속도와 효율성을 위해 나머지 모든 것을 처리한다.
+
+    사용자는 일반 이메일 기반 계정처럼 느껴지는 Smart Contract Wallet(Chapter II와 Chapter V에서 소개된 개념)을 통해 자신의 돈에 대한 완전한 통제를 유지한다. 이는 핵심 UX 문제를 해결했다: 시드 구문을 관리하거나 Blockchain 메커니즘을 이해할 필요 없이 자기 수탁(Self-custody)을 얻는다. Polymarket은 사용자 자금에 접근할 수 없으며, 승자는 시장이 해결될 때 Smart Contract를 통해 직접 상환한다.
+
+    완전 담보 모델은 간단하다: 1 USDC는 1개의 YES 토큰과 1개의 NO 토큰을 발행한다. 이는 승자에게 지불할 충분한 돈이 항상 정확히 있음을 보장하여, 하우스가 자금을 가지고 있다고 신뢰해야 하는 전통적인 베팅 사이트에 내재된 거래 상대방 위험을 제거한다.
+
+    그러나 주문 매칭, 시장 생성, 대부분의 거래 인프라는 전통적인 중앙화된 서버에서 실행된다. 이 하이브리드 접근법은 Augur와 Gnosis의 치명적인 결함을 해결했다: 모든 것을 탈중앙화하려는 시도는 그 플랫폼들을 느리고, 비싸고, 사용할 수 없게 만들었다.
+
+    ### 낙관적 해결
+
+    시장 해결을 위해 Polymarket은 **낙관적 오라클(Optimistic Oracle)** 시스템(Chapter II에서 설명한 Optimistic Rollup과 철학이 유사)을 사용하여 누구나 보증금(일반적으로 $750)과 함께 결과를 제안할 수 있다. 2시간 내에 아무도 이의를 제기하지 않으면 결과가 수용된다. 이의 제기는 토큰 보유자 투표를 트리거한다. 이는 속도와 정확성의 균형을 맞춘다. Augur의 긴 투표 과정보다 훨씬 빠르면서도 정직한 보고에 대한 경제적 인센티브를 유지한다.
+
+    Blockchain 복잡성을 배후에서 처리함으로써, Polymarket은 탈중앙화를 사용자에게 보이지 않게 만들었다. 트레이드오프: 주문 매칭과 시장 큐레이션에 대해 중앙화된 운영자를 신뢰해야 하지만, 그들이 당신의 돈을 훔칠 수는 없다.
+
+=== "EN"
+
+    ## Section VI: The Network Effects of Political Prediction
+
+    Technical infrastructure alone doesn't explain Polymarket's breakthrough. The platform succeeded because it became information infrastructure integrated into how people followed and understood the 2024 election, creating self-reinforcing network effects that transcended its role as a simple trading platform.
+
+    ### Media Integration
+
+    Media integration became a crucial factor. Major news outlets began citing prediction market odds alongside traditional polling data, treating them as legitimate indicators of electoral sentiment. This created a feedback loop: media coverage drove more users to the platforms, increasing liquidity and accuracy, which justified more media coverage. Polymarket odds were regularly featured on CNN, Fox News, and major newspapers, giving the platform unprecedented mainstream visibility.
+
+    This created what researchers call "**information cascades**": as prediction markets became more accurate and widely followed, they attracted more sophisticated traders, which improved accuracy further. Professional political analysts, campaign operatives, and institutional investors began participating, bringing additional information and capital that enhanced market quality.
+
+    The real-time information processing capabilities of prediction markets proved particularly valuable during a volatile election cycle. While polls are snapshots taken at specific moments, prediction markets continuously incorporate new information. Major events produced immediate market reactions: During the 2024 US election cycle, Donald Trump's Manhattan conviction moved odds from 54% to 47% within hours, then recovered to 52% as traders assessed the actual electoral impact. When Joe Biden withdrew from the race, Kamala Harris's odds subsequently surged from 15% to 38% in under 24 hours, faster than any polling could capture.
+
+    Social media amplification proved crucial to these platforms' success. The prediction market odds themselves became highly shareable content, with users posting screenshots of their positions and market movements across social platforms. This created viral, user-driven marketing, though the line between "authentic social proof" and gambling promotion was often blurred. Polymarket's social media presence generated significant attention, including mentions by Donald Trump in interviews, though whether political candidates citing betting odds on themselves represents validation or circular self-promotion remains debatable.
+
+    Institutional adoption began emerging as hedge funds and political organizations started using prediction markets for both information and hedging purposes. Campaign strategists could monitor market reactions to their messaging in real-time, while investors could hedge political risk in their portfolios. This institutional participation added significant liquidity and legitimacy to the markets.
+
+    ### The 2024 Results
+
+    The results vindicated the prediction market consensus. National polls showed the race within 1-2 percentage points throughout October, suggesting a coin-flip election. Pennsylvania, Michigan, and Wisconsin polls all showed Harris with slight leads or ties within days of the election. Yet when it was all said and done, Trump won Pennsylvania by 2.2%, Michigan by 1.4%, and Wisconsin by 0.9%, outperforming polls by an average of 2-3 points (similar to the polling errors in 2016 and 2020). Polymarket, meanwhile, showed Trump favored in all three states during the final week, with Pennsylvania odds at 57% Trump to 43% Harris.
+
+=== "KO"
+
+    ## Section VI: 정치적 예측의 네트워크 효과
+
+    기술적 인프라만으로는 Polymarket의 돌파구를 설명하지 못한다. 플랫폼은 사람들이 2024년 선거를 따르고 이해하는 방식에 통합된 정보 인프라가 되면서 성공했으며, 단순한 거래 플랫폼 역할을 초월하는 자기 강화적 네트워크 효과를 만들었다.
+
+    ### 미디어 통합
+
+    미디어 통합은 결정적인 요소가 되었다. 주요 뉴스 매체는 전통적인 여론조사 데이터와 함께 예측 시장 배당률을 인용하기 시작했으며, 이를 선거 여론의 정당한 지표로 취급했다. 이는 피드백 루프를 만들었다: 미디어 보도가 더 많은 사용자를 플랫폼으로 이끌어 유동성과 정확성을 높였고, 이는 더 많은 미디어 보도를 정당화했다. Polymarket 배당률은 CNN, Fox News, 주요 신문에서 정기적으로 다뤄지며 플랫폼에 전례 없는 주류 가시성을 부여했다.
+
+    이것은 연구자들이 **"정보 캐스케이드(Information Cascade)"**라고 부르는 것을 만들었다: 예측 시장이 더 정확해지고 널리 팔로우됨에 따라, 더 정교한 트레이더를 끌어들였고, 이는 정확성을 더욱 향상시켰다. 전문 정치 분석가, 캠페인 운영자, 기관 투자자가 참여하기 시작했으며, 시장 품질을 향상시키는 추가 정보와 자본을 가져왔다.
+
+    예측 시장의 실시간 정보 처리 능력은 변동성이 큰 선거 주기 동안 특히 가치 있음이 입증되었다. 여론조사가 특정 순간에 찍힌 스냅샷인 반면, 예측 시장은 새로운 정보를 지속적으로 반영한다. 주요 이벤트는 즉각적인 시장 반응을 만들어냈다: 2024년 미국 선거 주기 동안, 도널드 트럼프의 맨해튼 유죄 판결은 몇 시간 만에 배당률을 54%에서 47%로 이동시켰고, 트레이더들이 실제 선거 영향을 평가하면서 52%로 회복되었다. 조 바이든이 레이스에서 철수했을 때, 카말라 해리스의 배당률은 24시간 만에 15%에서 38%로 급등했으며, 이는 어떤 여론조사보다 빠른 것이었다.
+
+    소셜 미디어 증폭은 이러한 플랫폼의 성공에 결정적임이 입증되었다. 예측 시장 배당률 자체가 매우 공유하기 좋은 콘텐츠가 되었으며, 사용자들은 소셜 플랫폼 전반에 걸쳐 자신의 포지션과 시장 움직임의 스크린샷을 게시했다. 이는 바이럴 사용자 주도 마케팅을 만들었지만, "진정한 사회적 증거"와 도박 홍보 사이의 경계는 종종 모호했다. Polymarket의 소셜 미디어 존재는 도널드 트럼프의 인터뷰 언급을 포함하여 상당한 관심을 불러일으켰지만, 정치 후보자가 자신에 대한 베팅 배당률을 인용하는 것이 검증을 나타내는지 아니면 순환적인 자기 홍보인지는 논쟁의 여지가 있다.
+
+    헤지 펀드와 정치 조직이 정보와 헤징 목적 모두를 위해 예측 시장을 사용하기 시작하면서 기관 채택이 나타나기 시작했다. 캠페인 전략가들은 메시지에 대한 시장 반응을 실시간으로 모니터링할 수 있었고, 투자자들은 포트폴리오의 정치적 위험을 헤지할 수 있었다. 이러한 기관 참여는 시장에 상당한 유동성과 정당성을 더했다.
+
+    ### 2024년 결과
+
+    결과는 예측 시장 컨센서스를 입증했다. 전국 여론조사는 10월 내내 1-2 퍼센트 포인트 내의 경합을 보여주며 동전 던지기 선거를 시사했다. 펜실베이니아, 미시간, 위스콘신 여론조사는 모두 선거 며칠 전 해리스가 약간 앞서거나 오차 범위 내 동률을 보여주었다. 그러나 결국, 트럼프는 펜실베이니아에서 2.2%, 미시간에서 1.4%, 위스콘신에서 0.9% 승리했으며, 여론조사를 평균 2-3 포인트 상회했다(2016년과 2020년의 여론조사 오류와 유사). 반면 Polymarket은 마지막 주 동안 세 주 모두에서 트럼프 우세를 보여주었으며, 펜실베이니아 배당률은 트럼프 57% 대 해리스 43%였다.
+
+=== "EN"
+
+    ## Section VII: The Future of Information Markets
+
+    The breakthrough success of prediction markets during 2024 has catalyzed broader interest in information markets beyond political events. The same mechanisms that proved effective for election forecasting are now being applied to economic indicators, corporate earnings, regulatory decisions, and even scientific research outcomes.
+
+    However, significant challenges remain before prediction markets can become universal truth-seeking mechanisms.
+
+    ### The Challenge of Manipulation and Market Depth
+
+    Manipulation concerns persist, particularly for markets with smaller participant bases or where interested parties have significant resources. The structure of prediction markets creates perverse incentives. Wealthy individuals or campaigns could potentially move odds in their favor to create favorable media narratives, even if it means losing money on the bets themselves.
+
+    The obvious antidote is deeper liquidity. But liquidity is not just "more money." It requires better market structure: tighter spreads, stronger competition among market makers, and faster arbitrage across venues. As markets mature, the manipulation problem becomes less about stopping large traders from taking positions. Instead, it becomes more about ensuring the system remains thick enough that trying to "buy a narrative" becomes prohibitively expensive.
+
+    ### The Scalability Question
+
+    Scalability questions remain, though Polymarket has demonstrated more staying power than critics initially expected. The platform continues processing over $1 billion in monthly volume a year after the 2024 election. This suggests it successfully diversified beyond presidential politics into international events, economic indicators, and cultural phenomena.
+
+    However, liquidity concentration persists. High-profile markets about geopolitical events, major elections, and crypto prices dominate volume, while niche markets struggle to attract sustained participation. Creating profitable liquidity for specialized topics (like local elections, academic predictions, and industry-specific forecasts) remains an unsolved challenge.
+
+    This could limit how comprehensively prediction markets can serve as "truth-seeking" mechanisms. The platform has proven prediction markets can sustain interest beyond quadrennial election cycles. But whether they can profitably support the long tail of markets that proponents envision is still an open question.
+
+    ### Moving the Rails On-Chain Without Losing the UX
+
+    The next phase of prediction markets is less about shiny new features and more about hardening the substrate. From the user's perspective, the product is already "good enough." You tap a few buttons, move dollars in and out, and see prices update in real time. The real question is whether that experience can survive contact with the two forces that eventually arrive for every successful market: scale and pressure.
+
+    The critical question is no longer "Can we put this on a blockchain?" but "How hard is it to turn this off?" The most important advances are those that push more of the critical path on-chain (custody, collateral, settlement integrity, and censorship resistance) without forcing the user to think about chains, bridges, or gas.
+
+    #### A Native Stablecoin That Earns Yield by Default
+
+    Once deposits are native, the next improvement is making collateral more efficient without changing the mental model for users. The clean pattern is this: users deposit any major stablecoin, the system swaps into a protocol-native "market dollar," and balances remain stablecoin-denominated while quietly earning the yield generated by the underlying collateral strategy. Users only swap back out when withdrawing. Done right, the UX stays "I hold dollars," but the economics shift from dead collateral to productive collateral. This can subsidize fees, tighten spreads, or simply make participation more attractive.
+
+    #### Off-Chain Speed, On-Chain Verifiability
+
+    Centralized order matching is the quiet tradeoff behind most "great UX" markets. It makes things fast, but it creates a single operator chokepoint. The frontier architecture keeps the off-chain orderbook for speed, while making the matching verifiable and permissionless. Orders can be disseminated openly so anyone can run a matcher. Matchers submit batches, and an on-chain verifier accepts only provably correct executions using cryptographic mechanisms that make cheating impossible even if the operator is malicious. This shifts the system from "trust the matching engine" to "verify the matching engine," while preserving the feel of a modern exchange.
+
+    #### Plural Interfaces: Third-Party UIs as a Resilience Layer
+
+    The final step is accepting a reality about censorship and jurisdiction. Frontends get blocked, apps get delisted, domains get seized. If the protocol is truly neutral infrastructure, it should survive the loss of any single interface. That means explicitly supporting third-party UIs, alternative clients, and static frontends that can be hosted anywhere, while the core protocol only accepts correctly verified batches and valid settlement. In that world, a company can ship the official interface, but the market itself is not dependent on it. Users get continuity, and the protocol becomes harder to extinguish because there is no single GUI you can kill to kill the market.
+
+    #### The Likely Equilibrium: A Two-Track Ecosystem
+
+    On one side, you get markets that are increasingly permissionless at the protocol level. Custody, collateral, and verification live on-chain while feeling, to most users, like a normal fintech app. The experience gets so good that the average participant never thinks about chains, bridging, or decentralization at all. They just see dollars in and probabilities out. Power users, meanwhile, route around local restrictions by using third-party clients and alternative frontends. They access the same underlying markets through interfaces that are harder to block and easier to replicate.
+
+    On the other side, you get jurisdiction-specific venues designed to be boring in the way regulators like. These venues are fully compliant, KYC'd, and integrated with traditional legal and banking infrastructure. These country-level prediction markets (whether a regulated Polymarket US/EU-style product or a Kalshi-style model) will resemble conventional exchanges more than crypto protocols. The tradeoff is straightforward: less permissionless reach and less censorship resistance, in exchange for clarity, distribution, and legal permanence in major markets.
+
+    If prediction markets become enduring information infrastructure, it will likely be because both tracks reinforce each other. The permissionless substrate keeps the mechanism global, resilient, and hard to extinguish. Meanwhile, regulated frontends provide a legitimate on-ramp for mainstream users and institutions who need compliance more than composability.
+
+    If this trajectory continues, the most important prediction markets will look boring at the surface and extremely hard to kill underneath. Interfaces may come and go, companies may pivot or be regulated away, but the core markets will live on-chain: collateral, contracts, and oracles that are forkable and globally accessible. What began as speculative crypto experiments could end up as a piece of planetary information infrastructure that no single corporation, regulator, or regime can fully control.
+
+    ### Advanced Market Structures
+
+    As the foundations harden, the design space for what these markets can express becomes much larger. Today's flagship markets are mostly simple binaries: "Candidate X wins," "Rate cut by December," "ETF approved by date Y." They are powerful because they compress complex realities into a single number. But the world is not binary, and neither are the questions that most people actually care about.
+
+    More sophisticated structures allow participants to trade on richer hypotheses. Conditional, combinatorial, and path-dependent markets can express much more. Instead of just "Who wins the election?", traders can price joint scenarios like "Trump wins AND Republicans control the Senate," or contingent questions such as "If interest rates are above 4% in 2026, what is the probability of a recession by 2027?" These markets do not just predict isolated events. They map out possible worlds and the dependencies between them.
+
+    Once markets become resilient enough to persist and cheap enough to trade frequently, they can start to function as a general-purpose calculus for beliefs. A campaign can see how its odds shift conditional on specific messaging choices. A company can hedge the risk of both regulatory outcomes and macroeconomic conditions simultaneously. Researchers can turn competing models into directly comparable, tradeable objects. The "truth-seeking machine" moves from forecasting single headlines to exploring entire scenario trees.
+
+    If the infrastructural evolution succeeds, prediction markets become something closer to a global coordination primitive. Markets that are easy to use, hard to shut down, and expressive enough to capture real-world complexity offer a live, continuously updated map of collective expectations about the future. The story traced in this chapter is ultimately about building that map. From early decentralized failures, through Polymarket's pragmatic breakthrough, to the emerging arms race over infrastructure and regulation, it's a story about creating a system of markets that anyone can tap into, but no one can unilaterally erase.
+
+=== "KO"
+
+    ## Section VII: 정보 시장의 미래
+
+    2024년 예측 시장의 돌파적 성공은 정치적 이벤트를 넘어 정보 시장에 대한 더 넓은 관심을 촉발했다. 선거 예측에 효과적임이 입증된 동일한 메커니즘이 이제 경제 지표, 기업 실적, 규제 결정, 심지어 과학 연구 결과에 적용되고 있다.
+
+    그러나 예측 시장이 보편적인 진실 추구 메커니즘이 되기 전에 상당한 과제가 남아 있다.
+
+    ### 조작과 시장 깊이의 과제
+
+    조작 우려는 특히 참여자 기반이 작거나 이해 당사자가 상당한 자원을 가진 시장에서 지속된다. 예측 시장의 구조는 왜곡된 인센티브를 만든다. 부유한 개인이나 캠페인은 베팅 자체에서 돈을 잃더라도 유리한 미디어 내러티브를 만들기 위해 배당률을 자신에게 유리하게 움직일 수 있다.
+
+    명백한 해독제는 더 깊은 유동성이다. 그러나 유동성은 단순히 "더 많은 돈"이 아니다. 더 나은 시장 구조가 필요하다: 더 타이트한 스프레드, 시장 조성자 간의 더 강한 경쟁, 거래소 간의 더 빠른 차익 거래. 시장이 성숙함에 따라, 조작 문제는 대형 트레이더가 포지션을 취하는 것을 막는 것에 관한 것이 아니게 된다. 대신, "내러티브를 사려는" 시도가 엄청나게 비싸질 정도로 시스템이 충분히 두꺼운 상태를 유지하는 것에 관한 것이 된다.
+
+    ### 확장성 질문
+
+    확장성 질문이 남아 있지만, Polymarket은 비평가들이 처음에 예상했던 것보다 더 많은 지속력을 보여주었다. 플랫폼은 2024년 선거 1년 후에도 월간 10억 달러 이상의 거래량을 계속 처리하고 있다. 이는 국제 이벤트, 경제 지표, 문화 현상으로 성공적으로 다각화했음을 시사한다.
+
+    그러나 유동성 집중은 지속된다. 지정학적 이벤트, 주요 선거, 암호화폐 가격에 관한 고프로필 시장이 거래량을 지배하는 반면, 틈새 시장은 지속적인 참여를 유치하는 데 어려움을 겪는다. 지역 선거, 학술 예측, 산업별 예측과 같은 전문화된 주제에 대한 수익성 있는 유동성을 만드는 것은 여전히 해결되지 않은 과제이다.
+
+    이것은 예측 시장이 "진실 추구" 메커니즘으로 얼마나 포괄적으로 기능할 수 있는지를 제한할 수 있다. 플랫폼은 예측 시장이 4년마다의 선거 주기를 넘어 관심을 유지할 수 있음을 증명했다. 그러나 지지자들이 상상하는 시장의 롱테일을 수익성 있게 지원할 수 있는지는 여전히 열린 질문이다.
+
+    ### UX를 잃지 않고 레일을 On-chain으로 이동
+
+    예측 시장의 다음 단계는 화려한 새 기능보다 기반을 강화하는 것에 관한 것이다. 사용자의 관점에서 제품은 이미 "충분히 좋다". 몇 개의 버튼을 탭하고, 달러를 입출금하고, 가격이 실시간으로 업데이트되는 것을 본다. 진짜 질문은 그 경험이 모든 성공적인 시장에 결국 도착하는 두 가지 힘: 규모와 압력과 접촉하고도 살아남을 수 있는지이다.
+
+    중요한 질문은 더 이상 "이것을 Blockchain에 올릴 수 있는가?"가 아니라 "이것을 끄기가 얼마나 어려운가?"이다. 가장 중요한 발전은 사용자가 체인, 브릿지 또는 가스에 대해 생각하도록 강요하지 않으면서 더 많은 중요 경로를 On-chain으로 밀어 넣는 것(보관, 담보, 정산 무결성, 검열 저항)이다.
+
+    #### 기본으로 수익을 얻는 네이티브 스테이블코인
+
+    예금이 네이티브가 되면, 다음 개선은 사용자의 멘탈 모델을 바꾸지 않으면서 담보를 더 효율적으로 만드는 것이다. 깔끔한 패턴은 이것이다: 사용자가 어떤 주요 스테이블코인이든 예치하면, 시스템이 프로토콜 네이티브 "시장 달러"로 스왑하고, 잔액은 기본 담보 전략에 의해 생성된 수익을 조용히 벌면서 스테이블코인 표시로 유지된다. 사용자는 인출할 때만 다시 스왑한다. 제대로 하면, UX는 "나는 달러를 보유하고 있다"로 유지되지만, 경제학은 죽은 담보에서 생산적인 담보로 전환된다. 이는 수수료를 보조하고, 스프레드를 좁히고, 또는 단순히 참여를 더 매력적으로 만들 수 있다.
+
+    #### Off-chain 속도, On-chain 검증 가능성
+
+    중앙화된 주문 매칭은 대부분의 "훌륭한 UX" 시장 뒤에 있는 조용한 트레이드오프이다. 빠르게 만들지만, 단일 운영자 병목점을 만든다. 프론티어 아키텍처는 속도를 위해 Off-chain 오더북을 유지하면서 매칭을 검증 가능하고 무허가로 만든다. 주문은 공개적으로 배포되어 누구나 매처를 실행할 수 있다. 매처는 배치를 제출하고, On-chain 검증자는 운영자가 악의적이더라도 부정 행위를 불가능하게 만드는 암호화 메커니즘을 사용하여 증명 가능하게 올바른 실행만 수락한다. 이는 시스템을 "매칭 엔진을 신뢰"에서 "매칭 엔진을 검증"으로 전환하면서 현대 거래소의 느낌을 보존한다.
+
+    #### 다원적 인터페이스: 회복력 레이어로서의 제3자 UI
+
+    마지막 단계는 검열과 관할권에 대한 현실을 받아들이는 것이다. 프론트엔드는 차단되고, 앱은 상장 폐지되고, 도메인은 압수된다. 프로토콜이 진정으로 중립적인 인프라라면, 어떤 단일 인터페이스의 손실에도 살아남아야 한다. 이는 명시적으로 제3자 UI, 대체 클라이언트, 어디서든 호스팅될 수 있는 정적 프론트엔드를 지원하면서 핵심 프로토콜은 올바르게 검증된 배치와 유효한 정산만 수락하는 것을 의미한다. 그 세계에서, 회사는 공식 인터페이스를 제공할 수 있지만, 시장 자체는 그것에 의존하지 않는다. 사용자는 연속성을 얻고, 프로토콜은 시장을 죽이기 위해 죽일 수 있는 단일 GUI가 없기 때문에 소멸시키기 더 어려워진다.
+
+    #### 가능성 있는 균형: 이중 트랙 생태계
+
+    한편에서는 프로토콜 수준에서 점점 더 무허가적인 시장을 얻는다. 보관, 담보, 검증은 On-chain에 있으면서 대부분의 사용자에게는 일반 핀테크 앱처럼 느껴진다. 경험이 너무 좋아져서 평균적인 참여자는 체인, 브릿징 또는 탈중앙화에 대해 전혀 생각하지 않는다. 그들은 달러가 들어가고 확률이 나오는 것만 본다. 한편, 파워 유저는 제3자 클라이언트와 대체 프론트엔드를 사용하여 로컬 제한을 우회한다. 그들은 차단하기 더 어렵고 복제하기 더 쉬운 인터페이스를 통해 동일한 기본 시장에 접근한다.
+
+    다른 한편에서는 규제 기관이 좋아하는 방식으로 지루하게 설계된 관할권별 장소를 얻는다. 이러한 장소는 완전히 규정을 준수하고, KYC되고, 전통적인 법률 및 은행 인프라와 통합된다. 이러한 국가 수준 예측 시장(규제된 Polymarket US/EU 스타일 제품이든 Kalshi 스타일 모델이든)은 암호화 프로토콜보다 기존 거래소를 더 닮게 될 것이다. 트레이드오프는 간단하다: 무허가 도달 범위와 검열 저항이 줄어드는 대신, 주요 시장에서 명확성, 배포, 법적 영속성을 얻는다.
+
+    예측 시장이 지속적인 정보 인프라가 된다면, 두 트랙이 서로를 강화하기 때문일 가능성이 높다. 무허가 기반은 메커니즘을 글로벌하고, 탄력적이며, 소멸시키기 어렵게 유지한다. 한편, 규제된 프론트엔드는 조합성보다 규정 준수가 더 필요한 주류 사용자와 기관을 위한 합법적인 온램프를 제공한다.
+
+    이 궤적이 계속된다면, 가장 중요한 예측 시장은 표면에서는 지루해 보이고 밑에서는 죽이기 극도로 어려워질 것이다. 인터페이스는 왔다 갔다 할 수 있고, 회사는 피벗하거나 규제로 사라질 수 있지만, 핵심 시장은 On-chain에 살아 있을 것이다: 포크 가능하고 전 세계적으로 접근 가능한 담보, 컨트랙트, 오라클. 투기적 암호화 실험으로 시작한 것이 어떤 단일 기업, 규제 기관 또는 정권도 완전히 통제할 수 없는 행성적 정보 인프라의 일부로 끝날 수 있다.
+
+    ### 고급 시장 구조
+
+    기반이 강화됨에 따라, 이러한 시장이 표현할 수 있는 것에 대한 설계 공간이 훨씬 커진다. 오늘날의 주력 시장은 대부분 단순한 이진형이다: "후보 X 승리", "12월까지 금리 인하", "Y 날짜까지 ETF 승인". 그들은 복잡한 현실을 단일 숫자로 압축하기 때문에 강력하다. 그러나 세상은 이진형이 아니며, 대부분의 사람들이 실제로 관심을 갖는 질문도 마찬가지이다.
+
+    더 정교한 구조는 참여자들이 더 풍부한 가설에 대해 거래할 수 있게 한다. **조건부(Conditional), 조합적(Combinatorial), 경로 의존적(Path-dependent)** 시장은 훨씬 더 많은 것을 표현할 수 있다. "누가 선거에서 이기는가?" 대신, 트레이더는 "트럼프가 승리하고 공화당이 상원을 장악"과 같은 공동 시나리오나 "2026년에 금리가 4% 이상이면, 2027년까지 경기 침체 확률은?"과 같은 조건부 질문에 가격을 매길 수 있다. 이러한 시장은 단순히 고립된 이벤트를 예측하지 않는다. 가능한 세계와 그 사이의 의존성을 매핑한다.
+
+    시장이 지속될 만큼 충분히 탄력적이고 자주 거래할 만큼 충분히 저렴해지면, 믿음을 위한 범용 계산기로 기능하기 시작할 수 있다. 캠페인은 특정 메시지 선택에 따라 자신의 배당률이 어떻게 변하는지 볼 수 있다. 회사는 규제 결과와 거시경제 조건의 위험을 동시에 헤지할 수 있다. 연구자들은 경쟁 모델을 직접 비교 가능하고 거래 가능한 객체로 변환할 수 있다. "진실 추구 기계"는 단일 헤드라인 예측에서 전체 시나리오 트리 탐색으로 이동한다.
+
+    인프라 진화가 성공한다면, 예측 시장은 글로벌 조정 원시 요소에 더 가까운 것이 된다. 사용하기 쉽고, 종료하기 어렵고, 실제 복잡성을 포착할 만큼 충분히 표현력이 있는 시장은 미래에 대한 집단적 기대의 라이브, 지속적으로 업데이트되는 지도를 제공한다. 이 장에서 추적한 이야기는 궁극적으로 그 지도를 구축하는 것에 관한 것이다. 초기 탈중앙화 실패에서, Polymarket의 실용적 돌파구를 거쳐, 인프라와 규제를 둘러싼 신흥 군비 경쟁까지, 이것은 누구나 활용할 수 있지만 아무도 일방적으로 지울 수 없는 시장 시스템을 만드는 것에 관한 이야기이다.
